@@ -8,6 +8,9 @@ build/
 ### DB INFO ###
 application-MYSQL.properties
 
+### JWT INFO ###
+application-JWT.properties
+
 ### STS ###
 .apt_generated
 .classpath
