@@ -20,8 +20,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserRestController {
 
@@ -39,15 +41,6 @@ public class UserRestController {
 
     @Value("${file.dir}")
     private String fileDir;
-
-    @PostMapping("/join")
-    public ApiResult<JoinResult> join(@Valid @RequestPart JoinRequest request, @RequestPart MultipartFile profileImage)
-            throws IOException {
-        return success(
-                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage)))
-                )
-        );
-    }
 
     @PostMapping("/login")
     public ApiResult<LoginResult> login(@Valid @RequestBody LoginRequest request) {
@@ -60,7 +53,7 @@ public class UserRestController {
         );
     }
 
-    @GetMapping(path = "/me")
+    @GetMapping
     public ApiResult<MeResult> me(@AuthenticationPrincipal JwtAuthentication authentication) {
         return success(
                 new MeResult(
@@ -71,7 +64,7 @@ public class UserRestController {
         );
     }
 
-    @GetMapping(path = "/me/detail")
+    @GetMapping("/detail")
     public ApiResult<MeDetailResult> meDetail(@AuthenticationPrincipal JwtAuthentication authentication) {
         return success(
                 new MeDetailResult(
@@ -80,6 +73,32 @@ public class UserRestController {
                                         "Could not found user for " + authentication.id()))
                 )
         );
+    }
+
+    @PostMapping
+    public ApiResult<JoinResult> join(@Valid @RequestPart JoinRequest request,
+                                      @RequestPart MultipartFile profileImage) throws IOException {
+        return success(
+                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage)))
+                )
+        );
+    }
+
+    @PutMapping
+    public ApiResult<Boolean> updateInfo(@AuthenticationPrincipal JwtAuthentication authentication,
+                                         @RequestBody UpdateRequest request) {
+        return success(userService.updateInfo(authentication.id(), user(request)));
+    }
+
+    //TODO: 프로필 이미지 수정
+    @PutMapping("/image")
+    public ApiResult<Boolean> updateProfileImage() {
+        return success(false);
+    }
+
+    @DeleteMapping
+    public ApiResult<Boolean> delete(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return success(userService.delete(authentication.id()));
     }
 
     private String saveFileAndGetFilePath(MultipartFile profileImage) throws IOException {
@@ -109,4 +128,15 @@ public class UserRestController {
                 .lastModifiedDate(now())
                 .build();
     }
+
+    private User user(UpdateRequest request) {
+        return User.builder()
+                .nickname(request.nickname())
+                .email(request.email())
+                .phone(request.phone())
+                .birth(request.birth())
+                .gender(request.gender() == null ? null : Gender.of(request.gender()))
+                .build();
+    }
+
 }

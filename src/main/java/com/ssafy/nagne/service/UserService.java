@@ -37,7 +37,7 @@ public class UserService {
         }
 
         user.afterLogin();
-        userRepository.update(user);
+        userRepository.update(user.getId(), user);
 
         return user;
     }
@@ -52,5 +52,15 @@ public class UserService {
         checkNotNull(username, "username must be provided");
 
         return userRepository.findByUsername(username);
+    }
+
+    @Transactional
+    public boolean updateInfo(Long id, User user) {
+        return userRepository.update(id, user) == 1;
+    }
+
+    @Transactional
+    public boolean delete(Long id) {
+        return userRepository.delete(id) == 1;
     }
 }

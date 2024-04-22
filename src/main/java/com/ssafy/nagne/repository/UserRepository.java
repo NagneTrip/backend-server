@@ -14,7 +14,7 @@ public interface UserRepository {
 
     Optional<User> findByUsername(@Param("username") String username);
 
-    void update(@Param("user") User user);
+    int update(@Param("id") Long id, @Param("user") User user);
 
-    void delete(Long id);
+    int delete(@Param("id") Long id);
 }
