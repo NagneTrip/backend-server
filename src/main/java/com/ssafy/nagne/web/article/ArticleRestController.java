@@ -39,6 +39,12 @@ public class ArticleRestController {
         );
     }
 
+    //TODO: 페이징 처리
+    @GetMapping
+    public ApiResult<ArticleListResult> findAll() {
+        return success(new ArticleListResult(articleService.findAll()));
+    }
+
     private Article article(SaveRequest request, Long userId) {
         return Article.builder()
                 .userId(userId)
