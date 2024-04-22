@@ -10,9 +10,11 @@ import com.ssafy.nagne.service.ArticleService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,12 +47,31 @@ public class ArticleRestController {
         return success(new ArticleListResult(articleService.findAll()));
     }
 
+    //TODO: 글 작성자만 변경 가능하게 하기
+    @PutMapping("/{id}")
+    public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest updateRequest) {
+        return success(articleService.update(id, article(updateRequest)));
+    }
+
+    //TODO: 글 작성자만 삭제 가능하게 하기
+    @DeleteMapping("/{id}")
+    public ApiResult<Boolean> delete(@PathVariable Long id) {
+        return success(articleService.delete(id));
+    }
+
     private Article article(SaveRequest request, Long userId) {
         return Article.builder()
                 .userId(userId)
                 .title(request.title())
                 .content(request.content())
                 .createdDate(now())
+                .build();
+    }
+
+    private Article article(UpdateRequest request) {
+        return Article.builder()
+                .title(request.title())
+                .content(request.content())
                 .build();
     }
 }

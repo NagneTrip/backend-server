@@ -33,4 +33,18 @@ public class ArticleService {
     public List<Article> findAll() {
         return articleRepository.findAll();
     }
+
+    @Transactional
+    public boolean update(Long id, Article article) {
+        checkNotNull(id, "id must be provided");
+
+        return articleRepository.update(id, article) == 1;
+    }
+
+    @Transactional
+    public boolean delete(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        return articleRepository.delete(id) == 1;
+    }
 }

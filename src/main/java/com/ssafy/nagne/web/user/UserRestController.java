@@ -141,5 +141,4 @@ public class UserRestController {
                 .gender(request.gender() == null ? null : Gender.of(request.gender()))
                 .build();
     }
-
 }

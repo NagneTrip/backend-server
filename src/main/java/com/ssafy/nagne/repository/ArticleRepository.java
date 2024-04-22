@@ -14,4 +14,8 @@ public interface ArticleRepository {
     Optional<Article> findById(@Param("id") Long id);
 
     List<Article> findAll();
+
+    int update(@Param("id") Long id, @Param("article") Article article);
+
+    int delete(@Param("id") Long id);
 }

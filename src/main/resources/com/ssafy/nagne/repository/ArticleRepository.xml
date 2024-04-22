@@ -29,4 +29,29 @@
         SELECT *
         FROM article
     </select>
+
+    <update id="update">
+        UPDATE article
+        SET
+        <if test="article.title != null">
+            title = #{article.title},
+        </if>
+        <if test="article.content != null">
+            content = #{article.content},
+        </if>
+        <if test="article.hit != null">
+            hit = #{article.hit},
+        </if>
+        <if test="article.good != null">
+            good = #{article.good},
+        </if>
+        last_modified_date = now()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE
+        FROM article
+        WHERE id = #{id}
+    </delete>
 </mapper>

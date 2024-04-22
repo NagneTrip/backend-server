@@ -16,9 +16,9 @@ public class Article {
 
     private String content;
 
-    private int hit;
+    private Integer hit;
 
-    private int good;
+    private Integer good;
 
     private LocalDateTime createdDate;
 
