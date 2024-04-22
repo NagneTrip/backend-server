@@ -18,4 +18,10 @@
                 now(),
                 now())
     </insert>
+
+    <select id="findById" resultType="Article">
+        SELECT *
+        FROM article
+        WHERE id = #{id}
+    </select>
 </mapper>
