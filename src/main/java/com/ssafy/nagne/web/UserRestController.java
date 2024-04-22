@@ -71,6 +71,17 @@ public class UserRestController {
         );
     }
 
+    @GetMapping(path = "/me/detail")
+    public ApiResult<MeDetailResult> meDetail(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return success(
+                new MeDetailResult(
+                        userService.findById(authentication.id())
+                                .orElseThrow(() -> new NotFoundException(
+                                        "Could not found user for " + authentication.id()))
+                )
+        );
+    }
+
     private String saveFileAndGetFilePath(MultipartFile profileImage) throws IOException {
         String path = null;
 
