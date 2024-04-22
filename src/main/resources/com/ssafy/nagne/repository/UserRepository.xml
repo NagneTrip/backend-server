@@ -39,7 +39,7 @@
         WHERE username = #{username}
     </select>
 
-    <update id="update">
+    <update id="updateInfo">
         UPDATE users
         SET
         <if test="user.nickname != null">
@@ -54,7 +54,14 @@
         <if test="user.birth != null">
             birth = #{user.birth},
         </if>
-        last_login_date = #{user.lastLoginDate}
+        last_modified_date = now()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateProfileImage">
+        UPDATE users
+        SET profile_image      = #{path},
+            last_modified_date = now()
         WHERE id = #{id}
     </update>
 

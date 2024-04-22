@@ -3,6 +3,7 @@ package com.ssafy.nagne.web;
 import static com.ssafy.nagne.domain.Tier.UNRANKED;
 import static com.ssafy.nagne.utils.ApiUtils.success;
 import static java.time.LocalDateTime.now;
+import static org.springframework.util.StringUtils.getFilenameExtension;
 
 import com.ssafy.nagne.domain.Gender;
 import com.ssafy.nagne.domain.User;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,7 +81,7 @@ public class UserRestController {
     public ApiResult<JoinResult> join(@Valid @RequestPart JoinRequest request,
                                       @RequestPart MultipartFile profileImage) throws IOException {
         return success(
-                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage)))
+                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage, request.username())))
                 )
         );
     }
@@ -90,10 +92,11 @@ public class UserRestController {
         return success(userService.updateInfo(authentication.id(), user(request)));
     }
 
-    //TODO: 프로필 이미지 수정
-    @PutMapping("/image")
-    public ApiResult<Boolean> updateProfileImage() {
-        return success(false);
+    @PutMapping("/profile-image")
+    public ApiResult<Boolean> updateProfileImage(@AuthenticationPrincipal JwtAuthentication authentication,
+                                                 @RequestParam MultipartFile profileImage) throws IOException {
+        return success(userService.updateProfileImage(authentication.id(),
+                saveFileAndGetFilePath(profileImage, authentication.username())));
     }
 
     @DeleteMapping
@@ -101,11 +104,11 @@ public class UserRestController {
         return success(userService.delete(authentication.id()));
     }
 
-    private String saveFileAndGetFilePath(MultipartFile profileImage) throws IOException {
+    private String saveFileAndGetFilePath(MultipartFile profileImage, String username) throws IOException {
         String path = null;
 
         if (!profileImage.isEmpty()) {
-            path = fileDir + profileImage.getOriginalFilename();
+            path = fileDir + username + "_profile_image." + getFilenameExtension(profileImage.getOriginalFilename());
 
             profileImage.transferTo(new File(path));
         }
