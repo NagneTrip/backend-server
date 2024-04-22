@@ -1,4 +1,4 @@
-package com.ssafy.nagne.web;
+package com.ssafy.nagne.web.user;
 
 import jakarta.validation.constraints.NotNull;
 

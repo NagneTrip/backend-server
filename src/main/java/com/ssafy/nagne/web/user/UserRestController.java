@@ -1,4 +1,4 @@
-package com.ssafy.nagne.web;
+package com.ssafy.nagne.web.user;
 
 import static com.ssafy.nagne.domain.Tier.UNRANKED;
 import static com.ssafy.nagne.utils.ApiUtils.success;

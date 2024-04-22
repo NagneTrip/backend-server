@@ -1,11 +1,10 @@
-package com.ssafy.nagne.web;
+package com.ssafy.nagne.web.user;
+
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
-
-import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 public record JoinRequest(
         @NotNull String username,

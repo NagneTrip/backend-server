@@ -1,4 +1,4 @@
-package com.ssafy.nagne.web;
+package com.ssafy.nagne.web.user;
 
 import com.ssafy.nagne.domain.User;
 import java.time.LocalDateTime;
