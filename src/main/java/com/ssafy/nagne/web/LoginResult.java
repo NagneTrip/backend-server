@@ -12,14 +12,14 @@ import org.springframework.security.core.GrantedAuthority;
 public class LoginResult {
 
     private String token;
-    private UserDto user;
+    private UserDto userInfo;
 
     public LoginResult(Jwt jwt, Authentication authentication) {
-        user = new UserDto((User) authentication.getDetails());
-        token = jwt.create(
+        this.userInfo = new UserDto((User) authentication.getDetails());
+        this.token = jwt.create(
                 Claims.of(
-                        user.getId(),
-                        user.getUsername(),
+                        userInfo.getId(),
+                        userInfo.getUsername(),
                         authentication.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
                                 .toArray(String[]::new))

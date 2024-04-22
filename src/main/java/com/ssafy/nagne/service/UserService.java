@@ -20,6 +20,14 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
+    public User save(User user) {
+        user.encodePassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+
+        return user;
+    }
+
+    @Transactional
     public User login(String username, String password) {
         User user = findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Could not fount user for " + username));

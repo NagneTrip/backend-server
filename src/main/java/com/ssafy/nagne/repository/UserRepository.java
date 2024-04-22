@@ -1,15 +1,14 @@
 package com.ssafy.nagne.repository;
 
 import com.ssafy.nagne.domain.User;
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.Optional;
 
 @Mapper
 public interface UserRepository {
 
-    User save(User user);
+    void save(@Param("user") User user);
 
     Optional<User> findById(@Param("id") Long id);
 

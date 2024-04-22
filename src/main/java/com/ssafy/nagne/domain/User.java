@@ -23,13 +23,13 @@ public class User {
 
     private String phone;
 
+    private LocalDate birth;
+
     private Gender gender;
 
     private String profileImage;
 
     private Tier tier;
-
-    private LocalDate birth;
 
     private LocalDateTime createdDate;
 
@@ -39,5 +39,9 @@ public class User {
 
     public void afterLogin() {
         lastLoginDate = now();
+    }
+
+    public void encodePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }

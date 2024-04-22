@@ -39,10 +39,12 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers("/api/users/login").permitAll();
+                            authorize.requestMatchers("/api/users/join").permitAll();
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )
-                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationTokenFilter,
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

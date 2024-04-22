@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.nagne.repository.UserRepository">
-    <select id="findById" resultType="User">
-        SELECT * FROM users WHERE id = #{id}
-    </select>
+  <insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO users (username,
+                       password,
+                       nickname,
+                       email,
+                       phone,
+                       birth,
+                       gender,
+                       profile_image,
+                       tier,
+                       created_date,
+                       last_modified_date)
+    VALUES (#{user.username},
+            #{user.password},
+            #{user.nickname},
+            #{user.email},
+            #{user.phone},
+            #{user.birth},
+            #{user.gender},
+            #{user.profileImage},
+            #{user.tier},
+            now(),
+            now())
+  </insert>
 
-    <select id="findByUsername" resultType="User">
-        SELECT * FROM users WHERE username = #{username}
-    </select>
+  <select id="findById" resultType="User">
+    SELECT *
+    FROM users
+    WHERE id = #{id}
+  </select>
 
-    <update id="update">
-        UPDATE users
-        SET last_login_date = #{user.lastLoginDate}
-        WHERE id = #{user.id}
-    </update>
+  <select id="findByUsername" resultType="User">
+    SELECT *
+    FROM users
+    WHERE username = #{username}
+  </select>
+
+  <update id="update">
+    UPDATE users
+    SET last_login_date = #{user.lastLoginDate}
+    WHERE id = #{user.id}
+  </update>
 </mapper>
