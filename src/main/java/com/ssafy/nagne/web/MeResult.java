@@ -5,27 +5,29 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class JoinResult {
+public class MeResult {
 
     private final UserInfo userInfo;
 
-    public JoinResult(User user) {
+    public MeResult(User user) {
         this.userInfo = new UserInfo(user);
     }
 
     @Data
-    private static class UserInfo {
+    public static class UserInfo {
 
         private final Long id;
         private final String username;
         private final String nickname;
-        private final LocalDateTime createdDate;
+        private final String profileImage;
+        private final LocalDateTime lastLoginDate;
 
         public UserInfo(User user) {
             this.id = user.getId();
             this.username = user.getUsername();
             this.nickname = user.getNickname();
-            this.createdDate = user.getCreatedDate();
+            this.profileImage = user.getProfileImage();
+            this.lastLoginDate = user.getLastLoginDate();
         }
     }
 }

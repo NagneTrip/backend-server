@@ -61,12 +61,13 @@ public class UserRestController {
     }
 
     @GetMapping(path = "/me")
-    public ApiResult<UserDto> me(@AuthenticationPrincipal JwtAuthentication authentication) {
+    public ApiResult<MeResult> me(@AuthenticationPrincipal JwtAuthentication authentication) {
         return success(
-                userService.findById(authentication.id())
-                        .map(UserDto::new)
-                        .orElseThrow(() -> new NotFoundException(
-                                "Could not found user for " + authentication.id()))
+                new MeResult(
+                        userService.findById(authentication.id())
+                                .orElseThrow(() -> new NotFoundException(
+                                        "Could not found user for " + authentication.id()))
+                )
         );
     }
 
