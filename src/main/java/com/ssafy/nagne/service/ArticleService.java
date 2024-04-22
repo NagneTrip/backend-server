@@ -11,13 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
 
-    @Transactional
     public Article save(Article article) {
         articleRepository.save(article);
 
@@ -27,21 +26,26 @@ public class ArticleService {
     public Optional<Article> findById(Long id) {
         checkNotNull(id, "id must be provided");
 
-        return articleRepository.findById(id);
+        Optional<Article> findById = articleRepository.findById(id);
+        findById.ifPresent(article -> {
+            article.view();
+            update(article.getId(), article);
+        });
+
+        return findById;
     }
 
+    @Transactional(readOnly = true)
     public List<Article> findAll() {
         return articleRepository.findAll();
     }
 
-    @Transactional
     public boolean update(Long id, Article article) {
         checkNotNull(id, "id must be provided");
 
         return articleRepository.update(id, article) == 1;
     }
 
-    @Transactional
     public boolean delete(Long id) {
         checkNotNull(id, "id must be provided");
 

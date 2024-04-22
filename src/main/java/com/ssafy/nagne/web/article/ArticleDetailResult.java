@@ -1,5 +1,7 @@
 package com.ssafy.nagne.web.article;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 import com.ssafy.nagne.domain.Article;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -16,18 +18,16 @@ public class ArticleDetailResult {
     @Data
     private static class ArticleInfo {
 
-        private final Long id;
-        private final Long userId;
-        private final String title;
-        private final String content;
-        private final LocalDateTime createDate;
+        private Long id;
+        private Long userId;
+        private String title;
+        private String content;
+        private Integer hit;
+        private Integer good;
+        private LocalDateTime createDate;
 
         public ArticleInfo(Article article) {
-            this.id = article.getId();
-            this.userId = article.getUserId();
-            this.title = article.getTitle();
-            this.content = article.getContent();
-            this.createDate = article.getCreatedDate();
+            copyProperties(article, this);
         }
     }
 }

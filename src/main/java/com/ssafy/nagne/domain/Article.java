@@ -23,4 +23,8 @@ public class Article {
     private LocalDateTime createdDate;
 
     private LocalDateTime lastModifiedDate;
+
+    public void view() {
+        hit++;
+    }
 }
