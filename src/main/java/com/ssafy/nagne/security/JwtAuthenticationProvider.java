@@ -3,7 +3,7 @@ package com.ssafy.nagne.security;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 import static org.springframework.util.TypeUtils.isAssignable;
 
-import com.ssafy.nagne.entity.User;
+import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.service.UserService;
 import lombok.RequiredArgsConstructor;

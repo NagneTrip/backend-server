@@ -2,7 +2,7 @@ package com.ssafy.nagne.web;
 
 import static com.ssafy.nagne.security.Jwt.Claims;
 
-import com.ssafy.nagne.entity.User;
+import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.security.Jwt;
 import lombok.Data;
 import org.springframework.security.core.Authentication;

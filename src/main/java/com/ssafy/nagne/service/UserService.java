@@ -2,7 +2,7 @@ package com.ssafy.nagne.service;
 
 import static lombok.Lombok.checkNotNull;
 
-import com.ssafy.nagne.entity.User;
+import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.UserRepository;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.ssafy.nagne.entity;
+package com.ssafy.nagne.domain;
 
 import static java.time.LocalDateTime.now;
 

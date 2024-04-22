@@ -1,4 +1,4 @@
-package com.ssafy.nagne.entity;
+package com.ssafy.nagne.domain;
 
 public enum Tier {
 

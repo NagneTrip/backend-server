@@ -1,6 +1,6 @@
 package com.ssafy.nagne.web;
 
-import com.ssafy.nagne.entity.User;
+import com.ssafy.nagne.domain.User;
 import java.time.LocalDateTime;
 import lombok.Data;
 
