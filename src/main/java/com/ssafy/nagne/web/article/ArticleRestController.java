@@ -47,6 +47,15 @@ public class ArticleRestController {
         return success(new ArticleListResult(articleService.findAll()));
     }
 
+    //TODO: 페이징 처리
+    @GetMapping("/followers")
+    public ApiResult<ArticleListResult> findFollowingArticles(
+            @AuthenticationPrincipal JwtAuthentication authentication) {
+        return success(
+                new ArticleListResult(articleService.findFollowingArticles(authentication.id()))
+        );
+    }
+
     //TODO: 글 작성자만 변경 가능하게 하기
     @PutMapping("/{id}")
     public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest updateRequest) {

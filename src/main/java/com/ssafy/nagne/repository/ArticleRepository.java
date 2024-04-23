@@ -15,6 +15,8 @@ public interface ArticleRepository {
 
     List<Article> findAll();
 
+    List<Article> findFollowingArticles(@Param("id") Long id);
+
     int update(@Param("id") Long id, @Param("article") Article article);
 
     int delete(@Param("id") Long id);

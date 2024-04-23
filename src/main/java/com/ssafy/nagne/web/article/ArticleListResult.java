@@ -27,7 +27,7 @@ public class ArticleListResult {
         private String content;
         private Integer hit;
         private Integer good;
-        private LocalDateTime createDate;
+        private LocalDateTime createdDate;
 
         public ArticleInfo(Article article) {
             copyProperties(article, this);

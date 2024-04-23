@@ -30,6 +30,14 @@
         FROM article
     </select>
 
+    <select id="findFollowerArticles" resultType="Article">
+        SELECT *
+        FROM article
+        WHERE user_id in (SELECT following_id
+                          FROM follow
+                          WHERE follower_id = #{id})
+    </select>
+
     <update id="update">
         UPDATE article
         SET

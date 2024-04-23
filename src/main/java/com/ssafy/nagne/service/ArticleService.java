@@ -40,6 +40,13 @@ public class ArticleService {
         return articleRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<Article> findFollowingArticles(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        return articleRepository.findFollowingArticles(id);
+    }
+
     public boolean update(Long id, Article article) {
         checkNotNull(id, "id must be provided");
 
