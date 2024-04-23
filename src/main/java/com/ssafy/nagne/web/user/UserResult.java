@@ -14,7 +14,7 @@ public class UserResult {
     }
 
     @Data
-    public static class UserInfo {
+    private static class UserInfo {
 
         private final Long id;
         private final String username;
