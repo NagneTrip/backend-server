@@ -5,8 +5,10 @@ import static lombok.Lombok.checkNotNull;
 import com.ssafy.nagne.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class FollowService {
 
@@ -26,7 +28,7 @@ public class FollowService {
     public boolean delete(Long id, Long followId) {
         checkNotNull(id, "id must be provided");
         checkNotNull(followId, "id must be provided");
-        
+
         if (id.equals(followId)) {
             return false;
         }
