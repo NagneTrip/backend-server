@@ -5,6 +5,7 @@ import static lombok.Lombok.checkNotNull;
 import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,6 +55,18 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public List<User> findFollowers(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        return userRepository.findFollowers(id);
+    }
+
+    public List<User> findFollowings(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        return userRepository.findFollowings(id);
+    }
+
     @Transactional
     public boolean updateInfo(Long id, User user) {
         checkNotNull(id, "id must be provided");
@@ -71,7 +84,7 @@ public class UserService {
     @Transactional
     public boolean delete(Long id) {
         checkNotNull(id, "id must be provided");
-        
+
         return userRepository.delete(id) == 1;
     }
 }

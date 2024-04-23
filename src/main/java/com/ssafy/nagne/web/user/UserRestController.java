@@ -28,4 +28,18 @@ public class UserRestController {
                 )
         );
     }
+
+    @GetMapping("/{id}/followers")
+    public ApiResult<UserListResult> findFollowers(@PathVariable Long id) {
+        return success(
+                new UserListResult(userService.findFollowers(id))
+        );
+    }
+
+    @GetMapping("/{id}/followings")
+    public ApiResult<UserListResult> findFollowings(@PathVariable Long id) {
+        return success(
+                new UserListResult(userService.findFollowings(id))
+        );
+    }
 }

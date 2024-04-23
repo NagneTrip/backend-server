@@ -1,6 +1,7 @@
 package com.ssafy.nagne.repository;
 
 import com.ssafy.nagne.domain.User;
+import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,6 +14,10 @@ public interface UserRepository {
     Optional<User> findById(@Param("id") Long id);
 
     Optional<User> findByUsername(@Param("username") String username);
+
+    List<User> findFollowers(@Param("id") Long id);
+
+    List<User> findFollowings(@Param("id") Long id);
 
     int updateInfo(@Param("id") Long id, @Param("user") User user);
 

@@ -69,6 +69,20 @@ public class MeRestController {
         );
     }
 
+    @GetMapping("/followers")
+    public ApiResult<UserListResult> findFollowers(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return success(
+                new UserListResult(userService.findFollowers(authentication.id()))
+        );
+    }
+
+    @GetMapping("/followings")
+    public ApiResult<UserListResult> findFollowings(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return success(
+                new UserListResult(userService.findFollowings(authentication.id()))
+        );
+    }
+
     @PutMapping
     public ApiResult<Boolean> updateInfo(@AuthenticationPrincipal JwtAuthentication authentication,
                                          @RequestBody UpdateRequest request) {
