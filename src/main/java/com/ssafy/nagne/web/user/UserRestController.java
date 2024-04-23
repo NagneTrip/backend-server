@@ -8,9 +8,7 @@ import static org.springframework.util.StringUtils.getFilenameExtension;
 import com.ssafy.nagne.domain.Gender;
 import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.NotFoundException;
-import com.ssafy.nagne.security.Jwt;
 import com.ssafy.nagne.security.JwtAuthentication;
-import com.ssafy.nagne.security.JwtAuthenticationToken;
 import com.ssafy.nagne.service.UserService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
@@ -18,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,21 +33,17 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserRestController {
 
-    private final Jwt jwt;
-    private final AuthenticationManager authenticationManager;
-    private final UserService userService;
-
     @Value("${file.dir}")
     private String fileDir;
 
-    @PostMapping("/login")
-    public ApiResult<LoginResult> login(@Valid @RequestBody LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new JwtAuthenticationToken(request.principal(), request.credentials())
-        );
+    private final UserService userService;
 
+    @PostMapping
+    public ApiResult<JoinResult> join(@Valid @RequestPart JoinRequest request,
+                                      @RequestPart MultipartFile profileImage) throws IOException {
         return success(
-                new LoginResult(jwt, authentication)
+                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage, request.username())))
+                )
         );
     }
 
@@ -73,15 +65,6 @@ public class UserRestController {
                         userService.findById(authentication.id())
                                 .orElseThrow(() -> new NotFoundException(
                                         "Could not found user for " + authentication.id()))
-                )
-        );
-    }
-
-    @PostMapping
-    public ApiResult<JoinResult> join(@Valid @RequestPart JoinRequest request,
-                                      @RequestPart MultipartFile profileImage) throws IOException {
-        return success(
-                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage, request.username())))
                 )
         );
     }
