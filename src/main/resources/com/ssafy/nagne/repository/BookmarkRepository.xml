@@ -6,4 +6,11 @@
         INSERT INTO bookmark(user_id, article_id, bookmark_date)
         VALUES (#{userId}, #{articleId}, now())
     </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM bookmark
+        WHERE user_id = #{userId}
+          and article_id = #{articleId}
+    </delete>
 </mapper>

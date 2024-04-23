@@ -8,6 +8,7 @@ import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +25,11 @@ public class BookmarkRestController {
     public ApiResult<Boolean> bookmark(@AuthenticationPrincipal JwtAuthentication authentication,
                                        @Valid @RequestBody BookmarkRequest request) {
         return success(bookmarkService.save(authentication.id(), request.articleId()));
+    }
+
+    @DeleteMapping
+    public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
+                                     @Valid @RequestBody BookmarkRequest request) {
+        return success(bookmarkService.delete(authentication.id(), request.articleId()));
     }
 }

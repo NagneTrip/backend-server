@@ -20,4 +20,11 @@ public class BookmarkService {
 
         return bookmarkRepository.save(userId, articleId) == 1;
     }
+
+    public boolean delete(Long userId, Long articleId) {
+        checkNotNull(userId, "userId must be provided");
+        checkNotNull(articleId, "articleId must be provided");
+
+        return bookmarkRepository.delete(userId, articleId) == 1;
+    }
 }
