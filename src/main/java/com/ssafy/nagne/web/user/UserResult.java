@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class MeResult {
+public class UserResult {
 
     private final UserInfo userInfo;
 
-    public MeResult(User user) {
+    public UserResult(User user) {
         this.userInfo = new UserInfo(user);
     }
 

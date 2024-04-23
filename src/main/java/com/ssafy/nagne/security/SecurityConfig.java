@@ -1,11 +1,11 @@
 package com.ssafy.nagne.security;
 
 import static com.ssafy.nagne.security.Role.USER;
+import static org.springframework.http.HttpMethod.POST;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,8 +39,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> {
-                            authorize.requestMatchers("/api/user/login").permitAll();
-                            authorize.requestMatchers(HttpMethod.POST, "/api/user").permitAll();
+                            authorize.requestMatchers("/api/users/login").permitAll();
+                            authorize.requestMatchers(POST, "/api/users").permitAll();
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )

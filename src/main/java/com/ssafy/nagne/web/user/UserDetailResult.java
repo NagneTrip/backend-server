@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class MeDetailResult {
+public class UserDetailResult {
 
     private final UserInfo userInfo;
 
-    public MeDetailResult(User user) {
+    public UserDetailResult(User user) {
         this.userInfo = new UserInfo(user);
     }
 
