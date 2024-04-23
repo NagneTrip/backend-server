@@ -28,14 +28,19 @@
     <select id="findAll" resultType="Article">
         SELECT *
         FROM article
+        WHERE id &lt; #{pageParameter.lastIndex}
+        ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>
 
     <select id="findFollowingArticles" resultType="Article">
         SELECT *
         FROM article
-        WHERE user_id in (SELECT following_id
-                          FROM follow
-                          WHERE follower_id = #{id})
+        WHERE user_id in
+              (SELECT following_id
+               FROM follow
+               WHERE follower_id = #{id})
+          AND id &lt; #{pageParameter.lastIndex}
+        ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>
 
     <update id="update">

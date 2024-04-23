@@ -5,6 +5,7 @@ import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.error.NotFoundException;
+import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.ArticleService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
@@ -41,18 +42,16 @@ public class ArticleRestController {
         );
     }
 
-    //TODO: 페이징 처리
     @GetMapping
-    public ApiResult<ArticleListResult> findAll() {
-        return success(new ArticleListResult(articleService.findAll()));
+    public ApiResult<ArticleListResult> findAll(PageParameter pageParameter) {
+        return success(new ArticleListResult(articleService.findAll(pageParameter)));
     }
 
-    //TODO: 페이징 처리
     @GetMapping("/followers")
-    public ApiResult<ArticleListResult> findFollowingArticles(
-            @AuthenticationPrincipal JwtAuthentication authentication) {
+    public ApiResult<ArticleListResult> findFollowingArticles(@AuthenticationPrincipal JwtAuthentication authentication,
+                                                              PageParameter pageParameter) {
         return success(
-                new ArticleListResult(articleService.findFollowingArticles(authentication.id()))
+                new ArticleListResult(articleService.findFollowingArticles(authentication.id(), pageParameter))
         );
     }
 

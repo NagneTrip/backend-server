@@ -3,6 +3,7 @@ package com.ssafy.nagne.service;
 import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Article;
+import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.repository.ArticleRepository;
 import java.util.List;
 import java.util.Optional;
@@ -36,15 +37,15 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findAll() {
-        return articleRepository.findAll();
+    public List<Article> findAll(PageParameter pageParameter) {
+        return articleRepository.findAll(pageParameter);
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findFollowingArticles(Long id) {
+    public List<Article> findFollowingArticles(Long id, PageParameter pageParameter) {
         checkNotNull(id, "id must be provided");
 
-        return articleRepository.findFollowingArticles(id);
+        return articleRepository.findFollowingArticles(id, pageParameter);
     }
 
     public boolean update(Long id, Article article) {
