@@ -8,5 +8,7 @@ public interface BookmarkRepository {
 
     int save(@Param("userId") Long userId, @Param("articleId") Long articleId);
 
+    boolean check(@Param("userId") Long userId, @Param("articleId") Long articleId);
+
     int delete(@Param("userId") Long userId, @Param("articleId") Long articleId);
 }

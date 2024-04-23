@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +29,15 @@ public class BookmarkRestController {
         return success(bookmarkService.save(authentication.id(), request.articleId()));
     }
 
-    @DeleteMapping
+    @GetMapping("/{articleId}")
+    public ApiResult<CheckResult> check(@AuthenticationPrincipal JwtAuthentication authentication,
+                                        @PathVariable Long articleId) {
+        return success(new CheckResult(bookmarkService.check(authentication.id(), articleId)));
+    }
+
+    @DeleteMapping("/{articleId}")
     public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
-                                     @Valid @RequestBody BookmarkRequest request) {
-        return success(bookmarkService.delete(authentication.id(), request.articleId()));
+                                     @PathVariable Long articleId) {
+        return success(bookmarkService.delete(authentication.id(), articleId));
     }
 }

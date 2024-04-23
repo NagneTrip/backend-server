@@ -7,10 +7,17 @@
         VALUES (#{userId}, #{articleId}, now())
     </insert>
 
+    <select id="check">
+        SELECT COUNT(*) &gt; 0
+        FROM bookmark
+        WHERE user_id = #{userId}
+          AND article_id = #{articleId}
+    </select>
+
     <delete id="delete">
         DELETE
         FROM bookmark
         WHERE user_id = #{userId}
-          and article_id = #{articleId}
+          AND article_id = #{articleId}
     </delete>
 </mapper>

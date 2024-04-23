@@ -21,6 +21,14 @@ public class BookmarkService {
         return bookmarkRepository.save(userId, articleId) == 1;
     }
 
+    @Transactional(readOnly = true)
+    public boolean check(Long userId, Long articleId) {
+        checkNotNull(userId, "userId must be provided");
+        checkNotNull(articleId, "articleId must be provided");
+
+        return bookmarkRepository.check(userId, articleId);
+    }
+
     public boolean delete(Long userId, Long articleId) {
         checkNotNull(userId, "userId must be provided");
         checkNotNull(articleId, "articleId must be provided");
