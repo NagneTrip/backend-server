@@ -6,4 +6,11 @@
         INSERT INTO follow(follower_id, following_id, follow_date)
         VALUES (#{id}, #{followId}, now())
     </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM follow
+        WHERE follower_id = #{id}
+          and following_id = #{followId}
+    </delete>
 </mapper>

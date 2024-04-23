@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Param;
 public interface FollowRepository {
 
     int save(@Param("id") Long id, @Param("followId") Long followId);
+
+    int delete(@Param("id") Long id, @Param("followId") Long followId);
 }
