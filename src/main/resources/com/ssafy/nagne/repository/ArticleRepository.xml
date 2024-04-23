@@ -30,7 +30,7 @@
         FROM article
     </select>
 
-    <select id="findFollowerArticles" resultType="Article">
+    <select id="findFollowingArticles" resultType="Article">
         SELECT *
         FROM article
         WHERE user_id in (SELECT following_id

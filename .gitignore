@@ -15,6 +15,10 @@ application-JWT.properties
 ### FILE INFO ###
 application-FILE.properties
 
+### SCHEMA ###
+data.sql
+schema.sql
+
 ### STS ###
 .apt_generated
 .classpath
