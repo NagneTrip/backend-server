@@ -7,6 +7,13 @@
         VALUES (#{id}, #{followId}, now())
     </insert>
 
+    <select id="check">
+        SELECT COUNT(*) &gt; 0
+        FROM follow
+        WHERE follower_id = #{id}
+          AND following_id = #{followId}
+    </select>
+
     <delete id="delete">
         DELETE
         FROM follow

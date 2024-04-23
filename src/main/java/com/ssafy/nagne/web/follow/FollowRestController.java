@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +29,15 @@ public class FollowRestController {
         return success(followService.save(authentication.id(), request.followId()));
     }
 
-    @DeleteMapping
+    @GetMapping("/{userId}")
+    public ApiResult<CheckResult> check(@AuthenticationPrincipal JwtAuthentication authentication,
+                                        @PathVariable Long userId) {
+        return success(new CheckResult(followService.check(authentication.id(), userId)));
+    }
+
+    @DeleteMapping("/{userId}")
     public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
-                                     @Valid @RequestBody FollowRequest request) {
-        return success(followService.delete(authentication.id(), request.followId()));
+                                     @PathVariable Long userId) {
+        return success(followService.delete(authentication.id(), userId));
     }
 }

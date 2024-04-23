@@ -25,6 +25,14 @@ public class FollowService {
         return followRepository.save(id, followId) == 1;
     }
 
+    @Transactional(readOnly = true)
+    public boolean check(Long id, Long followId) {
+        checkNotNull(id, "id must be provided");
+        checkNotNull(followId, "id must be provided");
+
+        return followRepository.check(id, followId);
+    }
+
     public boolean delete(Long id, Long followId) {
         checkNotNull(id, "id must be provided");
         checkNotNull(followId, "id must be provided");
