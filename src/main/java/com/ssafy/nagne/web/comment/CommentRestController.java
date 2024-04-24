@@ -10,6 +10,8 @@ import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,12 @@ public class CommentRestController {
                                       @Valid @RequestBody SaveRequest request) {
         return success(new SaveResult(commentService.save(comment(request, authentication.id()))));
     }
+
+    @GetMapping("/{articleId}")
+    public ApiResult<CommentListResult> findCommentsByArticleId(@PathVariable Long articleId) {
+        return success(new CommentListResult(commentService.findCommentsByArticleId(articleId)));
+    }
+
 
     private Comment comment(SaveRequest request, Long userId) {
         return Comment.builder()
