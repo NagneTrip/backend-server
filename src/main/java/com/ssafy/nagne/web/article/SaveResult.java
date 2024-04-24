@@ -18,12 +18,12 @@ public class SaveResult {
 
         private final Long id;
         private final Long userId;
-        private final LocalDateTime createDate;
+        private final LocalDateTime createdDate;
 
         public ArticleInfo(Article article) {
             this.id = article.getId();
             this.userId = article.getUserId();
-            this.createDate = article.getCreatedDate();
+            this.createdDate = article.getCreatedDate();
         }
     }
 }
