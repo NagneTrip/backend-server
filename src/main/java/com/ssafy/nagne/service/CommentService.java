@@ -27,4 +27,10 @@ public class CommentService {
 
         return commentRepository.findCommentsByArticleId(articleId);
     }
+
+    public boolean update(Long id, String content) {
+        checkNotNull(id, "id must be provided");
+
+        return commentRepository.update(id, content) == 1;
+    }
 }
