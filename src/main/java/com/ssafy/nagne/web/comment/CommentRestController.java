@@ -10,6 +10,7 @@ import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,6 @@ public class CommentRestController {
 
     private final CommentService commentService;
 
-    //TODO: CRUD 구현
     @PostMapping
     public ApiResult<SaveResult> save(@AuthenticationPrincipal JwtAuthentication authentication,
                                       @Valid @RequestBody SaveRequest request) {
@@ -41,6 +41,11 @@ public class CommentRestController {
     @PutMapping("/{id}")
     public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest request) {
         return success(commentService.update(id, request.content()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResult<Boolean> delete(@PathVariable Long id) {
+        return success(commentService.delete(id));
     }
 
     private Comment comment(SaveRequest request, Long userId) {

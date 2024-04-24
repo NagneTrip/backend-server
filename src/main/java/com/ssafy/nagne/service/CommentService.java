@@ -33,4 +33,10 @@ public class CommentService {
 
         return commentRepository.update(id, content) == 1;
     }
+
+    public boolean delete(Long id) {
+        checkNotNull(id, "id must be provided");
+        
+        return commentRepository.delete(id) == 1;
+    }
 }
