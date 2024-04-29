@@ -2,7 +2,6 @@ package com.ssafy.nagne.web.user;
 
 import static com.ssafy.nagne.utils.ApiUtils.success;
 
-import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.service.UserService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +20,7 @@ public class UserRestController {
     @GetMapping("/{id}")
     public ApiResult<UserDetailResult> findById(@PathVariable Long id) {
         return success(
-                new UserDetailResult(
-                        userService.findById(id)
-                                .orElseThrow(() -> new NotFoundException(
-                                        "Could not found user for " + id))
-                )
+                new UserDetailResult(userService.findById(id))
         );
     }
 

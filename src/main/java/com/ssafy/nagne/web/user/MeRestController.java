@@ -7,7 +7,6 @@ import static org.springframework.util.StringUtils.getFilenameExtension;
 
 import com.ssafy.nagne.domain.Gender;
 import com.ssafy.nagne.domain.User;
-import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.UserService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
@@ -50,22 +49,14 @@ public class MeRestController {
     @GetMapping
     public ApiResult<UserResult> me(@AuthenticationPrincipal JwtAuthentication authentication) {
         return success(
-                new UserResult(
-                        userService.findById(authentication.id())
-                                .orElseThrow(() -> new NotFoundException(
-                                        "Could not found user for " + authentication.id()))
-                )
+                new UserResult(userService.findById(authentication.id()))
         );
     }
 
     @GetMapping("/detail")
     public ApiResult<UserDetailResult> meDetail(@AuthenticationPrincipal JwtAuthentication authentication) {
         return success(
-                new UserDetailResult(
-                        userService.findById(authentication.id())
-                                .orElseThrow(() -> new NotFoundException(
-                                        "Could not found user for " + authentication.id()))
-                )
+                new UserDetailResult(userService.findById(authentication.id()))
         );
     }
 

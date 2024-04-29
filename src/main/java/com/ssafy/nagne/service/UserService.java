@@ -6,7 +6,6 @@ import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.UserRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,7 @@ public class UserService {
 
     @Transactional
     public User login(String username, String password) {
-        User user = findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Could not fount user for " + username));
+        User user = findByUsername(username);
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("Bad Credential");
@@ -43,16 +41,17 @@ public class UserService {
         return user;
     }
 
-    public Optional<User> findById(Long id) {
+    public User findById(Long id) {
         checkNotNull(id, "id must be provided");
 
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("Could not found user for " + id));
     }
 
-    public Optional<User> findByUsername(String username) {
+    public User findByUsername(String username) {
         checkNotNull(username, "username must be provided");
 
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Could not found user for " + username));
     }
 
     public List<User> findFollowers(Long id) {
