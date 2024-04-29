@@ -37,8 +37,11 @@ public class ArticleLikeService {
         checkNotNull(userId, "userId must be provided");
         checkNotNull(articleId, "articleId must be provided");
 
-        articleRepository.minusGoodCount(articleId);
+        if (articleLikeRepository.delete(userId, articleId) != 1) {
+            return false;
+        }
 
-        return articleLikeRepository.delete(userId, articleId) == 1;
+        articleRepository.minusGoodCount(articleId);
+        return true;
     }
 }
