@@ -118,7 +118,6 @@ public class MeRestController {
                 .username(request.username())
                 .password(request.password())
                 .nickname(request.nickname())
-                .email(request.email())
                 .phone(request.phone())
                 .birth(request.birth())
                 .gender(Gender.of(request.gender()))
@@ -132,7 +131,6 @@ public class MeRestController {
     private User user(UpdateRequest request) {
         return User.builder()
                 .nickname(request.nickname())
-                .email(request.email())
                 .phone(request.phone())
                 .birth(request.birth())
                 .gender(request.gender() == null ? null : Gender.of(request.gender()))

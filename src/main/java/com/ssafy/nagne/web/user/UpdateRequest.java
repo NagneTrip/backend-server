@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 public record UpdateRequest(
         String nickname,
-        String email,
         String phone,
         @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul") LocalDate birth,
         String gender

@@ -10,7 +10,6 @@ public record JoinRequest(
         @NotNull String username,
         @NotNull String password,
         @NotNull String nickname,
-        String email,
         String phone,
         String gender,
         @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul") LocalDate birth
