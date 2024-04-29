@@ -16,6 +16,8 @@ public class Comment {
 
     private String content;
 
+    private Integer good;
+
     private LocalDateTime createdDate;
 
     private LocalDateTime lastModifiedDate;

@@ -6,11 +6,13 @@
         INSERT INTO comment(article_id,
                             user_id,
                             content,
+                            good,
                             created_date,
                             last_modified_date)
         VALUES (#{comment.articleId},
                 #{comment.userId},
                 #{comment.content},
+                0,
                 now(),
                 now())
     </insert>
@@ -25,6 +27,18 @@
         UPDATE comment
         SET content            = #{content},
             last_modified_date = now()
+        WHERE id = #{id}
+    </update>
+
+    <update id="plusGoodCount">
+        UPDATE comment
+        SET good = good + 1
+        WHERE id = #{id}
+    </update>
+
+    <update id="minusGoodCount">
+        UPDATE comment
+        SET good = good - 1
         WHERE id = #{id}
     </update>
 

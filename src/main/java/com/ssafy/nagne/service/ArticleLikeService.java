@@ -2,8 +2,8 @@ package com.ssafy.nagne.service;
 
 import static lombok.Lombok.checkNotNull;
 
+import com.ssafy.nagne.repository.ArticleLikeRepository;
 import com.ssafy.nagne.repository.ArticleRepository;
-import com.ssafy.nagne.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class LikeService {
+public class ArticleLikeService {
 
-    private final LikeRepository likeRepository;
+    private final ArticleLikeRepository articleLikeRepository;
     private final ArticleRepository articleRepository;
 
     public boolean save(Long userId, Long articleId) {
@@ -22,7 +22,7 @@ public class LikeService {
 
         articleRepository.plusGoodCount(articleId);
 
-        return likeRepository.save(userId, articleId) == 1;
+        return articleLikeRepository.save(userId, articleId) == 1;
     }
 
     @Transactional(readOnly = true)
@@ -30,7 +30,7 @@ public class LikeService {
         checkNotNull(userId, "userId must be provided");
         checkNotNull(articleId, "articleId must be provided");
 
-        return likeRepository.check(userId, articleId);
+        return articleLikeRepository.check(userId, articleId);
     }
 
     public boolean delete(Long userId, Long articleId) {
@@ -39,6 +39,6 @@ public class LikeService {
 
         articleRepository.minusGoodCount(articleId);
 
-        return likeRepository.delete(userId, articleId) == 1;
+        return articleLikeRepository.delete(userId, articleId) == 1;
     }
 }

@@ -3,7 +3,7 @@ package com.ssafy.nagne.web.like;
 import static com.ssafy.nagne.utils.ApiUtils.success;
 
 import com.ssafy.nagne.security.JwtAuthentication;
-import com.ssafy.nagne.service.LikeService;
+import com.ssafy.nagne.service.ArticleLikeService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,27 +17,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/like")
+@RequestMapping("api/articles/like")
 @RequiredArgsConstructor
-public class LikeRestController {
+public class ArticleLikeRestController {
 
-    private final LikeService likeService;
+    private final ArticleLikeService articleLikeService;
 
     @PostMapping
     public ApiResult<Boolean> like(@AuthenticationPrincipal JwtAuthentication authentication,
-                                   @Valid @RequestBody LikeRequest request) {
-        return success(likeService.save(authentication.id(), request.articleId()));
+                                   @Valid @RequestBody ArticleLikeRequest request) {
+        return success(articleLikeService.save(authentication.id(), request.articleId()));
     }
 
     @GetMapping("/{articleId}")
     public ApiResult<CheckResult> check(@AuthenticationPrincipal JwtAuthentication authentication,
                                         @PathVariable Long articleId) {
-        return success(new CheckResult(likeService.check(authentication.id(), articleId)));
+        return success(new CheckResult(articleLikeService.check(authentication.id(), articleId)));
     }
 
     @DeleteMapping("/{articleId}")
     public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
                                      @PathVariable Long articleId) {
-        return success(likeService.delete(authentication.id(), articleId));
+        return success(articleLikeService.delete(authentication.id(), articleId));
     }
 }

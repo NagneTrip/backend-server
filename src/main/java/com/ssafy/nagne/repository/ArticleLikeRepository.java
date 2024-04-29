@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface LikeRepository {
+public interface ArticleLikeRepository {
 
     int save(@Param("userId") Long userId, @Param("articleId") Long articleId);
 

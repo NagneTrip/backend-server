@@ -14,5 +14,9 @@ public interface CommentRepository {
 
     int update(@Param("id") Long id, @Param("content") String content);
 
+    void plusGoodCount(@Param("id") Long id);
+
+    void minusGoodCount(@Param("id") Long id);
+    
     int delete(@Param("id") Long id);
 }
