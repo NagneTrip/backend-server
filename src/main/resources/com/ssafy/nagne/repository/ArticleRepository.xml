@@ -45,10 +45,13 @@
         <if test="article.content != null">
             content = #{article.content},
         </if>
-        <if test="article.good != null">
-            good = #{article.good},
-        </if>
         last_modified_date = now()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateGoodCount">
+        UPDATE article
+        SET good = good + 1
         WHERE id = #{id}
     </update>
 

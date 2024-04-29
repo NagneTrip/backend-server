@@ -3,6 +3,7 @@ package com.ssafy.nagne.service;
 import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Comment;
+import com.ssafy.nagne.repository.ArticleRepository;
 import com.ssafy.nagne.repository.CommentRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentService {
 
+    private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
 
     public Comment save(Comment comment) {
+        articleRepository.updateGoodCount(comment.getArticleId());
         commentRepository.save(comment);
 
         return comment;
@@ -36,7 +39,7 @@ public class CommentService {
 
     public boolean delete(Long id) {
         checkNotNull(id, "id must be provided");
-        
+
         return commentRepository.delete(id) == 1;
     }
 }
