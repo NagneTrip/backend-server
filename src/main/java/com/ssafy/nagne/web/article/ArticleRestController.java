@@ -70,7 +70,6 @@ public class ArticleRestController {
     private Article article(SaveRequest request, Long userId) {
         return Article.builder()
                 .userId(userId)
-                .title(request.title())
                 .content(request.content())
                 .createdDate(now())
                 .build();
@@ -78,7 +77,6 @@ public class ArticleRestController {
 
     private Article article(UpdateRequest request) {
         return Article.builder()
-                .title(request.title())
                 .content(request.content())
                 .build();
     }

@@ -23,9 +23,7 @@ public class ArticleListResult {
 
         private Long id;
         private Long userId;
-        private String title;
         private String content;
-        private Integer hit;
         private Integer good;
         private LocalDateTime createdDate;
 

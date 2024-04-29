@@ -27,13 +27,7 @@ public class ArticleService {
     public Optional<Article> findById(Long id) {
         checkNotNull(id, "id must be provided");
 
-        Optional<Article> findById = articleRepository.findById(id);
-        findById.ifPresent(article -> {
-            article.view();
-            update(article.getId(), article);
-        });
-
-        return findById;
+        return articleRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
