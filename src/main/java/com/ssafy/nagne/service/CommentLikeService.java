@@ -37,8 +37,11 @@ public class CommentLikeService {
         checkNotNull(userId, "userId must be provided");
         checkNotNull(commentId, "commentId must be provided");
 
-        commentRepository.minusGoodCount(commentId);
+        if (commentLikeRepository.delete(userId, commentId) != 1) {
+            return false;
+        }
 
-        return commentLikeRepository.delete(userId, commentId) == 1;
+        commentRepository.minusGoodCount(commentId);
+        return true;
     }
 }
