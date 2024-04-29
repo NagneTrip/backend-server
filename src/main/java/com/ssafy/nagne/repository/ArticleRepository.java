@@ -16,7 +16,11 @@ public interface ArticleRepository {
 
     List<Article> findAll(@Param("pageParameter") PageParameter pageParameter);
 
-    List<Article> findFollowingArticles(@Param("id") Long id, @Param("pageParameter") PageParameter pageParameter);
+    List<Article> findFollowingArticles(@Param("userId") Long userId,
+                                        @Param("pageParameter") PageParameter pageParameter);
+
+    List<Article> findBookmarkArticles(@Param("userId") Long userId,
+                                       @Param("pageParameter") PageParameter pageParameter);
 
     int update(@Param("id") Long id, @Param("article") Article article);
 

@@ -21,7 +21,7 @@ public class ArticleDetailResult {
         private Long id;
         private Long userId;
         private String content;
-        private Integer hit;
+        private Integer good;
         private LocalDateTime createdDate;
 
         public ArticleInfo(Article article) {

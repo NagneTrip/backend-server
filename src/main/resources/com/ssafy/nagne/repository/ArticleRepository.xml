@@ -34,7 +34,18 @@
         WHERE user_id in
               (SELECT following_id
                FROM follow
-               WHERE follower_id = #{id})
+               WHERE follower_id = #{userId})
+          AND id &lt; #{pageParameter.lastIndex}
+        ORDER BY id DESC LIMIT #{pageParameter.size}
+    </select>
+
+    <select id="findBookmarkArticles" resultType="Article">
+        SELECT *
+        FROM article
+        WHERE id in
+              (SELECT article_id
+               FROM bookmark
+               WHERE user_id = #{userId})
           AND id &lt; #{pageParameter.lastIndex}
         ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>

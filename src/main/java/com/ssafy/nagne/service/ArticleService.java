@@ -36,10 +36,17 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findFollowingArticles(Long id, PageParameter pageParameter) {
-        checkNotNull(id, "id must be provided");
+    public List<Article> findFollowingArticles(Long userId, PageParameter pageParameter) {
+        checkNotNull(userId, "userId must be provided");
 
-        return articleRepository.findFollowingArticles(id, pageParameter);
+        return articleRepository.findFollowingArticles(userId, pageParameter);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Article> findBookmarkArticles(Long userId, PageParameter pageParameter) {
+        checkNotNull(userId, "userId must be provided");
+
+        return articleRepository.findBookmarkArticles(userId, pageParameter);
     }
 
     public boolean update(Long id, Article article) {

@@ -55,6 +55,14 @@ public class ArticleRestController {
         );
     }
 
+    @GetMapping("/bookmark")
+    public ApiResult<ArticleListResult> findBookmarkArticles(@AuthenticationPrincipal JwtAuthentication authentication,
+                                                             PageParameter pageParameter) {
+        return success(
+                new ArticleListResult(articleService.findBookmarkArticles(authentication.id(), pageParameter))
+        );
+    }
+    
     //TODO: 글 작성자만 변경 가능하게 하기
     @PutMapping("/{id}")
     public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest updateRequest) {
