@@ -3,10 +3,10 @@ package com.ssafy.nagne.service;
 import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Article;
+import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.repository.ArticleRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +24,11 @@ public class ArticleService {
         return article;
     }
 
-    public Optional<Article> findById(Long id) {
+    public Article findById(Long id) {
         checkNotNull(id, "id must be provided");
 
-        return articleRepository.findById(id);
+        return articleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
     }
 
     @Transactional(readOnly = true)

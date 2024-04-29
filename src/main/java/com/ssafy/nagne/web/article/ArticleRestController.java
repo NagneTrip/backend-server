@@ -4,7 +4,6 @@ import static com.ssafy.nagne.utils.ApiUtils.success;
 import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.domain.Article;
-import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.ArticleService;
@@ -35,11 +34,7 @@ public class ArticleRestController {
 
     @GetMapping("/{id}")
     public ApiResult<ArticleDetailResult> findById(@PathVariable Long id) {
-        return success(new ArticleDetailResult(
-                articleService.findById(id)
-                        .orElseThrow(() -> new NotFoundException(
-                                "Could not found article for " + id)))
-        );
+        return success(new ArticleDetailResult(articleService.findById(id)));
     }
 
     @GetMapping
@@ -62,7 +57,7 @@ public class ArticleRestController {
                 new ArticleListResult(articleService.findBookmarkArticles(authentication.id(), pageParameter))
         );
     }
-    
+
     //TODO: 글 작성자만 변경 가능하게 하기
     @PutMapping("/{id}")
     public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest updateRequest) {
