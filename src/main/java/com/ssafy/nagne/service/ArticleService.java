@@ -56,8 +56,12 @@ public class ArticleService {
         return articleRepository.findBookmarkArticles(userId, pageParameter);
     }
 
-    public boolean update(Long id, Article article) {
+    public boolean update(Long id, Article article, List<MultipartFile> images) {
         checkNotNull(id, "id must be provided");
+
+        deleteImage(id);
+
+        saveImage(id, images);
 
         return articleRepository.update(id, article) == 1;
     }
@@ -65,8 +69,8 @@ public class ArticleService {
     public boolean delete(Long id) {
         checkNotNull(id, "id must be provided");
 
-        imageRepository.delete(id);
-        
+        deleteImage(id);
+
         return articleRepository.delete(id) == 1;
     }
 
@@ -76,5 +80,17 @@ public class ArticleService {
         if (!filePaths.isEmpty()) {
             imageRepository.save(article.getId(), filePaths);
         }
+    }
+
+    private void saveImage(Long articleId, List<MultipartFile> images) {
+        List<String> filePaths = fileStore.storeFiles(images);
+
+        if (!filePaths.isEmpty()) {
+            imageRepository.save(articleId, filePaths);
+        }
+    }
+
+    private void deleteImage(Long id) {
+        imageRepository.delete(id);
     }
 }

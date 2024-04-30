@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,8 +65,10 @@ public class ArticleRestController {
 
     //TODO: 글 작성자만 변경 가능하게 하기
     @PutMapping("/{id}")
-    public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest updateRequest) {
-        return success(articleService.update(id, article(updateRequest)));
+    public ApiResult<Boolean> update(@PathVariable Long id,
+                                     @RequestPart UpdateRequest request,
+                                     @RequestPart List<MultipartFile> images) {
+        return success(articleService.update(id, article(request), images));
     }
 
     //TODO: 글 작성자만 삭제 가능하게 하기
