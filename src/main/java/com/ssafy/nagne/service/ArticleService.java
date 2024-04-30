@@ -25,7 +25,7 @@ public class ArticleService {
     public Article save(Article article, List<MultipartFile> images) {
         articleRepository.save(article);
 
-        imageRepository.save(article.getId(), saveImagesAndGetPaths(images));
+        saveImage(article, images);
 
         return article;
     }
@@ -68,9 +68,11 @@ public class ArticleService {
         return articleRepository.delete(id) == 1;
     }
 
-    private List<String> saveImagesAndGetPaths(List<MultipartFile> images) {
-        return images.stream()
-                .map(fileStore::storeFile)
-                .toList();
+    private void saveImage(Article article, List<MultipartFile> images) {
+        List<String> filePaths = fileStore.storeFiles(images);
+
+        if (!filePaths.isEmpty()) {
+            imageRepository.save(article.getId(), filePaths);
+        }
     }
 }

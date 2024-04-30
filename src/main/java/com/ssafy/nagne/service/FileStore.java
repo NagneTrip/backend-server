@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.getFilenameExtension;
 import com.ssafy.nagne.error.FIleStoreException;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,16 @@ public class FileStore {
 
     public String getFullPath(String fileName) {
         return fileDir + fileName;
+    }
+
+    public List<String> storeFiles(List<MultipartFile> multipartFiles) {
+        if (multipartFiles.get(0).isEmpty()) {
+            return List.of();
+        }
+
+        return multipartFiles.stream()
+                .map(this::storeFile)
+                .toList();
     }
 
     public String storeFile(MultipartFile multipartFile) {
