@@ -4,7 +4,7 @@
 <mapper namespace="com.ssafy.nagne.repository.TravelPlanRepository">
     <insert id="save" parameterType="TravelPlan" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO travel_plan(user_id, created_date, last_modified_date)
-        VALUES (#{travelPlan.userId}, #{travelPlan.createdDate}, #{travelPlan.lastModifiedDate})
+        VALUES (#{travelPlan.userId}, now(), now())
     </insert>
 
     <resultMap id="TravelPlanWithSchedule" type="TravelPlan">
@@ -38,5 +38,9 @@
         WHERE travel_plan.id = #{id}
     </select>
 
-
+    <delete id="delete">
+        DELETE
+        FROM travel_plan
+        WHERE id = #{id}
+    </delete>
 </mapper>

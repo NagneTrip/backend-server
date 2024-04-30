@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,11 @@ public class TravelPlanRestController {
     @GetMapping("/{id}")
     public ApiResult<TravelPlanDetailResult> findById(@PathVariable Long id) {
         return success(new TravelPlanDetailResult(travelPlanService.findById(id)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResult<Boolean> delete(@PathVariable Long id) {
+        return success(travelPlanService.delete(id));
     }
 
     private TravelPlan travelPlan(Long userId) {

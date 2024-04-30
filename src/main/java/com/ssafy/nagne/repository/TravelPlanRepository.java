@@ -11,4 +11,6 @@ public interface TravelPlanRepository {
     void save(@Param("travelPlan") TravelPlan travelPlan);
 
     Optional<TravelPlan> findById(@Param("id") Long id);
+
+    int delete(@Param("id") Long id);
 }

@@ -12,26 +12,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class TravelPlanService {
 
     private final TravelPlanRepository travelPlanRepository;
     private final ScheduleRepository scheduleRepository;
 
-    @Transactional
     public TravelPlan save(TravelPlan travelPlan, List<Long> attractions) {
         travelPlanRepository.save(travelPlan);
 
         scheduleRepository.save(travelPlan.getId(), attractions);
-        
+
         return travelPlan;
     }
 
+    @Transactional(readOnly = true)
     public TravelPlan findById(Long id) {
         checkNotNull(id, "id must be provided");
 
         return travelPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
+    }
+
+    public boolean delete(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        scheduleRepository.delete(id);
+
+        return travelPlanRepository.delete(id) == 1;
     }
 }
