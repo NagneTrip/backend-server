@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 public interface ImageRepository {
 
     void save(@Param("articleId") Long articleId, @Param("filePaths") List<String> FilePaths);
+
+    void delete(@Param("articleId") Long articleId);
 }

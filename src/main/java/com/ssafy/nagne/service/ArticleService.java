@@ -65,6 +65,8 @@ public class ArticleService {
     public boolean delete(Long id) {
         checkNotNull(id, "id must be provided");
 
+        imageRepository.delete(id);
+        
         return articleRepository.delete(id) == 1;
     }
 

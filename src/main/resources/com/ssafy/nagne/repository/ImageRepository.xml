@@ -9,4 +9,10 @@
             (#{articleId}, #{filePath}, now())
         </foreach>
     </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM image
+        WHERE article_id = #{articleId}
+    </delete>
 </mapper>
