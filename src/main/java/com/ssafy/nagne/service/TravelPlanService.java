@@ -4,7 +4,9 @@ import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.TravelPlan;
 import com.ssafy.nagne.error.NotFoundException;
+import com.ssafy.nagne.repository.ScheduleRepository;
 import com.ssafy.nagne.repository.TravelPlanRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TravelPlanService {
 
     private final TravelPlanRepository travelPlanRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Transactional
-    public TravelPlan save(TravelPlan travelPlan) {
+    public TravelPlan save(TravelPlan travelPlan, List<Long> attractions) {
         travelPlanRepository.save(travelPlan);
 
-        //TODO
+        scheduleRepository.save(travelPlan.getId(), attractions);
+        
         return travelPlan;
     }
 

@@ -5,8 +5,8 @@
     <insert id="save">
         INSERT INTO travel_plan_schedule(travel_plan_id, attraction_id, attraction_order)
         VALUES
-        <foreach collection="attractions" item="attraction" index="idx" separator=",">
-            (#{travelPlanId}, #{attraction}, #{idx})
+        <foreach collection="attractions" item="attraction" index="order" separator=",">
+            (#{travelPlanId}, #{attraction}, #{order})
         </foreach>
     </insert>
 
