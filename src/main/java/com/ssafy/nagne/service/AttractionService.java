@@ -1,5 +1,7 @@
 package com.ssafy.nagne.service;
 
+import static lombok.Lombok.checkNotNull;
+
 import com.ssafy.nagne.domain.Attraction;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.AttractionRepository;
@@ -16,11 +18,15 @@ public class AttractionService {
     private final AttractionRepository attractionRepository;
 
     public Attraction findById(Long id) {
+        checkNotNull(id, "id must be provided");
+
         return attractionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
     }
 
     public List<Attraction> findAttractionsByKeyword(String keyword) {
+        checkNotNull(keyword, "keyword must be provided");
+
         return attractionRepository.findAttractionsByKeyword(keyword);
     }
 }

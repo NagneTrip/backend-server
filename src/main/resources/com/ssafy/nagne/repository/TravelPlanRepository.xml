@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.nagne.repository.TravelPlanRepository">
+    <resultMap id="TravelPlanWithSchedule" type="TravelPlan">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="last_modified_date" property="lastModifiedDate"/>
+        <collection property="schedules" javaType="java.util.List" ofType="Schedule">
+            <result column="travel_plan_id" property="travelPlanId"/>
+            <result column="attraction_order" property="attractionOrder"/>
+            <association property="attraction" javaType="Attraction">
+                <id column="attraction_id" property="id"/>
+                <result column="sido_code" property="sidoCode"/>
+                <result column="gugun_code" property="gugunCode"/>
+                <result column="title" property="title"/>
+                <result column="addr" property="addr"/>
+                <result column="zipcode" property="zipCode"/>
+                <result column="tel" property="tel"/>
+                <result column="image_url" property="imageUrl"/>
+                <result column="latitude" property="latitude"/>
+                <result column="longitude" property="longitude"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="TravelPlanWithSchedule">
+        SELECT *
+        FROM travel_plan
+                 LEFT JOIN travel_plan_schedule ON travel_plan.id = travel_plan_schedule.travel_plan_id
+                 LEFT JOIN attraction_info ON travel_plan_schedule.attraction_id = attraction_info.id
+        WHERE travel_plan.id = #{id}
+    </select>
+
+
+</mapper>
