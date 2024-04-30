@@ -7,4 +7,10 @@
         FROM attraction_info
         WHERE id = #{id}
     </select>
+
+    <select id="findAttractionsByKeyword" resultType="Attraction">
+        SELECT *
+        FROM attraction_info
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
 </mapper>
