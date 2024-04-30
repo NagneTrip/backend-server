@@ -6,10 +6,12 @@ import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.repository.ArticleRepository;
+import com.ssafy.nagne.repository.ImageRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -17,9 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final ImageRepository imageRepository;
+    private final FileStore fileStore;
 
-    public Article save(Article article) {
+    public Article save(Article article, List<MultipartFile> images) {
         articleRepository.save(article);
+
+        imageRepository.save(article.getId(), saveImagesAndGetPaths(images));
 
         return article;
     }
@@ -60,5 +66,11 @@ public class ArticleService {
         checkNotNull(id, "id must be provided");
 
         return articleRepository.delete(id) == 1;
+    }
+
+    private List<String> saveImagesAndGetPaths(List<MultipartFile> images) {
+        return images.stream()
+                .map(fileStore::storeFile)
+                .toList();
     }
 }

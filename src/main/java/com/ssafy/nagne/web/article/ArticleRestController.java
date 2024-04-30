@@ -8,6 +8,7 @@ import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.ArticleService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/articles")
@@ -28,8 +31,11 @@ public class ArticleRestController {
 
     @PostMapping
     public ApiResult<SaveResult> save(@AuthenticationPrincipal JwtAuthentication authentication,
-                                      @RequestBody SaveRequest request) {
-        return success(new SaveResult(articleService.save(article(request, authentication.id()))));
+                                      @RequestPart SaveRequest request,
+                                      @RequestPart List<MultipartFile> images) {
+        return success(
+                new SaveResult(articleService.save(article(request, authentication.id()), images))
+        );
     }
 
     @GetMapping("/{id}")

@@ -44,8 +44,7 @@ public class SecurityConfig {
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )
-                .addFilterBefore(jwtAuthenticationTokenFilter,
-                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
