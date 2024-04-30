@@ -38,36 +38,14 @@
     </select>
 
     <select id="findFollowers" resultType="User">
-        SELECT users.id,
-               users.username,
-               users.password,
-               users.nickname,
-               users.phone,
-               users.birth,
-               users.gender,
-               users.profile_image,
-               users.tier,
-               users.created_date,
-               users.last_modified_date,
-               users.last_login_date
+        SELECT *
         FROM follow
                  LEFT OUTER JOIN users ON follow.follower_id = users.id
         WHERE follow.following_id = #{id}
     </select>
 
     <select id="findFollowings" resultType="User">
-        SELECT users.id,
-               users.username,
-               users.password,
-               users.nickname,
-               users.phone,
-               users.birth,
-               users.gender,
-               users.profile_image,
-               users.tier,
-               users.created_date,
-               users.last_modified_date,
-               users.last_login_date
+        SELECT *
         FROM follow
                  LEFT OUTER JOIN users ON follow.following_id = users.id
         WHERE follow.follower_id = #{id}

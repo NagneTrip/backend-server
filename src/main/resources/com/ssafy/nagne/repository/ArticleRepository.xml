@@ -15,22 +15,39 @@
                 now())
     </insert>
 
-    <select id="findById" resultType="Article">
+    <resultMap id="ArticleWithImage" type="Article">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="content" property="content"/>
+        <result column="good" property="good"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="last_modified_date" property="lastModifiedDate"/>
+        <collection property="imageUrls" javaType="java.util.ArrayList" ofType="Image">
+            <id column="article_id" property="articleId"/>
+            <id column="url" property="url"/>
+            <result column="created_date" property="createdDate"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="ArticleWithImage">
         SELECT *
         FROM article
-        WHERE id = #{id}
+                 LEFT JOIN image ON article.id = image.article_id
+        WHERE article.id = #{id}
     </select>
 
-    <select id="findAll" resultType="Article">
+    <select id="findAll" resultMap="ArticleWithImage">
         SELECT *
         FROM article
+                 LEFT JOIN image ON article.id = image.article_id
         WHERE id &lt; #{pageParameter.lastIndex}
         ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>
 
-    <select id="findFollowingArticles" resultType="Article">
+    <select id="findFollowingArticles" resultMap="ArticleWithImage">
         SELECT *
         FROM article
+                 LEFT JOIN image ON article.id = image.article_id
         WHERE user_id in
               (SELECT following_id
                FROM follow
@@ -39,9 +56,10 @@
         ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>
 
-    <select id="findBookmarkArticles" resultType="Article">
+    <select id="findBookmarkArticles" resultMap="ArticleWithImage">
         SELECT *
         FROM article
+                 LEFT JOIN image ON article.id = image.article_id
         WHERE id in
               (SELECT article_id
                FROM bookmark
