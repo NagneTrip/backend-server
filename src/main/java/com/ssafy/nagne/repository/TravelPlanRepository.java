@@ -8,5 +8,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface TravelPlanRepository {
 
+    void save(@Param("travelPlan") TravelPlan travelPlan);
+
     Optional<TravelPlan> findById(@Param("id") Long id);
 }

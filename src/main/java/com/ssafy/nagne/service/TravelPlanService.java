@@ -16,6 +16,14 @@ public class TravelPlanService {
 
     private final TravelPlanRepository travelPlanRepository;
 
+    @Transactional
+    public TravelPlan save(TravelPlan travelPlan) {
+        travelPlanRepository.save(travelPlan);
+
+        //TODO
+        return travelPlan;
+    }
+
     public TravelPlan findById(Long id) {
         checkNotNull(id, "id must be provided");
 

@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.nagne.repository.TravelPlanRepository">
+    <insert id="save">
+        INSERT INTO travel_plan(user_id, created_date, last_modified_date)
+        VALUES ()
+    </insert>
+
     <resultMap id="TravelPlanWithSchedule" type="TravelPlan">
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
