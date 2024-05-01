@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -74,13 +74,13 @@ public class MeRestController {
         );
     }
 
-    @PutMapping
+    @PatchMapping
     public ApiResult<Boolean> updateInfo(@AuthenticationPrincipal JwtAuthentication authentication,
                                          @RequestBody UpdateRequest request) {
         return success(userService.updateInfo(authentication.id(), user(request)));
     }
 
-    @PutMapping("/profile-image")
+    @PatchMapping("/profile-image")
     public ApiResult<Boolean> updateProfileImage(@AuthenticationPrincipal JwtAuthentication authentication,
                                                  @RequestParam MultipartFile profileImage) throws IOException {
         return success(userService.updateProfileImage(authentication.id(),
