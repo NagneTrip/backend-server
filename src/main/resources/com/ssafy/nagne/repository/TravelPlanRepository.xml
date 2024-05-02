@@ -38,6 +38,12 @@
         WHERE travel_plan.id = #{id}
     </select>
 
+    <update id="update">
+        UPDATE travel_plan
+        SET last_modified_date = now()
+        WHERE id = #{id}
+    </update>
+
     <delete id="delete">
         DELETE
         FROM travel_plan

@@ -12,5 +12,7 @@ public interface TravelPlanRepository {
 
     Optional<TravelPlan> findById(@Param("id") Long id);
 
+    int update(@Param("id") Long id);
+
     int delete(@Param("id") Long id);
 }

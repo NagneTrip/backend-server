@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,7 @@ public class TravelPlanRestController {
 
     @PostMapping
     public ApiResult<SaveResult> save(@AuthenticationPrincipal JwtAuthentication authentication,
-                                      @Valid @RequestBody SaveRequest request) {
+                                      @Valid @RequestBody SaveUpdateRequest request) {
         log.info("request={}", request);
 
         return success(
@@ -41,6 +42,13 @@ public class TravelPlanRestController {
     public ApiResult<TravelPlanDetailResult> findById(@PathVariable Long id) {
         return success(new TravelPlanDetailResult(travelPlanService.findById(id)));
     }
+
+    @PatchMapping("/{id}")
+    public ApiResult<Boolean> update(@PathVariable Long id,
+                                     @Valid @RequestBody SaveUpdateRequest request) {
+        return success(travelPlanService.update(id, request.attractions()));
+    }
+
 
     @DeleteMapping("/{id}")
     public ApiResult<Boolean> delete(@PathVariable Long id) {

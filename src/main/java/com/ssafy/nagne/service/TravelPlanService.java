@@ -35,6 +35,16 @@ public class TravelPlanService {
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
     }
 
+    public boolean update(Long id, List<Long> attractions) {
+        checkNotNull(id, "id must be provided");
+
+        scheduleRepository.delete(id);
+
+        scheduleRepository.save(id, attractions);
+
+        return travelPlanRepository.update(id) == 1;
+    }
+
     public boolean delete(Long id) {
         checkNotNull(id, "id must be provided");
 
