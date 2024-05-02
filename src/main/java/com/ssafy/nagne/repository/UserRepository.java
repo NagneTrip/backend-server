@@ -21,6 +21,8 @@ public interface UserRepository {
 
     List<User> findFollowings(@Param("id") Long id);
 
+    int update(@Param("user") User user);
+
     int updateInfo(@Param("id") Long id, @Param("user") User user);
 
     int updateProfileImage(@Param("id") Long id, @Param("path") String path);

@@ -29,16 +29,20 @@ public class UserService {
 
     @Transactional
     public User login(String username, String password) {
+        checkNotNull(username, "username must be provided");
+        checkNotNull(password, "password must be provided");
+
         User user = findByUsername(username);
+        user.checkPassword(passwordEncoder, password);
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException();
-        }
-
-        user.afterLogin();
-        userRepository.updateInfo(user.getId(), user);
+        updateLastLoginDate(user);
 
         return user;
+    }
+
+    private void updateLastLoginDate(User user) {
+        user.afterLogin();
+        userRepository.update(user);
     }
 
     public User findById(Long id) {

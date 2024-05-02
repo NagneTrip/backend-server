@@ -57,6 +57,22 @@
         WHERE follow.follower_id = #{id}
     </select>
 
+    <update id="update">
+        UPDATE users
+        SET username           = #{user.username},
+            password           = #{user.password},
+            nickname           = #{user.nickname},
+            phone              = #{user.phone},
+            birth              = #{user.birth},
+            gender             = #{user.gender},
+            profile_image      = #{user.profileImage},
+            tier               = #{user.tier},
+            created_date       = #{user.createdDate},
+            last_modified_date = #{user.lastModifiedDate},
+            last_login_date    = #{user.lastLoginDate}
+        WHERE id = #{user.id}
+    </update>
+
     <update id="updateInfo">
         UPDATE users
         SET

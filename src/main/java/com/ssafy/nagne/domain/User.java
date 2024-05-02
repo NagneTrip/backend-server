@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Builder
@@ -39,8 +40,14 @@ public class User {
 
     private LocalDateTime lastLoginDate;
 
+    public void checkPassword(PasswordEncoder passwordEncoder, String password) {
+        if (!passwordEncoder.matches(password, this.password)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void afterLogin() {
-        lastLoginDate = now();
+        this.lastLoginDate = now();
     }
 
     public void encodePassword(String encodedPassword) {
