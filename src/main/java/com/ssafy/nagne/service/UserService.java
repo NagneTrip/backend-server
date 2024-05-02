@@ -54,6 +54,10 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Could not found user for " + username));
     }
 
+    public List<User> findAll(String keyword) {
+        return userRepository.findAll(keyword);
+    }
+
     public List<User> findFollowers(Long id) {
         checkNotNull(id, "id must be provided");
 

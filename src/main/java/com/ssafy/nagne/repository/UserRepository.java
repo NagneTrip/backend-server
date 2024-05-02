@@ -15,6 +15,8 @@ public interface UserRepository {
 
     Optional<User> findByUsername(@Param("username") String username);
 
+    List<User> findAll(@Param("keyword") String keyword);
+
     List<User> findFollowers(@Param("id") Long id);
 
     List<User> findFollowings(@Param("id") Long id);
