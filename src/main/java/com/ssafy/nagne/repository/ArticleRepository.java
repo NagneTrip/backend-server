@@ -14,7 +14,7 @@ public interface ArticleRepository {
 
     Optional<Article> findById(@Param("id") Long id);
 
-    List<Article> findAll(@Param("pageParameter") PageParameter pageParameter);
+    List<Article> findAll(@Param("tags") List<String> tags, @Param("pageParameter") PageParameter pageParameter);
 
     List<Article> findFollowingArticles(@Param("userId") Long userId,
                                         @Param("pageParameter") PageParameter pageParameter);

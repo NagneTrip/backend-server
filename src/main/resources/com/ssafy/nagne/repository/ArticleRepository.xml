@@ -38,9 +38,15 @@
 
     <select id="findAll" resultMap="ArticleWithImage">
         SELECT *
-        FROM article
-                 LEFT JOIN image ON article.id = image.article_id
-        WHERE id &lt; #{pageParameter.lastIndex}
+        FROM article_hashtag
+        LEFT JOIN article ON article_hashtag.article_id = article.id
+        LEFT JOIN image ON article.id = image.article_id
+        WHERE hashtag_name in (
+        <foreach collection="tags" item="tag" separator=",">
+            #{tag}
+        </foreach>
+        )
+        AND id &lt; #{pageParameter.lastIndex}
         ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>
 

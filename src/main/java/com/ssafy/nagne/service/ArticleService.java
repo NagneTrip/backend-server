@@ -48,8 +48,8 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findAll(PageParameter pageParameter) {
-        return articleRepository.findAll(pageParameter);
+    public List<Article> findAll(List<String> tags, PageParameter pageParameter) {
+        return articleRepository.findAll(tags, pageParameter);
     }
 
     @Transactional(readOnly = true)
