@@ -32,7 +32,7 @@ public class UserService {
         User user = findByUsername(username);
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Bad Credential");
+            throw new IllegalArgumentException();
         }
 
         user.afterLogin();

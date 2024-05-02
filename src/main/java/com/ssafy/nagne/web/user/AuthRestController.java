@@ -25,7 +25,7 @@ public class AuthRestController {
     @PostMapping("/login")
     public ApiResult<LoginResult> login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new JwtAuthenticationToken(request.principal(), request.credentials())
+                new JwtAuthenticationToken(request.username(), request.password())
         );
 
         return success(

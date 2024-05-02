@@ -37,6 +37,14 @@ public class GeneralExceptionHandler {
         return newResponse(e, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({
+            UsernameNotFoundException.class,
+            BadCredentialsException.class
+    })
+    public ResponseEntity<?> handleLoginException(Exception e) {
+        return newResponse("Bad Credential", HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<?> handleUnauthorizedException(Exception e) {
         return newResponse(e, HttpStatus.UNAUTHORIZED);
@@ -46,9 +54,7 @@ public class GeneralExceptionHandler {
             IllegalArgumentException.class,
             IllegalStateException.class,
             ConstraintViolationException.class,
-            MethodArgumentNotValidException.class,
-            UsernameNotFoundException.class,
-            BadCredentialsException.class
+            MethodArgumentNotValidException.class
     })
     public ResponseEntity<?> handleBadRequestException(Exception e) {
         log.debug("Bad request exception occurred: {}", e.getMessage(), e);
