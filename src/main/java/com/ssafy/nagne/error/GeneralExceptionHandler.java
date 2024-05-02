@@ -4,13 +4,18 @@ import static com.ssafy.nagne.utils.ApiUtils.error;
 
 import com.ssafy.nagne.utils.ApiUtils;
 import jakarta.validation.ConstraintViolationException;
+import java.util.Locale;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,9 +23,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-@ControllerAdvice
 @Slf4j
+@ControllerAdvice
+@RequiredArgsConstructor
 public class GeneralExceptionHandler {
+
+    private final MessageSource messageSource;
 
     private ResponseEntity<ApiUtils.ApiResult<?>> newResponse(Throwable throwable, HttpStatus status) {
         return newResponse(throwable.getMessage(), status);
@@ -58,12 +66,24 @@ public class GeneralExceptionHandler {
     })
     public ResponseEntity<?> handleBadRequestException(Exception e) {
         log.debug("Bad request exception occurred: {}", e.getMessage(), e);
+
         if (e instanceof MethodArgumentNotValidException) {
             return newResponse(
-                    ((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().get(0).getDefaultMessage(),
+                    getErrorMessage(((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().get(0)),
                     HttpStatus.BAD_REQUEST);
         }
         return newResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    private String getErrorMessage(ObjectError error) {
+        for (String code : error.getCodes()) {
+            try {
+                return messageSource.getMessage(code, error.getArguments(), Locale.KOREA);
+            } catch (NoSuchMessageException ignored) {
+            }
+        }
+
+        return error.getDefaultMessage();
     }
 
     @ExceptionHandler(HttpMediaTypeException.class)
