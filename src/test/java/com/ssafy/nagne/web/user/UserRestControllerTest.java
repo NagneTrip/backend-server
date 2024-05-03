@@ -2,12 +2,14 @@ package com.ssafy.nagne.web.user;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ssafy.nagne.security.WithMockJwtAuthentication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -37,8 +39,8 @@ class UserRestControllerTest {
                 multipart("/api/users/me")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"1234\", "
-                                 + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
-                                 + "\"birth\" : \"1998-05-04\"}").getBytes(),
+                                        + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1998-05-04\"}").getBytes(),
                                 APPLICATION_JSON))
                         .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
         );
@@ -61,8 +63,8 @@ class UserRestControllerTest {
                 multipart("/api/users/me")
                         .part(new MockPart("request", "request",
                                 ("{\"password\" : \"1234\", "
-                                 + "\"nickname\" : \"newUser\", \"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
-                                 + "\"birth\" : \"1990-01-01\"}").getBytes(),
+                                        + "\"nickname\" : \"newUser\", \"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1990-01-01\"}").getBytes(),
                                 APPLICATION_JSON))
                         .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
         );
@@ -84,8 +86,8 @@ class UserRestControllerTest {
                 multipart("/api/users/me")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", "
-                                 + "\"nickname\" : \"newUser\", \"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
-                                 + "\"birth\" : \"1990-01-01\"}").getBytes(),
+                                        + "\"nickname\" : \"newUser\", \"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1990-01-01\"}").getBytes(),
                                 APPLICATION_JSON))
                         .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
         );
@@ -107,8 +109,8 @@ class UserRestControllerTest {
                 multipart("/api/users/me")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"1234\", "
-                                 + "\"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
-                                 + "\"birth\" : \"1990-01-01\"}").getBytes(),
+                                        + "\"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1990-01-01\"}").getBytes(),
                                 APPLICATION_JSON))
                         .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
         );
@@ -130,8 +132,8 @@ class UserRestControllerTest {
                 multipart("/api/users/me")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser\", \"password\" : \"1234\", "
-                                 + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
-                                 + "\"birth\" : \"1998-05-04\"}").getBytes(),
+                                        + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1998-05-04\"}").getBytes(),
                                 APPLICATION_JSON))
                         .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
         );
@@ -145,4 +147,42 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.error.status", is(400)))
                 .andExpect(jsonPath("$.error.message", is("username must be a well-formed email address")));
     }
+
+    @Test
+    @DisplayName("유저 조회 테스트")
+    @WithMockJwtAuthentication
+    void findByIdSuccessTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("findById"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.userInfo.id", is(1)))
+                .andExpect(jsonPath("$.response.userInfo.username", is("test1@gmail.com")))
+                .andExpect(jsonPath("$.response.userInfo.nickname", is("김두열1")))
+                .andExpect(jsonPath("$.response.userInfo.birth", is("1998-05-04")))
+                .andExpect(jsonPath("$.response.userInfo.gender", is("MAN")))
+                .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")))
+                .andExpect(jsonPath("$.response.userInfo.createdDate").exists());
+    }
+
+    @Test
+    @DisplayName("키워드 기반 유저 목록 조회 테스트")
+    @WithMockJwtAuthentication
+    void findAllSuccessTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users?keyword=test")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("findAll"))
+                .andExpect(jsonPath("$.success", is(true)));
+    }
+
 }
