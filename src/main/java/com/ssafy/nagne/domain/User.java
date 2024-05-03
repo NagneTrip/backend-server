@@ -2,6 +2,7 @@ package com.ssafy.nagne.domain;
 
 import static java.time.LocalDateTime.now;
 
+import com.ssafy.nagne.error.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,12 @@ public class User {
 
     public void afterLogin() {
         this.lastLoginDate = now();
+    }
+
+    public void isMine(Long sessionId) {
+        if (this.id != sessionId) {
+            throw new AccessDeniedException();
+        }
     }
 
     public void encodePassword(String encodedPassword) {

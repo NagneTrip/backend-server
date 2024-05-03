@@ -60,7 +60,7 @@ public class GeneralExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(Exception e) {
-        return newResponse(e, HttpStatus.FORBIDDEN);
+        return newResponse("Forbidden", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({

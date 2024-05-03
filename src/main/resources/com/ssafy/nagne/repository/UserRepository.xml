@@ -31,7 +31,7 @@
         WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="User">
+    <select id="findUsers" resultType="User">
         SELECT *
         FROM users
         WHERE username like CONCAT('%', #{keyword}, '%')

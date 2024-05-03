@@ -40,7 +40,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers("/api/users/login").permitAll();
-                            authorize.requestMatchers(POST, "/api/users/me").permitAll();
+                            authorize.requestMatchers(POST, "/api/users").permitAll();
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )

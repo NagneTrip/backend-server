@@ -36,7 +36,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 성공 테스트")
     void joinSuccessTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                multipart("/api/users/me")
+                multipart("/api/users")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"1234\", "
                                         + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
@@ -47,7 +47,7 @@ class UserRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(MeRestController.class))
+                .andExpect(handler().handlerType(UserRestController.class))
                 .andExpect(handler().methodName("join"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.userInfo.id").exists())
@@ -60,7 +60,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 실패 테스트 (아이디가 누락된 경우)")
     void omitUsernameJoinFailureTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                multipart("/api/users/me")
+                multipart("/api/users")
                         .part(new MockPart("request", "request",
                                 ("{\"password\" : \"1234\", "
                                         + "\"nickname\" : \"newUser\", \"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
@@ -71,7 +71,7 @@ class UserRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(MeRestController.class))
+                .andExpect(handler().handlerType(UserRestController.class))
                 .andExpect(handler().methodName("join"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
@@ -83,7 +83,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 실패 테스트 (비밀번호가 누락된 경우)")
     void omitPasswordJoinFailureTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                multipart("/api/users/me")
+                multipart("/api/users")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", "
                                         + "\"nickname\" : \"newUser\", \"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
@@ -94,7 +94,7 @@ class UserRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(MeRestController.class))
+                .andExpect(handler().handlerType(UserRestController.class))
                 .andExpect(handler().methodName("join"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
@@ -106,7 +106,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 실패 테스트 (닉네임이 누락된 경우)")
     void omitNicknameJoinFailureTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                multipart("/api/users/me")
+                multipart("/api/users")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"1234\", "
                                         + "\"phone\" : \"01000000000\", \"gender\" : \"MAN\", "
@@ -117,7 +117,7 @@ class UserRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(MeRestController.class))
+                .andExpect(handler().handlerType(UserRestController.class))
                 .andExpect(handler().methodName("join"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
@@ -129,7 +129,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 실패 테스트 (아이디가 이메일 형식이 아닌 경우)")
     void WrongFormUsernameJoinFailureTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                multipart("/api/users/me")
+                multipart("/api/users")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser\", \"password\" : \"1234\", "
                                         + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
@@ -140,7 +140,7 @@ class UserRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(MeRestController.class))
+                .andExpect(handler().handlerType(UserRestController.class))
                 .andExpect(handler().methodName("join"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
@@ -151,7 +151,7 @@ class UserRestControllerTest {
     @Test
     @DisplayName("유저 조회 테스트")
     @WithMockJwtAuthentication
-    void findByIdSuccessTest() throws Exception {
+    void findByIdTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 get("/api/users/1")
         );
@@ -164,16 +164,55 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.response.userInfo.id", is(1)))
                 .andExpect(jsonPath("$.response.userInfo.username", is("test1@gmail.com")))
                 .andExpect(jsonPath("$.response.userInfo.nickname", is("김두열1")))
+                .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")))
+                .andExpect(jsonPath("$.response.userInfo.lastLoginDate").exists());
+    }
+
+    @Test
+    @DisplayName("유저 조회 (자세히) 성공 테스트")
+    @WithMockJwtAuthentication
+    void findByIdDetailSuccessTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users/1/detail")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("findByIdDetail"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.userInfo.id", is(1)))
+                .andExpect(jsonPath("$.response.userInfo.username", is("test1@gmail.com")))
+                .andExpect(jsonPath("$.response.userInfo.nickname", is("김두열1")))
+                .andExpect(jsonPath("$.response.userInfo.phone", is("01011111111")))
                 .andExpect(jsonPath("$.response.userInfo.birth", is("1998-05-04")))
                 .andExpect(jsonPath("$.response.userInfo.gender", is("MAN")))
                 .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")))
-                .andExpect(jsonPath("$.response.userInfo.createdDate").exists());
+                .andExpect(jsonPath("$.response.userInfo.createdDate").exists())
+                .andExpect(jsonPath("$.response.userInfo.lastLoginDate").exists());
+    }
+
+    @Test
+    @DisplayName("유저 조회 (자세히) 실패 테스트 (다른 사람의 정보에 접근하는 경우)")
+    @WithMockJwtAuthentication(id = 2L)
+    void findByIdDetailFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users/1/detail")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("findByIdDetail"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(403)));
     }
 
     @Test
     @DisplayName("키워드 기반 유저 목록 조회 테스트")
     @WithMockJwtAuthentication
-    void findAllSuccessTest() throws Exception {
+    void findAllTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 get("/api/users?keyword=test")
         );
@@ -181,8 +220,37 @@ class UserRestControllerTest {
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(handler().handlerType(UserRestController.class))
-                .andExpect(handler().methodName("findAll"))
+                .andExpect(handler().methodName("findUsers"))
                 .andExpect(jsonPath("$.success", is(true)));
     }
 
+    @Test
+    @DisplayName("유저 팔로워 목록 조회 테스트")
+    @WithMockJwtAuthentication
+    void findFollowersTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users/1/followers")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("findFollowers"))
+                .andExpect(jsonPath("$.success", is(true)));
+    }
+
+    @Test
+    @DisplayName("유저 팔로잉 목록 조회 테스트")
+    @WithMockJwtAuthentication
+    void findFollowingsTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users/1/followings")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("findFollowings"))
+                .andExpect(jsonPath("$.success", is(true)));
+    }
 }

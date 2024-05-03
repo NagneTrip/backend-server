@@ -51,6 +51,21 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("Could not found user for " + id));
     }
 
+    public User findById(Long sessionId, Long id) {
+        checkNotNull(id, "id must be provided");
+
+        return checkAndFindUser(sessionId, id);
+    }
+
+    private User checkAndFindUser(Long sessionId, Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Could not found user for " + id));
+
+        user.isMine(sessionId);
+
+        return user;
+    }
+
     public User findByUsername(String username) {
         checkNotNull(username, "username must be provided");
 
@@ -58,8 +73,8 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Could not found user for " + username));
     }
 
-    public List<User> findAll(String keyword) {
-        return userRepository.findAll(keyword);
+    public List<User> findUsers(String keyword) {
+        return userRepository.findUsers(keyword);
     }
 
     public List<User> findFollowers(Long id) {
