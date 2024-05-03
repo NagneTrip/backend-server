@@ -1,7 +1,10 @@
 package com.ssafy.nagne.web.user;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,7 +39,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 성공 테스트")
     void joinSuccessTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                multipart("/api/users")
+                multipart(POST, "/api/users")
                         .part(new MockPart("request", "request",
                                 ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"1234\", "
                                         + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
@@ -252,5 +255,62 @@ class UserRestControllerTest {
                 .andExpect(handler().handlerType(UserRestController.class))
                 .andExpect(handler().methodName("findFollowings"))
                 .andExpect(jsonPath("$.success", is(true)));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 성공 테스트")
+    @WithMockJwtAuthentication
+    void updateSuccessTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart(PATCH, "/api/users/1")
+                        .part(new MockPart("request", "request",
+                                ("{\"nickname\" : \"newNickname\", \"phone\" : \"010-1234-5678\"}").getBytes(),
+                                APPLICATION_JSON))
+                        .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response", is(true)));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 테스트")
+    @WithMockJwtAuthentication(id = 2L)
+    void updateFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart(PATCH, "/api/users/1")
+                        .part(new MockPart("request", "request",
+                                ("{\"nickname\" : \"newNickname\", \"phone\" : \"010-1234-5678\"}").getBytes(),
+                                APPLICATION_JSON))
+                        .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(403)));
+    }
+
+    @Test
+    @DisplayName("유저 삭제 테스트")
+    @WithMockJwtAuthentication
+    void deleteTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                delete("/api/users/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response", is(true)));
     }
 }

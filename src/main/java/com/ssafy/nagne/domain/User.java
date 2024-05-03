@@ -1,8 +1,9 @@
 package com.ssafy.nagne.domain;
 
 import static java.time.LocalDateTime.now;
+import static org.springframework.beans.BeanUtils.copyProperties;
 
-import com.ssafy.nagne.error.AccessDeniedException;
+import com.ssafy.nagne.web.user.UpdateRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -51,13 +52,12 @@ public class User {
         this.lastLoginDate = now();
     }
 
-    public void isMine(Long sessionId) {
-        if (this.id != sessionId) {
-            throw new AccessDeniedException();
-        }
+    public boolean isMine(Long sessionId) {
+        return this.id.equals(sessionId);
     }
 
-    public void encodePassword(String encodedPassword) {
-        this.password = encodedPassword;
+    public void updateInfo(UpdateRequest request, String profileImage) {
+        copyProperties(request, this);
+        this.profileImage = profileImage;
     }
 }
