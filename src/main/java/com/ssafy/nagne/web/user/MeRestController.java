@@ -38,53 +38,44 @@ public class MeRestController {
     private final UserService userService;
 
     @PostMapping
-    public ApiResult<JoinResult> join(@Valid @RequestPart JoinRequest request,
-                                      @RequestPart MultipartFile profileImage) throws IOException {
-        return success(
-                new JoinResult(userService.save(user(request, saveFileAndGetFilePath(profileImage, request.username())))
-                )
+    public JoinResult join(@Valid @RequestPart JoinRequest request,
+                           @RequestPart MultipartFile profileImage) throws IOException {
+        return new JoinResult(
+                userService.save(user(request, saveFileAndGetFilePath(profileImage, request.username())))
         );
     }
 
     @GetMapping
-    public ApiResult<UserResult> me(@AuthenticationPrincipal JwtAuthentication authentication) {
-        return success(
-                new UserResult(userService.findById(authentication.id()))
-        );
+    public UserResult me(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return new UserResult(userService.findById(authentication.id()));
     }
 
     @GetMapping("/detail")
-    public ApiResult<UserDetailResult> meDetail(@AuthenticationPrincipal JwtAuthentication authentication) {
-        return success(
-                new UserDetailResult(userService.findById(authentication.id()))
-        );
+    public UserDetailResult meDetail(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return new UserDetailResult(userService.findById(authentication.id()));
     }
 
     @GetMapping("/followers")
-    public ApiResult<UserListResult> findFollowers(@AuthenticationPrincipal JwtAuthentication authentication) {
-        return success(
-                new UserListResult(userService.findFollowers(authentication.id()))
-        );
+    public UserListResult findFollowers(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return new UserListResult(userService.findFollowers(authentication.id()));
     }
 
     @GetMapping("/followings")
-    public ApiResult<UserListResult> findFollowings(@AuthenticationPrincipal JwtAuthentication authentication) {
-        return success(
-                new UserListResult(userService.findFollowings(authentication.id()))
-        );
+    public UserListResult findFollowings(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return new UserListResult(userService.findFollowings(authentication.id()));
     }
 
     @PatchMapping
-    public ApiResult<Boolean> updateInfo(@AuthenticationPrincipal JwtAuthentication authentication,
-                                         @RequestBody UpdateRequest request) {
-        return success(userService.updateInfo(authentication.id(), user(request)));
+    public Boolean updateInfo(@AuthenticationPrincipal JwtAuthentication authentication,
+                              @RequestBody UpdateRequest request) {
+        return userService.updateInfo(authentication.id(), user(request));
     }
 
     @PatchMapping("/profile-image")
-    public ApiResult<Boolean> updateProfileImage(@AuthenticationPrincipal JwtAuthentication authentication,
-                                                 @RequestParam MultipartFile profileImage) throws IOException {
-        return success(userService.updateProfileImage(authentication.id(),
-                saveFileAndGetFilePath(profileImage, authentication.username())));
+    public Boolean updateProfileImage(@AuthenticationPrincipal JwtAuthentication authentication,
+                                      @RequestParam MultipartFile profileImage) throws IOException {
+        return userService.updateProfileImage(authentication.id(),
+                saveFileAndGetFilePath(profileImage, authentication.username()));
     }
 
     @DeleteMapping

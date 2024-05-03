@@ -1,9 +1,6 @@
 package com.ssafy.nagne.web.user;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-
 import com.ssafy.nagne.service.UserService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,30 +16,22 @@ public class UserRestController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ApiResult<UserDetailResult> findById(@PathVariable Long id) {
-        return success(
-                new UserDetailResult(userService.findById(id))
-        );
+    public UserDetailResult findById(@PathVariable Long id) {
+        return new UserDetailResult(userService.findById(id));
     }
 
     @GetMapping
-    public ApiResult<UserListResult> findAll(@RequestParam(required = false) String keyword) {
-        return success(
-                new UserListResult(userService.findAll(keyword))
-        );
+    public UserListResult findAll(@RequestParam(required = false) String keyword) {
+        return new UserListResult(userService.findAll(keyword));
     }
 
     @GetMapping("/{id}/followers")
-    public ApiResult<UserListResult> findFollowers(@PathVariable Long id) {
-        return success(
-                new UserListResult(userService.findFollowers(id))
-        );
+    public UserListResult findFollowers(@PathVariable Long id) {
+        return new UserListResult(userService.findFollowers(id));
     }
 
     @GetMapping("/{id}/followings")
-    public ApiResult<UserListResult> findFollowings(@PathVariable Long id) {
-        return success(
-                new UserListResult(userService.findFollowings(id))
-        );
+    public UserListResult findFollowings(@PathVariable Long id) {
+        return new UserListResult(userService.findFollowings(id));
     }
 }

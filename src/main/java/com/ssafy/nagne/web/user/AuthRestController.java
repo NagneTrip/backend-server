@@ -1,10 +1,7 @@
 package com.ssafy.nagne.web.user;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-
 import com.ssafy.nagne.security.Jwt;
 import com.ssafy.nagne.security.JwtAuthenticationToken;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,13 +20,11 @@ public class AuthRestController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ApiResult<LoginResult> login(@Valid @RequestBody LoginRequest request) {
+    public LoginResult login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new JwtAuthenticationToken(request.username(), request.password())
         );
 
-        return success(
-                new LoginResult(jwt, authentication)
-        );
+        return new LoginResult(jwt, authentication);
     }
 }
