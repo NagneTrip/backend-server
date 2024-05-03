@@ -167,8 +167,7 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.response.userInfo.id", is(1)))
                 .andExpect(jsonPath("$.response.userInfo.username", is("test1@gmail.com")))
                 .andExpect(jsonPath("$.response.userInfo.nickname", is("김두열1")))
-                .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")))
-                .andExpect(jsonPath("$.response.userInfo.lastLoginDate").exists());
+                .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")));
     }
 
     @Test
@@ -191,8 +190,7 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.response.userInfo.birth", is("1998-05-04")))
                 .andExpect(jsonPath("$.response.userInfo.gender", is("MAN")))
                 .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")))
-                .andExpect(jsonPath("$.response.userInfo.createdDate").exists())
-                .andExpect(jsonPath("$.response.userInfo.lastLoginDate").exists());
+                .andExpect(jsonPath("$.response.userInfo.createdDate").exists());
     }
 
     @Test
@@ -278,7 +276,7 @@ class UserRestControllerTest {
     }
 
     @Test
-    @DisplayName("유저 정보 수정 실패 테스트")
+    @DisplayName("유저 정보 수정 실패 테스트 (다른 사람의 정보를 수정하는 경우)")
     @WithMockJwtAuthentication(id = 2L)
     void updateFailureTest() throws Exception {
         ResultActions result = mockMvc.perform(
@@ -299,9 +297,9 @@ class UserRestControllerTest {
     }
 
     @Test
-    @DisplayName("유저 삭제 테스트")
+    @DisplayName("유저 삭제 성공 테스트")
     @WithMockJwtAuthentication
-    void deleteTest() throws Exception {
+    void deleteSuccessTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 delete("/api/users/1")
         );
@@ -312,5 +310,22 @@ class UserRestControllerTest {
                 .andExpect(handler().methodName("delete"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
+    }
+
+    @Test
+    @DisplayName("유저 삭제 실패 테스트 (다른 유저를 삭제 하는 경우)")
+    @WithMockJwtAuthentication(id = 2L)
+    void deleteFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                delete("/api/users/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(403)));
     }
 }

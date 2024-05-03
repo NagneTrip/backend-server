@@ -34,8 +34,8 @@ public class UserRestController {
     }
 
     @GetMapping("/{id}/detail")
-    public UserDetailResult findByIdDetail(@AuthenticationPrincipal JwtAuthentication authentication,
-                                           @PathVariable Long id) {
+    public UserDetailResult findByIdDetail(@PathVariable Long id,
+                                           @AuthenticationPrincipal JwtAuthentication authentication) {
         return new UserDetailResult(userService.findById(authentication.id(), id));
     }
 
