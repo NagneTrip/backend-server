@@ -58,6 +58,11 @@ public class GeneralExceptionHandler {
         return newResponse(e, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(Exception e) {
+        return newResponse(e, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler({
             IllegalArgumentException.class,
             IllegalStateException.class,
