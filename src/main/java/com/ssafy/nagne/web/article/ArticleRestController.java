@@ -38,8 +38,8 @@ public class ArticleRestController {
     }
 
     @GetMapping("/{id}")
-    public ApiResult<ArticleDetailResult> findById(@PathVariable Long id) {
-        return success(new ArticleDetailResult(articleService.findById(id)));
+    public ArticleDetailResult findById(@PathVariable Long id) {
+        return new ArticleDetailResult(articleService.findById(id));
     }
 
     @GetMapping

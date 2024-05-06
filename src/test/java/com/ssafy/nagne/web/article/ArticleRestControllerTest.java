@@ -2,6 +2,7 @@ package com.ssafy.nagne.web.article;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -106,5 +107,44 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.response.articleInfo.id").exists())
                 .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
+    }
+
+    @Test
+    @DisplayName("게시글 조회 성공 테스트")
+    @WithMockJwtAuthentication
+    void findByIdSuccessTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findById"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articleInfo.id", is(1)))
+                .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
+                .andExpect(jsonPath("$.response.articleInfo.content", is("김두열1의 글")))
+                .andExpect(jsonPath("$.response.articleInfo.good", is(0)))
+                .andExpect(jsonPath("$.response.articleInfo.imageUrls").exists())
+                .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
+    }
+
+    @Test
+    @DisplayName("게시글 조회 실패 테스트 (없는 게시글 ID로 접근하는 경우)")
+    @WithMockJwtAuthentication
+    void findByIdFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/0")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findById"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(404)))
+                .andExpect(jsonPath("$.error.message", is("Could not found article for 0")));
     }
 }

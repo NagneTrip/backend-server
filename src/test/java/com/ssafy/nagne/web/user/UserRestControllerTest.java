@@ -152,9 +152,9 @@ class UserRestControllerTest {
     }
 
     @Test
-    @DisplayName("유저 조회 테스트")
+    @DisplayName("유저 조회 성공 테스트")
     @WithMockJwtAuthentication
-    void findByIdTest() throws Exception {
+    void findByIdSuccessTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 get("/api/users/1")
         );
@@ -168,6 +168,22 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.response.userInfo.username", is("test1@gmail.com")))
                 .andExpect(jsonPath("$.response.userInfo.nickname", is("김두열1")))
                 .andExpect(jsonPath("$.response.userInfo.tier", is("UNRANKED")));
+    }
+
+    @Test
+    @DisplayName("유저 조회 실패 테스트 (없는 유저 ID로 접근하는 경우)")
+    @WithMockJwtAuthentication
+    void findByIdFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/users/0")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(404)))
+                .andExpect(jsonPath("$.error.message", is("Could not found user for 0")));
     }
 
     @Test
