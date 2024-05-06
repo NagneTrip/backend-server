@@ -30,14 +30,14 @@ public class UserService {
 
     @Transactional
     public User save(JoinRequest request, MultipartFile profileImage) {
-        User newUser = newUser(request, fileStore.storeFile(profileImage));
+        User newUser = createNewUser(request, fileStore.store(profileImage));
 
         userRepository.save(newUser);
 
         return newUser;
     }
 
-    private User newUser(JoinRequest request, String imagePath) {
+    private User createNewUser(JoinRequest request, String imagePath) {
         return User.builder()
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
@@ -111,7 +111,7 @@ public class UserService {
 
         User user = findAndCheckUser(id, sessionId);
 
-        user.updateInfo(request, fileStore.storeFile(profileImage));
+        user.updateInfo(request, fileStore.store(profileImage));
 
         return userRepository.update(user) == 1;
     }

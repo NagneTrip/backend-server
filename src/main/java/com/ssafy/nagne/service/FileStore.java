@@ -17,21 +17,26 @@ public class FileStore {
     @Value("${file.dir}")
     private String fileDir;
 
-    public String getFullPath(String fileName) {
+    private String getFullPath(String fileName) {
         return fileDir + fileName;
     }
 
-    public List<String> storeFiles(List<MultipartFile> multipartFiles) {
+    public List<String> store(List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            return List.of();
+        }
+
         if (multipartFiles.get(0).isEmpty()) {
             return List.of();
         }
 
         return multipartFiles.stream()
-                .map(this::storeFile)
+                .map(this::store)
+                .map(this::getFullPath)
                 .toList();
     }
 
-    public String storeFile(MultipartFile multipartFile) {
+    public String store(MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             return null;
         }
@@ -40,7 +45,7 @@ public class FileStore {
             String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
             multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
-            return storeFileName;
+            return getFullPath(storeFileName);
         } catch (IOException e) {
             throw new FIleStoreException("파일 저장 중 예외가 발생했습니다.");
         }

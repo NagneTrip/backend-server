@@ -1,5 +1,6 @@
 package com.ssafy.nagne.service;
 
+import static java.time.LocalDateTime.now;
 import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Article;
@@ -9,6 +10,7 @@ import com.ssafy.nagne.repository.ArticleHashTagRepository;
 import com.ssafy.nagne.repository.ArticleRepository;
 import com.ssafy.nagne.repository.HashTagRepository;
 import com.ssafy.nagne.repository.ImageRepository;
+import com.ssafy.nagne.web.article.SaveRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,14 +32,24 @@ public class ArticleService {
 
     private final FileStore fileStore;
 
-    public Article save(Article article, List<MultipartFile> images) {
-        articleRepository.save(article);
+    public Article save(SaveRequest request, Long userId, List<MultipartFile> images) {
+        Article newArticle = createNewArticle(request, userId);
 
-        saveHashTags(article);
+        save(newArticle);
 
-        saveImage(article, images);
+        saveHashTags(newArticle);
 
-        return article;
+        saveImages(newArticle, images);
+
+        return newArticle;
+    }
+
+    private Article createNewArticle(SaveRequest request, Long userId) {
+        return Article.builder()
+                .userId(userId)
+                .content(request.content())
+                .createdDate(now())
+                .build();
     }
 
     public Article findById(Long id) {
@@ -75,7 +87,7 @@ public class ArticleService {
 
         deleteImage(id);
 
-        saveImage(id, images);
+        saveImages(id, images);
 
         return articleRepository.update(id, article) == 1;
     }
@@ -88,6 +100,10 @@ public class ArticleService {
         deleteImage(id);
 
         return articleRepository.delete(id) == 1;
+    }
+
+    private void save(Article newArticle) {
+        articleRepository.save(newArticle);
     }
 
     private void saveHashTags(Article article) {
@@ -112,16 +128,16 @@ public class ArticleService {
         articleHashTagRepository.delete(id);
     }
 
-    private void saveImage(Article article, List<MultipartFile> images) {
-        List<String> filePaths = fileStore.storeFiles(images);
+    private void saveImages(Article article, List<MultipartFile> images) {
+        List<String> filePaths = fileStore.store(images);
 
         if (!filePaths.isEmpty()) {
             imageRepository.save(article.getId(), filePaths);
         }
     }
 
-    private void saveImage(Long articleId, List<MultipartFile> images) {
-        List<String> filePaths = fileStore.storeFiles(images);
+    private void saveImages(Long articleId, List<MultipartFile> images) {
+        List<String> filePaths = fileStore.store(images);
 
         if (!filePaths.isEmpty()) {
             imageRepository.save(articleId, filePaths);

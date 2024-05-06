@@ -1,7 +1,6 @@
 package com.ssafy.nagne.web.article;
 
 import static com.ssafy.nagne.utils.ApiUtils.success;
-import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.page.PageParameter;
@@ -32,12 +31,10 @@ public class ArticleRestController {
     private final ArticleService articleService;
 
     @PostMapping
-    public ApiResult<SaveResult> save(@AuthenticationPrincipal JwtAuthentication authentication,
-                                      @RequestPart SaveRequest request,
-                                      @RequestPart List<MultipartFile> images) {
-        return success(
-                new SaveResult(articleService.save(article(request, authentication.id()), images))
-        );
+    public SaveResult save(@AuthenticationPrincipal JwtAuthentication authentication,
+                           @RequestPart SaveRequest request,
+                           @RequestPart(required = false) List<MultipartFile> images) {
+        return new SaveResult(articleService.save(request, authentication.id(), images));
     }
 
     @GetMapping("/{id}")
@@ -80,14 +77,6 @@ public class ArticleRestController {
     @DeleteMapping("/{id}")
     public ApiResult<Boolean> delete(@PathVariable Long id) {
         return success(articleService.delete(id));
-    }
-
-    private Article article(SaveRequest request, Long userId) {
-        return Article.builder()
-                .userId(userId)
-                .content(request.content())
-                .createdDate(now())
-                .build();
     }
 
     private Article article(UpdateRequest request) {
