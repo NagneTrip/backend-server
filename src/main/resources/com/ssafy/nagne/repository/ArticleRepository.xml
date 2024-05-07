@@ -10,7 +10,7 @@
                             last_modified_date)
         VALUES (#{article.userId},
                 #{article.content},
-                0,
+                #{article.good},
                 now(),
                 now())
     </insert>
@@ -82,7 +82,7 @@
             content = #{article.content},
         </if>
         last_modified_date = now()
-        WHERE id = #{id}
+        WHERE id = #{article.id}
     </update>
 
     <update id="plusGoodCount">

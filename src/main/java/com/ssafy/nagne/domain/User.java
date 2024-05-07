@@ -51,7 +51,7 @@ public class User {
         this.lastLoginDate = now();
     }
 
-    public boolean isMine(Long sessionId) {
+    public boolean isMe(Long sessionId) {
         return this.id.equals(sessionId);
     }
 

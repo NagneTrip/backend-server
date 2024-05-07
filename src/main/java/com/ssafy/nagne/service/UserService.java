@@ -79,7 +79,7 @@ public class UserService {
     public User findById(Long sessionId, Long id) {
         checkNotNull(id, "id must be provided");
 
-        return findAndCheckUser(id, sessionId);
+        return findUserAndCheckMe(id, sessionId);
     }
 
     public User findByUsername(String username) {
@@ -109,7 +109,7 @@ public class UserService {
     public boolean update(Long id, Long sessionId, UpdateRequest request, MultipartFile profileImage) {
         checkNotNull(id, "id must be provided");
 
-        User user = findAndCheckUser(id, sessionId);
+        User user = findUserAndCheckMe(id, sessionId);
 
         user.updateInfo(request, fileStore.store(profileImage));
 
@@ -120,15 +120,15 @@ public class UserService {
     public boolean delete(Long id, Long sessionId) {
         checkNotNull(id, "id must be provided");
 
-        findAndCheckUser(id, sessionId);
+        findUserAndCheckMe(id, sessionId);
 
         return userRepository.delete(id) == 1;
     }
 
-    private User findAndCheckUser(Long id, Long sessionId) {
+    private User findUserAndCheckMe(Long id, Long sessionId) {
         User user = findById(id);
 
-        if (!user.isMine(sessionId)) {
+        if (!user.isMe(sessionId)) {
             throw new AccessDeniedException();
         }
 

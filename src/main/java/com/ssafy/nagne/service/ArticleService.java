@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ArticleService {
 
@@ -34,24 +34,11 @@ public class ArticleService {
 
     private final FileStore fileStore;
 
+    @Transactional
     public Article save(SaveRequest request, Long userId, List<MultipartFile> images) {
         Article newArticle = createNewArticle(request, userId);
 
-        save(newArticle);
-
-        saveImages(newArticle, images);
-
-        saveHashTags(newArticle);
-
-        return newArticle;
-    }
-
-    private Article createNewArticle(SaveRequest request, Long userId) {
-        return Article.builder()
-                .userId(userId)
-                .content(request.content())
-                .createdDate(now())
-                .build();
+        return save(newArticle, images);
     }
 
     public Article findById(Long id) {
@@ -61,37 +48,73 @@ public class ArticleService {
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
     }
 
-    @Transactional(readOnly = true)
     public List<Article> findArticles(List<String> tags, Pageable pageable) {
         return articleRepository.findArticles(tags, pageable);
     }
 
-    @Transactional(readOnly = true)
     public List<Article> findFollowerArticles(Long userId, Pageable pageable) {
         checkNotNull(userId, "userId must be provided");
 
         return articleRepository.findFollowerArticles(userId, pageable);
     }
 
-    @Transactional(readOnly = true)
     public List<Article> findBookmarkArticles(Long userId, Pageable pageable) {
         checkNotNull(userId, "userId must be provided");
 
         return articleRepository.findBookmarkArticles(userId, pageable);
     }
 
+    @Transactional
     public boolean update(Long id, Long sessionId, UpdateRequest request, List<MultipartFile> images) {
         checkNotNull(id, "id must be provided");
 
-        Article article = findAndCheckArticle(id, sessionId);
+        return update(findArticleAndCheckMine(id, sessionId), request, images);
+    }
 
+    @Transactional
+    public boolean delete(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        deleteHashTags(id);
+        deleteImages(id);
+
+        return articleRepository.delete(id) == 1;
+    }
+
+    private Article createNewArticle(SaveRequest request, Long userId) {
+        return Article.builder()
+                .userId(userId)
+                .content(request.content())
+                .good(0)
+                .createdDate(now())
+                .build();
+    }
+
+    private Article save(Article newArticle, List<MultipartFile> images) {
+        articleRepository.save(newArticle);
+
+        saveImages(newArticle, images);
+        saveHashTags(newArticle);
+
+        return newArticle;
+    }
+
+    private Article findArticleAndCheckMine(Long id, Long sessionId) {
+        Article article = findById(id);
+
+        if (!article.isMine(sessionId)) {
+            throw new AccessDeniedException();
+        }
+
+        return article;
+    }
+
+    private boolean update(Article article, UpdateRequest request, List<MultipartFile> images) {
         updateHashTags(article);
-
         updateImages(article, images);
-
         updateContent(article, request);
 
-        return articleRepository.update(id, article) == 1;
+        return articleRepository.update(article) == 1;
     }
 
     private void updateHashTags(Article article) {
@@ -106,30 +129,6 @@ public class ArticleService {
 
     private void updateContent(Article article, UpdateRequest request) {
         article.update(request);
-    }
-
-    public boolean delete(Long id) {
-        checkNotNull(id, "id must be provided");
-
-        deleteHashTags(id);
-
-        deleteImages(id);
-
-        return articleRepository.delete(id) == 1;
-    }
-
-    private Article findAndCheckArticle(Long id, Long sessionId) {
-        Article article = findById(id);
-
-        if (!article.isMine(sessionId)) {
-            throw new AccessDeniedException();
-        }
-
-        return article;
-    }
-
-    private void save(Article newArticle) {
-        articleRepository.save(newArticle);
     }
 
     private void saveHashTags(Article article) {

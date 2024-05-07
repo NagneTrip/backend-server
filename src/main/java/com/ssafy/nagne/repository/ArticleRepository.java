@@ -22,7 +22,7 @@ public interface ArticleRepository {
     List<Article> findBookmarkArticles(@Param("userId") Long userId,
                                        @Param("pageable") Pageable pageable);
 
-    int update(@Param("id") Long id, @Param("article") Article article);
+    int update(@Param("article") Article article);
 
     void plusGoodCount(@Param("id") Long id);
 
