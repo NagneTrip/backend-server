@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -63,30 +64,6 @@ class ArticleRestControllerTest {
     }
 
     @Test
-    @DisplayName("이미지 없는 게시글 작성 테스트")
-    @WithMockJwtAuthentication
-    void saveWithoutImageTest() throws Exception {
-        ResultActions result = mockMvc.perform(
-                multipart(POST, "/api/articles")
-                        .part(new MockPart(
-                                "request",
-                                "request",
-                                "{\"content\" : \"오늘은 #맑은날씨 입니다. #해시태그\"}".getBytes(),
-                                MediaType.APPLICATION_JSON
-                        ))
-        );
-
-        result.andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(handler().handlerType(ArticleRestController.class))
-                .andExpect(handler().methodName("save"))
-                .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.response.articleInfo.id").exists())
-                .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
-                .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
-    }
-
-    @Test
     @DisplayName("해시태그 없는 게시글 작성 테스트")
     @WithMockJwtAuthentication
     void saveWithoutHashTagTest() throws Exception {
@@ -110,6 +87,30 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.response.articleInfo.id").exists())
                 .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
+    }
+
+    @Test
+    @DisplayName("게시글 작성 실패 테스트 (길이 제한을 초과할 경우)")
+    @WithMockJwtAuthentication
+    void saveFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart(POST, "/api/articles")
+                        .part(new MockPart(
+                                "request",
+                                "request",
+                                ("{\"content\" : \"" + "A".repeat(1001) + "\"}").getBytes(),
+                                MediaType.APPLICATION_JSON
+                        ))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("save"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("content must be less than 1,000 characters")));
     }
 
     @Test
@@ -349,9 +350,33 @@ class ArticleRestControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 수정 실패 테스트 (길이 제한을 초과할 경우)")
+    @WithMockJwtAuthentication
+    void updateFailureTest1() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart(PATCH, "/api/articles/1")
+                        .part(new MockPart(
+                                "request",
+                                "request",
+                                ("{\"content\" : \"" + "A".repeat(1001) + "\"}").getBytes(),
+                                MediaType.APPLICATION_JSON
+                        ))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("content must be less than 1,000 characters")));
+    }
+
+    @Test
     @DisplayName("게시글 수정 실패 테스트 (다른 사람의 게시글을 수정하는 경우)")
     @WithMockJwtAuthentication(id = 2L)
-    void updateFailureTest() throws Exception {
+    void updateFailureTest2() throws Exception {
         ResultActions result = mockMvc.perform(
                 multipart(PATCH, "/api/articles/1")
                         .part(new MockPart("request", "request",
@@ -365,6 +390,40 @@ class ArticleRestControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(handler().handlerType(ArticleRestController.class))
                 .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(403)))
+                .andExpect(jsonPath("$.error.message", is("Forbidden")));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 성공 테스트")
+    @WithMockJwtAuthentication
+    void deleteSuccessTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                delete("/api/articles/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response", is(true)));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패 테스트")
+    @WithMockJwtAuthentication(id = 2L)
+    void deleteFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                delete("/api/articles/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("delete"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(403)))

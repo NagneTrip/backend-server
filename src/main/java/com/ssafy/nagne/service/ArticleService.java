@@ -72,13 +72,12 @@ public class ArticleService {
     }
 
     @Transactional
-    public boolean delete(Long id) {
+    public boolean delete(Long id, Long sessionId) {
         checkNotNull(id, "id must be provided");
 
-        deleteHashTags(id);
-        deleteImages(id);
+        findArticleAndCheckMine(id, sessionId);
 
-        return articleRepository.delete(id) == 1;
+        return delete(id);
     }
 
     private Article createNewArticle(SaveRequest request, Long userId) {
@@ -109,6 +108,33 @@ public class ArticleService {
         return article;
     }
 
+    private void saveImages(Article article, List<MultipartFile> images) {
+        List<String> filePaths = fileStore.store(images);
+
+        if (!filePaths.isEmpty()) {
+            imageRepository.save(article.getId(), filePaths);
+        }
+
+        article.update(filePaths);
+    }
+
+    private void deleteImages(Long id) {
+        imageRepository.delete(id);
+    }
+
+    private void saveHashTags(Article article) {
+        List<String> tags = article.extractHashTags();
+
+        if (!tags.isEmpty()) {
+            hashTagRepository.save(tags);
+            articleHashTagRepository.save(article.getId(), tags);
+        }
+    }
+
+    private void deleteHashTags(Long id) {
+        articleHashTagRepository.delete(id);
+    }
+
     private boolean update(Article article, UpdateRequest request, List<MultipartFile> images) {
         updateHashTags(article);
         updateImages(article, images);
@@ -131,30 +157,10 @@ public class ArticleService {
         article.update(request);
     }
 
-    private void saveHashTags(Article article) {
-        List<String> tags = article.extractHashTags();
+    private boolean delete(Long id) {
+        deleteHashTags(id);
+        deleteImages(id);
 
-        if (!tags.isEmpty()) {
-            hashTagRepository.save(tags);
-            articleHashTagRepository.save(article.getId(), tags);
-        }
-    }
-
-    private void deleteHashTags(Long id) {
-        articleHashTagRepository.delete(id);
-    }
-
-    private void saveImages(Article article, List<MultipartFile> images) {
-        List<String> filePaths = fileStore.store(images);
-
-        if (!filePaths.isEmpty()) {
-            imageRepository.save(article.getId(), filePaths);
-        }
-
-        article.update(filePaths);
-    }
-
-    private void deleteImages(Long id) {
-        imageRepository.delete(id);
+        return articleRepository.delete(id) == 1;
     }
 }

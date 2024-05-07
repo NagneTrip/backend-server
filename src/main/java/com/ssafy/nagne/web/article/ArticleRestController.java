@@ -1,11 +1,9 @@
 package com.ssafy.nagne.web.article;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-
 import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.ArticleService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +29,8 @@ public class ArticleRestController {
 
     @PostMapping
     public SaveResult save(@AuthenticationPrincipal JwtAuthentication authentication,
-                           @RequestPart SaveRequest request,
-                           @RequestPart(required = false) List<MultipartFile> images) {
+                           @Valid @RequestPart SaveRequest request,
+                           @RequestPart List<MultipartFile> images) {
         return new SaveResult(articleService.save(request, authentication.id(), images));
     }
 
@@ -61,14 +59,13 @@ public class ArticleRestController {
 
     @PatchMapping("/{id}")
     public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
-                          @RequestPart UpdateRequest request,
+                          @Valid @RequestPart UpdateRequest request,
                           @RequestPart List<MultipartFile> images) {
         return articleService.update(id, authentication.id(), request, images);
     }
 
-    //TODO: 글 작성자만 삭제 가능하게 하기
     @DeleteMapping("/{id}")
-    public ApiResult<Boolean> delete(@PathVariable Long id) {
-        return success(articleService.delete(id));
+    public Boolean delete(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return articleService.delete(id, authentication.id());
     }
 }
