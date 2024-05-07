@@ -1,7 +1,6 @@
 package com.ssafy.nagne.domain;
 
 import static java.time.LocalDateTime.now;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 import com.ssafy.nagne.web.user.UpdateRequest;
 import java.time.LocalDate;
@@ -57,7 +56,8 @@ public class User {
     }
 
     public void updateInfo(UpdateRequest request, String profileImage) {
-        copyProperties(request, this);
+        this.nickname = request.nickname();
+        this.phone = request.phone();
         this.profileImage = profileImage;
     }
 }
