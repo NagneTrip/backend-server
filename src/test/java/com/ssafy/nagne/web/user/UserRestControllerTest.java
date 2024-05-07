@@ -152,6 +152,75 @@ class UserRestControllerTest {
     }
 
     @Test
+    @DisplayName("회원가입 실패 테스트 (아이디가 길이 제한을 초과한 경우)")
+    void lengthLimitExceededUsernameJoinFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart("/api/users")
+                        .part(new MockPart("request", "request",
+                                ("{\"username\" : \"newUsernewUsernewUsernewUsernewUsernewUsernewUser@gmail.com\", \"password\" : \"1234\", "
+                                        + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1998-05-04\"}").getBytes(),
+                                APPLICATION_JSON))
+                        .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("join"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("username must be less than 50 characters")));
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 테스트 (비밀번호가 길이 제한을 초과한 경우)")
+    void lengthLimitExceededPasswordJoinFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart("/api/users")
+                        .part(new MockPart("request", "request",
+                                ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"123412341234123412341234\", "
+                                        + "\"nickname\" : \"newUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1998-05-04\"}").getBytes(),
+                                APPLICATION_JSON))
+                        .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("join"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("password must be less than 20 characters")));
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 테스트 (닉네임이 길이 제한을 초과한 경우)")
+    void lengthLimitExceededNicknameJoinFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart("/api/users")
+                        .part(new MockPart("request", "request",
+                                ("{\"username\" : \"newUser@gmail.com\", \"password\" : \"1234\", "
+                                        + "\"nickname\" : \"newUserNewUserNewUser\", \"phone\" : \"01059220969\", \"gender\" : \"MAN\", "
+                                        + "\"birth\" : \"1998-05-04\"}").getBytes(),
+                                APPLICATION_JSON))
+                        .file(new MockMultipartFile("profileImage", "profileImage".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(UserRestController.class))
+                .andExpect(handler().methodName("join"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("nickname must be less than 20 characters")));
+    }
+
+    @Test
     @DisplayName("유저 조회 성공 테스트")
     @WithMockJwtAuthentication
     void findByIdSuccessTest() throws Exception {
