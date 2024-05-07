@@ -1,7 +1,8 @@
 package com.ssafy.nagne.service;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.time.LocalDateTime.now;
-import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.error.AccessDeniedException;
@@ -15,12 +16,10 @@ import com.ssafy.nagne.web.article.SaveRequest;
 import com.ssafy.nagne.web.article.UpdateRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,6 +35,8 @@ public class ArticleService {
 
     @Transactional
     public Article save(SaveRequest request, Long userId, List<MultipartFile> images) {
+        checkArgument(images.size() <= 10, "must be 10 images or less");
+
         Article newArticle = createNewArticle(request, userId);
 
         return save(newArticle, images);
@@ -67,6 +68,7 @@ public class ArticleService {
     @Transactional
     public boolean update(Long id, Long sessionId, UpdateRequest request, List<MultipartFile> images) {
         checkNotNull(id, "id must be provided");
+        checkArgument(images.size() <= 10, "must be 10 images or less");
 
         return update(findArticleAndCheckMine(id, sessionId), request, images);
     }

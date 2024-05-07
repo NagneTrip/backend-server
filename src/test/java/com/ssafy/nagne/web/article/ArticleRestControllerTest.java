@@ -92,7 +92,7 @@ class ArticleRestControllerTest {
     @Test
     @DisplayName("게시글 작성 실패 테스트 (길이 제한을 초과할 경우)")
     @WithMockJwtAuthentication
-    void saveFailureTest() throws Exception {
+    void saveFailureTest1() throws Exception {
         ResultActions result = mockMvc.perform(
                 multipart(POST, "/api/articles")
                         .part(new MockPart(
@@ -101,6 +101,8 @@ class ArticleRestControllerTest {
                                 ("{\"content\" : \"" + "A".repeat(1001) + "\"}").getBytes(),
                                 MediaType.APPLICATION_JSON
                         ))
+                        .file(new MockMultipartFile("images", "image1".getBytes()))
+                        .file(new MockMultipartFile("images", "image2".getBytes()))
         );
 
         result.andDo(print())
@@ -111,6 +113,41 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(400)))
                 .andExpect(jsonPath("$.error.message", is("content must be less than 1,000 characters")));
+    }
+
+    @Test
+    @DisplayName("게시글 작성 실패 테스트 (최대 허용 사진 개수를 초과한 경우)")
+    @WithMockJwtAuthentication
+    void saveFailureTest2() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart(POST, "/api/articles")
+                        .part(new MockPart(
+                                "request",
+                                "request",
+                                "{\"content\" : \"오늘은 #맑은날씨 입니다. #해시태그\"}".getBytes(),
+                                MediaType.APPLICATION_JSON
+                        ))
+                        .file(new MockMultipartFile("images", "image1".getBytes()))
+                        .file(new MockMultipartFile("images", "image2".getBytes()))
+                        .file(new MockMultipartFile("images", "image3".getBytes()))
+                        .file(new MockMultipartFile("images", "image4".getBytes()))
+                        .file(new MockMultipartFile("images", "image5".getBytes()))
+                        .file(new MockMultipartFile("images", "image6".getBytes()))
+                        .file(new MockMultipartFile("images", "image7".getBytes()))
+                        .file(new MockMultipartFile("images", "image8".getBytes()))
+                        .file(new MockMultipartFile("images", "image9".getBytes()))
+                        .file(new MockMultipartFile("images", "image10".getBytes()))
+                        .file(new MockMultipartFile("images", "image11".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("save"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("must be 10 images or less")));
     }
 
     @Test
@@ -374,9 +411,44 @@ class ArticleRestControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 수정 실패 테스트 (최대 허용 사진 개수를 초과한 경우)")
+    @WithMockJwtAuthentication
+    void updateFailureTest2() throws Exception {
+        ResultActions result = mockMvc.perform(
+                multipart(PATCH, "/api/articles/1")
+                        .part(new MockPart(
+                                "request",
+                                "request",
+                                "{\"content\" : \"오늘은 #맑은날씨 입니다. #해시태그\"}".getBytes(),
+                                MediaType.APPLICATION_JSON
+                        ))
+                        .file(new MockMultipartFile("images", "image1".getBytes()))
+                        .file(new MockMultipartFile("images", "image2".getBytes()))
+                        .file(new MockMultipartFile("images", "image3".getBytes()))
+                        .file(new MockMultipartFile("images", "image4".getBytes()))
+                        .file(new MockMultipartFile("images", "image5".getBytes()))
+                        .file(new MockMultipartFile("images", "image6".getBytes()))
+                        .file(new MockMultipartFile("images", "image7".getBytes()))
+                        .file(new MockMultipartFile("images", "image8".getBytes()))
+                        .file(new MockMultipartFile("images", "image9".getBytes()))
+                        .file(new MockMultipartFile("images", "image10".getBytes()))
+                        .file(new MockMultipartFile("images", "image11".getBytes()))
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("must be 10 images or less")));
+    }
+
+    @Test
     @DisplayName("게시글 수정 실패 테스트 (다른 사람의 게시글을 수정하는 경우)")
     @WithMockJwtAuthentication(id = 2L)
-    void updateFailureTest2() throws Exception {
+    void updateFailureTest3() throws Exception {
         ResultActions result = mockMvc.perform(
                 multipart(PATCH, "/api/articles/1")
                         .part(new MockPart("request", "request",
