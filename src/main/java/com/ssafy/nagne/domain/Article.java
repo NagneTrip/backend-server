@@ -1,5 +1,6 @@
 package com.ssafy.nagne.domain;
 
+import com.ssafy.nagne.web.article.UpdateRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class Article {
 
     private Integer good;
 
-    private List<Image> imageUrls;
+    private List<String> imageUrls;
 
     private LocalDateTime createdDate;
 
@@ -41,5 +42,17 @@ public class Article {
         }
 
         return tags;
+    }
+
+    public boolean isMine(Long sessionId) {
+        return this.userId.equals(sessionId);
+    }
+
+    public void update(UpdateRequest request) {
+        this.content = request.content();
+    }
+
+    public void update(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 }

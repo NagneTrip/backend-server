@@ -4,14 +4,15 @@ import static java.time.LocalDateTime.now;
 import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Article;
+import com.ssafy.nagne.error.AccessDeniedException;
 import com.ssafy.nagne.error.NotFoundException;
-import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.repository.ArticleHashTagRepository;
 import com.ssafy.nagne.repository.ArticleRepository;
 import com.ssafy.nagne.repository.HashTagRepository;
 import com.ssafy.nagne.repository.ImageRepository;
 import com.ssafy.nagne.web.article.SaveRequest;
+import com.ssafy.nagne.web.article.UpdateRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +39,9 @@ public class ArticleService {
 
         save(newArticle);
 
-        saveHashTags(newArticle);
-
         saveImages(newArticle, images);
+
+        saveHashTags(newArticle);
 
         return newArticle;
     }
@@ -73,24 +74,38 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findBookmarkArticles(Long userId, PageParameter pageParameter) {
+    public List<Article> findBookmarkArticles(Long userId, Pageable pageable) {
         checkNotNull(userId, "userId must be provided");
 
-        return articleRepository.findBookmarkArticles(userId, pageParameter);
+        return articleRepository.findBookmarkArticles(userId, pageable);
     }
 
-    public boolean update(Long id, Article article, List<MultipartFile> images) {
+    public boolean update(Long id, Long sessionId, UpdateRequest request, List<MultipartFile> images) {
         checkNotNull(id, "id must be provided");
 
-        deleteHashTags(id);
+        Article article = findAndCheckArticle(id, sessionId);
 
-        saveHashTags(id, article);
+        updateHashTags(article);
 
-        deleteImage(id);
+        updateImages(article, images);
 
-        saveImages(id, images);
+        updateContent(article, request);
 
         return articleRepository.update(id, article) == 1;
+    }
+
+    private void updateHashTags(Article article) {
+        deleteHashTags(article.getId());
+        saveHashTags(article);
+    }
+
+    private void updateImages(Article article, List<MultipartFile> images) {
+        deleteImages(article.getId());
+        saveImages(article, images);
+    }
+
+    private void updateContent(Article article, UpdateRequest request) {
+        article.update(request);
     }
 
     public boolean delete(Long id) {
@@ -98,9 +113,19 @@ public class ArticleService {
 
         deleteHashTags(id);
 
-        deleteImage(id);
+        deleteImages(id);
 
         return articleRepository.delete(id) == 1;
+    }
+
+    private Article findAndCheckArticle(Long id, Long sessionId) {
+        Article article = findById(id);
+
+        if (!article.isMine(sessionId)) {
+            throw new AccessDeniedException();
+        }
+
+        return article;
     }
 
     private void save(Article newArticle) {
@@ -116,15 +141,6 @@ public class ArticleService {
         }
     }
 
-    private void saveHashTags(Long articleId, Article article) {
-        List<String> tags = article.extractHashTags();
-
-        if (!tags.isEmpty()) {
-            hashTagRepository.save(tags);
-            articleHashTagRepository.save(articleId, tags);
-        }
-    }
-
     private void deleteHashTags(Long id) {
         articleHashTagRepository.delete(id);
     }
@@ -135,17 +151,11 @@ public class ArticleService {
         if (!filePaths.isEmpty()) {
             imageRepository.save(article.getId(), filePaths);
         }
+
+        article.update(filePaths);
     }
 
-    private void saveImages(Long articleId, List<MultipartFile> images) {
-        List<String> filePaths = fileStore.store(images);
-
-        if (!filePaths.isEmpty()) {
-            imageRepository.save(articleId, filePaths);
-        }
-    }
-
-    private void deleteImage(Long id) {
+    private void deleteImages(Long id) {
         imageRepository.delete(id);
     }
 }

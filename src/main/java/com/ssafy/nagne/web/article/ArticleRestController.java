@@ -2,8 +2,6 @@ package com.ssafy.nagne.web.article;
 
 import static com.ssafy.nagne.utils.ApiUtils.success;
 
-import com.ssafy.nagne.domain.Article;
-import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.ArticleService;
@@ -57,27 +55,20 @@ public class ArticleRestController {
 
     @GetMapping("/bookmark")
     public ArticleListResult findBookmarkArticles(@AuthenticationPrincipal JwtAuthentication authentication,
-                                                  PageParameter pageParameter) {
-        return new ArticleListResult(articleService.findBookmarkArticles(authentication.id(), pageParameter));
+                                                  Pageable pageable) {
+        return new ArticleListResult(articleService.findBookmarkArticles(authentication.id(), pageable));
     }
 
-    //TODO: 글 작성자만 변경 가능하게 하기
     @PatchMapping("/{id}")
-    public ApiResult<Boolean> update(@PathVariable Long id,
-                                     @RequestPart UpdateRequest request,
-                                     @RequestPart List<MultipartFile> images) {
-        return success(articleService.update(id, article(request), images));
+    public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
+                          @RequestPart UpdateRequest request,
+                          @RequestPart List<MultipartFile> images) {
+        return articleService.update(id, authentication.id(), request, images);
     }
 
     //TODO: 글 작성자만 삭제 가능하게 하기
     @DeleteMapping("/{id}")
     public ApiResult<Boolean> delete(@PathVariable Long id) {
         return success(articleService.delete(id));
-    }
-
-    private Article article(UpdateRequest request) {
-        return Article.builder()
-                .content(request.content())
-                .build();
     }
 }

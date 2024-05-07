@@ -1,7 +1,6 @@
 package com.ssafy.nagne.repository;
 
 import com.ssafy.nagne.domain.Article;
-import com.ssafy.nagne.page.PageParameter;
 import com.ssafy.nagne.page.Pageable;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +20,7 @@ public interface ArticleRepository {
                                        @Param("pageable") Pageable pageable);
 
     List<Article> findBookmarkArticles(@Param("userId") Long userId,
-                                       @Param("pageParameter") PageParameter pageParameter);
+                                       @Param("pageable") Pageable pageable);
 
     int update(@Param("id") Long id, @Param("article") Article article);
 

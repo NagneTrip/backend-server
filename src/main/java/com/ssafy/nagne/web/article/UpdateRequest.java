@@ -1,4 +1,6 @@
 package com.ssafy.nagne.web.article;
 
-public record UpdateRequest(String content) {
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateRequest(@NotNull String content) {
 }

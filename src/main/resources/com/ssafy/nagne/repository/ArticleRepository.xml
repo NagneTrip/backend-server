@@ -22,10 +22,8 @@
         <result column="good" property="good"/>
         <result column="created_date" property="createdDate"/>
         <result column="last_modified_date" property="lastModifiedDate"/>
-        <collection property="imageUrls" javaType="java.util.ArrayList" ofType="Image">
-            <id column="article_id" property="articleId"/>
-            <id column="url" property="url"/>
-            <result column="created_date" property="createdDate"/>
+        <collection property="imageUrls" ofType="java.lang.String">
+            <result column="url" property="url"/>
         </collection>
     </resultMap>
 
@@ -72,8 +70,8 @@
         WHERE id IN (SELECT article_id
                      FROM bookmark
                      WHERE user_id = #{userId}
-                       AND article_id &lt; #{pageParameter.lastIndex}
-                     ORDER BY article_id DESC LIMIT #{pageParameter.size})
+                       AND article_id &lt; #{pageable.lastIndex}
+                     ORDER BY article_id DESC LIMIT #{pageable.size})
         ORDER BY id DESC
     </select>
 
