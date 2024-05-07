@@ -270,6 +270,58 @@ class ArticleRestControllerTest {
                 .andExpect(handler().methodName("findFollowerArticles"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articles", hasSize(3)))
+                .andExpect(jsonPath("$.response.articles", hasSize(3)))
                 .andExpect(jsonPath("$.response.articles[0].id", is(6)));
+    }
+
+    @Test
+    @DisplayName("북마크 게시글 목록 조회 테스트1")
+    @WithMockJwtAuthentication
+    void findBookmarkArticlesTest1() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/bookmark")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findBookmarkArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(5)));
+    }
+
+    @Test
+    @DisplayName("북마크 게시글 목록 조회 테스트2")
+    @WithMockJwtAuthentication(id = 2L)
+    void findBookmarkArticlesTest2() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/bookmark")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findBookmarkArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(0)));
+    }
+
+    @Test
+    @DisplayName("북마크 게시글 목록 조회 테스트3")
+    @WithMockJwtAuthentication
+    void findBookmarkArticlesTest3() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/bookmark")
+                        .param("size", "2")
+                        .param("lastIndex", "5")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findBookmarkArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(2)))
+                .andExpect(jsonPath("$.response.articles[0].id", is(4)));
     }
 }

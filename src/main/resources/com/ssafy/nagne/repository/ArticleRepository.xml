@@ -69,12 +69,12 @@
         SELECT *
         FROM article
                  LEFT JOIN image ON article.id = image.article_id
-        WHERE id in
-              (SELECT article_id
-               FROM bookmark
-               WHERE user_id = #{userId})
-          AND id &lt; #{pageParameter.lastIndex}
-        ORDER BY id DESC LIMIT #{pageParameter.size}
+        WHERE id IN (SELECT article_id
+                     FROM bookmark
+                     WHERE user_id = #{userId}
+                       AND article_id &lt; #{pageParameter.lastIndex}
+                     ORDER BY article_id DESC LIMIT #{pageParameter.size})
+        ORDER BY id DESC
     </select>
 
     <update id="update">
