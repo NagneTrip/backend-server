@@ -38,31 +38,31 @@
 
     <select id="findArticles" resultMap="ArticleWithImage">
         SELECT *
-        FROM article
-        LEFT JOIN image ON article.id = image.article_id
+        FROM article LEFT JOIN image ON article.id = image.article_id
         WHERE article.id IN (
-            SELECT DISTINCT article_id
-            FROM article_hashtag
-            WHERE hashtag_name IN (
-            <foreach collection="tags" item="tag" separator=",">
-                #{tag}
-            </foreach>
-            )
-            AND article_id &lt; #{pageable.lastIndex}
-            ORDER BY article_id DESC LIMIT #{pageable.size}
+        SELECT DISTINCT article_id
+        FROM article_hashtag
+        WHERE hashtag_name IN (
+        <foreach collection="tags" item="tag" separator=",">
+            #{tag}
+        </foreach>
+        )
+        AND article_id &lt; #{pageable.lastIndex}
+        ORDER BY article_id DESC LIMIT #{pageable.size}
         )
     </select>
 
-    <select id="findFollowingArticles" resultMap="ArticleWithImage">
+    <select id="findFollowerArticles" resultMap="ArticleWithImage">
         SELECT *
         FROM article
                  LEFT JOIN image ON article.id = image.article_id
-        WHERE user_id in
-              (SELECT following_id
-               FROM follow
-               WHERE follower_id = #{userId})
-          AND id &lt; #{pageParameter.lastIndex}
-        ORDER BY id DESC LIMIT #{pageParameter.size}
+        WHERE id IN (SELECT article.id
+                     FROM follow
+                              LEFT JOIN article ON follow.following_id = article.user_id
+                     WHERE follower_id = #{userId}
+                       AND article.id &lt; #{pageable.lastIndex}
+                     ORDER BY article.id DESC LIMIT#{pageable.size})
+        ORDER BY id DESC
     </select>
 
     <select id="findBookmarkArticles" resultMap="ArticleWithImage">

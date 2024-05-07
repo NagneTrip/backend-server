@@ -66,10 +66,10 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findFollowingArticles(Long userId, PageParameter pageParameter) {
+    public List<Article> findFollowerArticles(Long userId, Pageable pageable) {
         checkNotNull(userId, "userId must be provided");
 
-        return articleRepository.findFollowingArticles(userId, pageParameter);
+        return articleRepository.findFollowerArticles(userId, pageable);
     }
 
     @Transactional(readOnly = true)

@@ -50,11 +50,9 @@ public class ArticleRestController {
     }
 
     @GetMapping("/followers")
-    public ApiResult<ArticleListResult> findFollowingArticles(@AuthenticationPrincipal JwtAuthentication authentication,
-                                                              PageParameter pageParameter) {
-        return success(
-                new ArticleListResult(articleService.findFollowingArticles(authentication.id(), pageParameter))
-        );
+    public ArticleListResult findFollowerArticles(@AuthenticationPrincipal JwtAuthentication authentication,
+                                                  Pageable pageable) {
+        return new ArticleListResult(articleService.findFollowerArticles(authentication.id(), pageable));
     }
 
     @GetMapping("/bookmark")

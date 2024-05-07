@@ -190,8 +190,8 @@ class ArticleRestControllerTest {
         ResultActions result = mockMvc.perform(
                 get("/api/articles")
                         .param("tags", "#태그1", "#태그2")
-                        .param("lastIndex", "5")
                         .param("size", "3")
+                        .param("lastIndex", "5")
         );
 
         result.andDo(print())
@@ -210,8 +210,8 @@ class ArticleRestControllerTest {
         ResultActions result = mockMvc.perform(
                 get("/api/articles")
                         .param("tags", "#태그1", "#태그2", "태그3", "태그4", "태그5")
-                        .param("lastIndex", "1")
                         .param("size", "3")
+                        .param("lastIndex", "1")
         );
 
         result.andDo(print())
@@ -220,5 +220,56 @@ class ArticleRestControllerTest {
                 .andExpect(handler().methodName("findArticles"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articles", hasSize(0)));
+    }
+
+    @Test
+    @DisplayName("팔로워 게시글 목록 조회 테스트1")
+    @WithMockJwtAuthentication
+    void findFollowerArticlesTest1() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/followers")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findFollowerArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(6)));
+    }
+
+    @Test
+    @DisplayName("팔로워 게시글 목록 조회 테스트2")
+    @WithMockJwtAuthentication(id = 2L)
+    void findFollowerArticlesTest2() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/followers")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findFollowerArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(3)));
+    }
+
+    @Test
+    @DisplayName("팔로워 게시글 목록 조회 테스트3")
+    @WithMockJwtAuthentication
+    void findFollowerArticlesTest3() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles/followers")
+                        .param("size", "3")
+                        .param("lastIndex", "7")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findFollowerArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(3)))
+                .andExpect(jsonPath("$.response.articles[0].id", is(6)));
     }
 }
