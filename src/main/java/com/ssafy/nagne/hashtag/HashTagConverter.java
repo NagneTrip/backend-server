@@ -8,7 +8,7 @@ public class HashTagConverter implements Converter<String, List<String>> {
 
     @Override
     public List<String> convert(String source) {
-        return Arrays.stream(source.split("\\s"))
+        return Arrays.stream(source.split(","))
                 .toList();
     }
 }

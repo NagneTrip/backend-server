@@ -1,5 +1,6 @@
 package com.ssafy.nagne.web.article;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -124,7 +125,7 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articleInfo.id", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
-                .andExpect(jsonPath("$.response.articleInfo.content", is("김두열1의 글")))
+                .andExpect(jsonPath("$.response.articleInfo.content", is("#태그1 김두열1의 글")))
                 .andExpect(jsonPath("$.response.articleInfo.good", is(0)))
                 .andExpect(jsonPath("$.response.articleInfo.imageUrls").exists())
                 .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
@@ -146,5 +147,78 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(404)))
                 .andExpect(jsonPath("$.error.message", is("Could not found article for 0")));
+    }
+
+    @Test
+    @DisplayName("해시태그 기반 게시글 목록 조회 테스트1")
+    @WithMockJwtAuthentication
+    void findArticlesTest1() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles")
+                        .param("tags", "#태그1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(4)));
+    }
+
+    @Test
+    @DisplayName("해시태그 기반 게시글 목록 조회 테스트2")
+    @WithMockJwtAuthentication
+    void findArticlesTest2() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles")
+                        .param("tags", "#태그1", "#태그2")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(5)));
+    }
+
+    @Test
+    @DisplayName("해시태그 기반 게시글 목록 조회 테스트3")
+    @WithMockJwtAuthentication
+    void findArticlesTest3() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles")
+                        .param("tags", "#태그1", "#태그2")
+                        .param("lastIndex", "5")
+                        .param("size", "3")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(3)))
+                .andExpect(jsonPath("$.response.articles[0].id", is(3)));
+    }
+
+    @Test
+    @DisplayName("해시태그 기반 게시글 목록 조회 테스트4")
+    @WithMockJwtAuthentication
+    void findArticlesTest4() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/articles")
+                        .param("tags", "#태그1", "#태그2", "태그3", "태그4", "태그5")
+                        .param("lastIndex", "1")
+                        .param("size", "3")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ArticleRestController.class))
+                .andExpect(handler().methodName("findArticles"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.articles", hasSize(0)));
     }
 }

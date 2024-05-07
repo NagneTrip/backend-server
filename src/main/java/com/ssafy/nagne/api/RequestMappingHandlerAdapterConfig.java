@@ -30,6 +30,7 @@ public class RequestMappingHandlerAdapterConfig {
         for (HandlerMethodArgumentResolver argumentResolver : handlerAdapter.getArgumentResolvers()) {
             if (argumentResolver instanceof RequestResponseBodyMethodProcessor) {
                 newArgumentResolvers.add(newHandler);
+                continue;
             }
 
             newArgumentResolvers.add(argumentResolver);
@@ -44,6 +45,7 @@ public class RequestMappingHandlerAdapterConfig {
         for (HandlerMethodReturnValueHandler returnValueHandler : handlerAdapter.getReturnValueHandlers()) {
             if (returnValueHandler instanceof RequestResponseBodyMethodProcessor) {
                 newReturnValueHandlers.add(newHandler);
+                continue;
             }
 
             newReturnValueHandlers.add(returnValueHandler);

@@ -6,6 +6,7 @@ import static lombok.Lombok.checkNotNull;
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.page.PageParameter;
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.repository.ArticleHashTagRepository;
 import com.ssafy.nagne.repository.ArticleRepository;
 import com.ssafy.nagne.repository.HashTagRepository;
@@ -60,8 +61,8 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> findAll(List<String> tags, PageParameter pageParameter) {
-        return articleRepository.findAll(tags, pageParameter);
+    public List<Article> findArticles(List<String> tags, Pageable pageable) {
+        return articleRepository.findArticles(tags, pageable);
     }
 
     @Transactional(readOnly = true)

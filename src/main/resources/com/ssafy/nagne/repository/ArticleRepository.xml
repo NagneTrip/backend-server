@@ -36,18 +36,21 @@
         WHERE article.id = #{id}
     </select>
 
-    <select id="findAll" resultMap="ArticleWithImage">
+    <select id="findArticles" resultMap="ArticleWithImage">
         SELECT *
-        FROM article_hashtag
-        LEFT JOIN article ON article_hashtag.article_id = article.id
+        FROM article
         LEFT JOIN image ON article.id = image.article_id
-        WHERE hashtag_name in (
-        <foreach collection="tags" item="tag" separator=",">
-            #{tag}
-        </foreach>
+        WHERE article.id IN (
+            SELECT DISTINCT article_id
+            FROM article_hashtag
+            WHERE hashtag_name IN (
+            <foreach collection="tags" item="tag" separator=",">
+                #{tag}
+            </foreach>
+            )
+            AND article_id &lt; #{pageable.lastIndex}
+            ORDER BY article_id DESC LIMIT #{pageable.size}
         )
-        AND id &lt; #{pageParameter.lastIndex}
-        ORDER BY id DESC LIMIT #{pageParameter.size}
     </select>
 
     <select id="findFollowingArticles" resultMap="ArticleWithImage">

@@ -2,6 +2,7 @@ package com.ssafy.nagne.repository;
 
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.page.PageParameter;
+import com.ssafy.nagne.page.Pageable;
 import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface ArticleRepository {
 
     Optional<Article> findById(@Param("id") Long id);
 
-    List<Article> findAll(@Param("tags") List<String> tags, @Param("pageParameter") PageParameter pageParameter);
+    List<Article> findArticles(@Param("tags") List<String> tags, @Param("pageable") Pageable pageable);
 
     List<Article> findFollowingArticles(@Param("userId") Long userId,
                                         @Param("pageParameter") PageParameter pageParameter);

@@ -4,6 +4,7 @@ import static com.ssafy.nagne.utils.ApiUtils.success;
 
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.page.PageParameter;
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.ArticleService;
 import com.ssafy.nagne.utils.ApiUtils.ApiResult;
@@ -43,10 +44,9 @@ public class ArticleRestController {
     }
 
     @GetMapping
-    public ApiResult<ArticleListResult> findAll(@RequestParam List<String> tags,
-                                                PageParameter pageParameter) {
-        log.info("tags={}", tags);
-        return success(new ArticleListResult(articleService.findAll(tags, pageParameter)));
+    public ArticleListResult findArticles(@RequestParam List<String> tags,
+                                          Pageable pageable) {
+        return new ArticleListResult(articleService.findArticles(tags, pageable));
     }
 
     @GetMapping("/followers")
