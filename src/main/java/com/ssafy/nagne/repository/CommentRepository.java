@@ -15,7 +15,7 @@ public interface CommentRepository {
 
     List<Comment> findCommentsByArticleId(@Param("articleId") Long articleId);
 
-    int update(@Param("id") Long id, @Param("content") String content);
+    int update(@Param("comment") Comment comment);
 
     void plusGoodCount(@Param("id") Long id);
 

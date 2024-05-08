@@ -31,9 +31,9 @@
 
     <update id="update">
         UPDATE comment
-        SET content            = #{content},
+        SET content            = #{comment.content},
             last_modified_date = now()
-        WHERE id = #{id}
+        WHERE id = #{comment.id}
     </update>
 
     <update id="plusGoodCount">

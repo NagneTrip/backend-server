@@ -21,4 +21,12 @@ public class Comment {
     private LocalDateTime createdDate;
 
     private LocalDateTime lastModifiedDate;
+
+    public boolean isMine(Long sessionId) {
+        return this.userId.equals(sessionId);
+    }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

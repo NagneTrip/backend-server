@@ -39,8 +39,9 @@ public class CommentRestController {
     }
 
     @PatchMapping("/{id}")
-    public Boolean update(@PathVariable Long id, @RequestBody UpdateRequest request) {
-        return commentService.update(id, request.content());
+    public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
+                          @RequestBody UpdateRequest request) {
+        return commentService.update(id, authentication.id(), request.content());
     }
 
     @DeleteMapping("/{id}")

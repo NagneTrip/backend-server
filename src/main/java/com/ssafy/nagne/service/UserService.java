@@ -1,8 +1,8 @@
 package com.ssafy.nagne.service;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.ssafy.nagne.domain.Tier.UNRANKED;
 import static java.time.LocalDateTime.now;
-import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Gender;
 import com.ssafy.nagne.domain.User;

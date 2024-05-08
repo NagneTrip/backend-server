@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.domain.Comment;
+import com.ssafy.nagne.error.AccessDeniedException;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.CommentRepository;
 import com.ssafy.nagne.web.comment.SaveRequest;
@@ -27,6 +28,7 @@ public class CommentService {
         return newComment;
     }
 
+    @Transactional(readOnly = true)
     public Comment findById(Long id) {
         checkNotNull(id, "id must be provided");
 
@@ -34,16 +36,17 @@ public class CommentService {
                 .orElseThrow(() -> new NotFoundException("Could not found comment for " + id));
     }
 
+    @Transactional(readOnly = true)
     public List<Comment> findCommentsByArticleId(Long articleId) {
         checkNotNull(articleId, "articleId must be provided");
 
         return commentRepository.findCommentsByArticleId(articleId);
     }
 
-    public boolean update(Long id, String content) {
+    public boolean update(Long id, Long sessionId, String content) {
         checkNotNull(id, "id must be provided");
 
-        return commentRepository.update(id, content) == 1;
+        return update(findCommentAndCheckMine(id, sessionId), content);
     }
 
     public boolean delete(Long id) {
@@ -59,5 +62,21 @@ public class CommentService {
                 .content(request.content())
                 .createdDate(now())
                 .build();
+    }
+
+    private Comment findCommentAndCheckMine(Long id, Long sessionId) {
+        Comment comment = findById(id);
+
+        if (!comment.isMine(sessionId)) {
+            throw new AccessDeniedException();
+        }
+
+        return comment;
+    }
+
+    private boolean update(Comment comment, String content) {
+        comment.update(content);
+
+        return commentRepository.update(comment) == 1;
     }
 }
