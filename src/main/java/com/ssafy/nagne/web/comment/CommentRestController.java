@@ -40,7 +40,7 @@ public class CommentRestController {
 
     @PatchMapping("/{id}")
     public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
-                          @RequestBody UpdateRequest request) {
+                          @Valid @RequestBody UpdateRequest request) {
         return commentService.update(id, authentication.id(), request.content());
     }
 

@@ -55,6 +55,27 @@ class CommentRestControllerTest {
     }
 
     @Test
+    @DisplayName("댓글 작성 실패 테스트 (길이 제한을 초과한 경우)")
+    @WithMockJwtAuthentication
+    void saveFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                post("/api/comments")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .content("{\"articleId\" : 1, \"content\" : \"" + "newComment".repeat(21) + "\"}")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(CommentRestController.class))
+                .andExpect(handler().methodName("save"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("content must be less than 200 characters")));
+    }
+
+    @Test
     @DisplayName("댓글 조회 테스트")
     @WithMockJwtAuthentication
     void findByIdTest() throws Exception {
@@ -112,6 +133,48 @@ class CommentRestControllerTest {
     }
 
     @Test
+    @DisplayName("댓글 수정 실패 테스트 (길이 제한을 초과한 경우)")
+    @WithMockJwtAuthentication
+    void updateFailureTest1() throws Exception {
+        ResultActions result = mockMvc.perform(
+                patch("/api/comments/1")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .content("{\"content\" : \"" + "newComment".repeat(21) + "\"}")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(CommentRestController.class))
+                .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(400)))
+                .andExpect(jsonPath("$.error.message", is("content must be less than 200 characters")));
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 테스트 (다른 사람의 댓글을 수정하는 경우)")
+    @WithMockJwtAuthentication(id = 2L)
+    void updateFailureTest2() throws Exception {
+        ResultActions result = mockMvc.perform(
+                patch("/api/comments/1")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .content("{\"content\" : \"updateComment\"}")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(CommentRestController.class))
+                .andExpect(handler().methodName("update"))
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(403)))
+                .andExpect(jsonPath("$.error.message", is("Forbidden")));
+    }
+
+    @Test
     @DisplayName("댓글 삭제 테스트")
     @WithMockJwtAuthentication
     void deleteTest() throws Exception {
@@ -125,5 +188,22 @@ class CommentRestControllerTest {
                 .andExpect(handler().methodName("delete"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 테스트 (다른 사람의 댓글을 삭제하는 경우)")
+    @WithMockJwtAuthentication(id = 2L)
+    void deleteFailureTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                delete("/api/comments/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(CommentRestController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.error.status", is(403)))
+                .andExpect(jsonPath("$.error.message", is("Forbidden")));
     }
 }
