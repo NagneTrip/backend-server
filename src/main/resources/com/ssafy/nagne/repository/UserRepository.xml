@@ -79,32 +79,6 @@
         WHERE id = #{user.id}
     </update>
 
-    <update id="updateInfo">
-        UPDATE users
-        SET
-        <if test="user.nickname != null">
-            nickname = #{user.nickname},
-        </if>
-        <if test="user.phone != null">
-            phone = #{user.phone},
-        </if>
-        <if test="user.birth != null">
-            birth = #{user.birth},
-        </if>
-        <if test="user.lastLoginDate != null">
-            last_login_date = now(),
-        </if>
-        last_modified_date = now()
-        WHERE id = #{id}
-    </update>
-
-    <update id="updateProfileImage">
-        UPDATE users
-        SET profile_image      = #{path},
-            last_modified_date = now()
-        WHERE id = #{id}
-    </update>
-
     <delete id="delete">
         DELETE
         FROM users

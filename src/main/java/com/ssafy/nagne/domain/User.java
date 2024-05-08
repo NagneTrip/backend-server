@@ -75,7 +75,7 @@ public class User {
         user.followers--;
         this.followings--;
 
-        checkArgument(user.followers > 0, "followers must be positive");
-        checkArgument(this.followings > 0, "followings must be positive");
+        checkArgument(user.followers >= 0, "followers must be positive");
+        checkArgument(this.followings >= 0, "followings must be positive");
     }
 }
