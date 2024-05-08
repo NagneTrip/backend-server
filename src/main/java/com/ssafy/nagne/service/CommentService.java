@@ -1,9 +1,12 @@
 package com.ssafy.nagne.service;
 
-import static lombok.Lombok.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.domain.Comment;
+import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.CommentRepository;
+import com.ssafy.nagne.web.comment.SaveRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,19 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public Comment save(Comment comment) {
-        commentRepository.save(comment);
+    public Comment save(SaveRequest request, Long userId) {
+        Comment newComment = createNewComment(request, userId);
 
-        return comment;
+        commentRepository.save(newComment);
+
+        return newComment;
+    }
+
+    public Comment findById(Long id) {
+        checkNotNull(id, "id must be provided");
+
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Could not found comment for " + id));
     }
 
     public List<Comment> findCommentsByArticleId(Long articleId) {
@@ -38,5 +50,14 @@ public class CommentService {
         checkNotNull(id, "id must be provided");
 
         return commentRepository.delete(id) == 1;
+    }
+
+    private Comment createNewComment(SaveRequest request, Long userId) {
+        return Comment.builder()
+                .articleId(request.articleId())
+                .userId(userId)
+                .content(request.content())
+                .createdDate(now())
+                .build();
     }
 }

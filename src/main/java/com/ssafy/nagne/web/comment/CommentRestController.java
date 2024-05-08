@@ -1,8 +1,5 @@
 package com.ssafy.nagne.web.comment;
 
-import static java.time.LocalDateTime.now;
-
-import com.ssafy.nagne.domain.Comment;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.CommentService;
 import jakarta.validation.Valid;
@@ -28,7 +25,12 @@ public class CommentRestController {
     @PostMapping
     public SaveResult save(@AuthenticationPrincipal JwtAuthentication authentication,
                            @Valid @RequestBody SaveRequest request) {
-        return new SaveResult(commentService.save(comment(request, authentication.id())));
+        return new SaveResult(commentService.save(request, authentication.id()));
+    }
+
+    @GetMapping("/{id}")
+    public CommentDetailResult findById(@PathVariable Long id) {
+        return new CommentDetailResult(commentService.findById(id));
     }
 
     @GetMapping
@@ -44,14 +46,5 @@ public class CommentRestController {
     @DeleteMapping("/{id}")
     public Boolean delete(@PathVariable Long id) {
         return commentService.delete(id);
-    }
-
-    private Comment comment(SaveRequest request, Long userId) {
-        return Comment.builder()
-                .articleId(request.articleId())
-                .userId(userId)
-                .content(request.content())
-                .createdDate(now())
-                .build();
     }
 }

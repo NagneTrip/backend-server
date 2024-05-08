@@ -17,6 +17,12 @@
                 now())
     </insert>
 
+    <select id="findById" resultType="Comment">
+        SELECT *
+        FROM comment
+        WHERE id = #{id}
+    </select>
+
     <select id="findCommentsByArticleId" resultType="Comment">
         SELECT *
         FROM comment

@@ -55,6 +55,27 @@ class CommentRestControllerTest {
     }
 
     @Test
+    @DisplayName("댓글 조회 테스트")
+    @WithMockJwtAuthentication
+    void findByIdTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                get("/api/comments/1")
+        );
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(CommentRestController.class))
+                .andExpect(handler().methodName("findById"))
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.response.commentInfo.id", is(1)))
+                .andExpect(jsonPath("$.response.commentInfo.articleId", is(1)))
+                .andExpect(jsonPath("$.response.commentInfo.userId", is(1)))
+                .andExpect(jsonPath("$.response.commentInfo.content", is("1번 게시글 유저1의 댓글")))
+                .andExpect(jsonPath("$.response.commentInfo.good", is(0)))
+                .andExpect(jsonPath("$.response.commentInfo.createdDate").exists());
+    }
+
+    @Test
     @DisplayName("게시글 별 댓글 목록 조회 테스트")
     @WithMockJwtAuthentication
     void findCommentsByArticleIdTest() throws Exception {
