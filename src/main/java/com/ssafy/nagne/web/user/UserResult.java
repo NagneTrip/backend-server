@@ -1,5 +1,7 @@
 package com.ssafy.nagne.web.user;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 import com.ssafy.nagne.domain.Tier;
 import com.ssafy.nagne.domain.User;
 import java.time.LocalDateTime;
@@ -17,20 +19,17 @@ public class UserResult {
     @Data
     private static class UserInfo {
 
-        private final Long id;
-        private final String username;
-        private final String nickname;
-        private final String profileImage;
-        private final Tier tier;
-        private final LocalDateTime lastLoginDate;
+        private Long id;
+        private String username;
+        private String nickname;
+        private Integer followers;
+        private Integer followings;
+        private String profileImage;
+        private Tier tier;
+        private LocalDateTime lastLoginDate;
 
         public UserInfo(User user) {
-            this.id = user.getId();
-            this.username = user.getUsername();
-            this.nickname = user.getNickname();
-            this.profileImage = user.getProfileImage();
-            this.tier = user.getTier();
-            this.lastLoginDate = user.getLastLoginDate();
+            copyProperties(user, this);
         }
     }
 }

@@ -1,10 +1,7 @@
 package com.ssafy.nagne.web.follow;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.FollowService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,20 +21,20 @@ public class FollowRestController {
     private final FollowService followService;
 
     @PostMapping
-    public ApiResult<Boolean> follow(@AuthenticationPrincipal JwtAuthentication authentication,
-                                     @Valid @RequestBody FollowRequest request) {
-        return success(followService.save(authentication.id(), request.followId()));
+    public Boolean follow(@AuthenticationPrincipal JwtAuthentication authentication,
+                          @Valid @RequestBody FollowRequest request) {
+        return followService.follow(authentication.id(), request.followId());
     }
 
     @GetMapping("/{userId}")
-    public ApiResult<CheckResult> check(@AuthenticationPrincipal JwtAuthentication authentication,
-                                        @PathVariable Long userId) {
-        return success(new CheckResult(followService.check(authentication.id(), userId)));
+    public CheckResult check(@AuthenticationPrincipal JwtAuthentication authentication,
+                             @PathVariable Long userId) {
+        return new CheckResult(followService.check(authentication.id(), userId));
     }
 
     @DeleteMapping("/{userId}")
-    public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
-                                     @PathVariable Long userId) {
-        return success(followService.delete(authentication.id(), userId));
+    public Boolean unfollow(@AuthenticationPrincipal JwtAuthentication authentication,
+                            @PathVariable Long userId) {
+        return followService.unfollow(authentication.id(), userId);
     }
 }

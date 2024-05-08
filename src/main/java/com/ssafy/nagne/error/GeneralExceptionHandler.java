@@ -67,7 +67,9 @@ public class GeneralExceptionHandler {
             IllegalArgumentException.class,
             IllegalStateException.class,
             ConstraintViolationException.class,
-            MethodArgumentNotValidException.class
+            MethodArgumentNotValidException.class,
+            DuplicatedFollowException.class,
+            DuplicatedUnfollowException.class
     })
     public ResponseEntity<?> handleBadRequestException(Exception e) {
         log.debug("Bad request exception occurred: {}", e.getMessage(), e);
@@ -77,6 +79,7 @@ public class GeneralExceptionHandler {
                     getErrorMessage(((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().get(0)),
                     HttpStatus.BAD_REQUEST);
         }
+
         return newResponse(e, HttpStatus.BAD_REQUEST);
     }
 

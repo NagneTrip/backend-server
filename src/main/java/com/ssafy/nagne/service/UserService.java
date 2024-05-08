@@ -42,6 +42,8 @@ public class UserService {
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
                 .nickname(request.nickname())
+                .followers(0)
+                .followings(0)
                 .phone(request.phone())
                 .birth(request.birth())
                 .gender(Gender.of(request.gender()))

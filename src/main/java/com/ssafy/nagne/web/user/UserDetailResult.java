@@ -24,6 +24,8 @@ public class UserDetailResult {
         private Long id;
         private String username;
         private String nickname;
+        private Integer followers;
+        private Integer followings;
         private String phone;
         private LocalDate birth;
         private Gender gender;

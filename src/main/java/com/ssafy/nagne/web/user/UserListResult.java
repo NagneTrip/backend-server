@@ -1,5 +1,7 @@
 package com.ssafy.nagne.web.user;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 import com.ssafy.nagne.domain.User;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +15,7 @@ public class UserListResult {
 
     public UserListResult(List<User> users) {
         count = users.size();
-        
+
         userInfo = users.stream()
                 .map(UserInfo::new)
                 .toList();
@@ -22,18 +24,16 @@ public class UserListResult {
     @Data
     private static class UserInfo {
 
-        private final Long id;
-        private final String username;
-        private final String nickname;
-        private final String profileImage;
-        private final LocalDateTime lastLoginDate;
+        private Long id;
+        private String username;
+        private String nickname;
+        private Integer followers;
+        private Integer followings;
+        private String profileImage;
+        private LocalDateTime lastLoginDate;
 
         public UserInfo(User user) {
-            this.id = user.getId();
-            this.username = user.getUsername();
-            this.nickname = user.getNickname();
-            this.profileImage = user.getProfileImage();
-            this.lastLoginDate = user.getLastLoginDate();
+            copyProperties(user, this);
         }
     }
 }
