@@ -3,8 +3,7 @@ package com.ssafy.nagne.service;
 import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.User;
-import com.ssafy.nagne.error.DuplicatedFollowException;
-import com.ssafy.nagne.error.DuplicatedUnfollowException;
+import com.ssafy.nagne.error.DuplicateException;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.FollowRepository;
 import com.ssafy.nagne.repository.UserRepository;
@@ -60,8 +59,15 @@ public class FollowService {
         try {
             return followRepository.save(id, followId) == 1;
         } catch (DuplicateKeyException e) {
-            throw new DuplicatedFollowException("already followed");
+            throw new DuplicateException("already followed");
         }
+    }
+
+    private void follow(User me, User follower) {
+        me.follow(follower);
+
+        userRepository.update(me);
+        userRepository.update(follower);
     }
 
     private boolean delete(Long id, Long followId) {
@@ -69,12 +75,19 @@ public class FollowService {
         User follower = findFollower(followId);
 
         if (!check(id, followId)) {
-            throw new DuplicatedUnfollowException("already unfollowed");
+            throw new DuplicateException("already unfollowed");
         }
 
         unfollow(me, follower);
 
         return followRepository.delete(id, followId) == 1;
+    }
+
+    private void unfollow(User me, User follower) {
+        me.unFollow(follower);
+
+        userRepository.update(me);
+        userRepository.update(follower);
     }
 
     private User findMe(Long id) {
@@ -85,19 +98,5 @@ public class FollowService {
     private User findFollower(Long followId) {
         return userRepository.findById(followId)
                 .orElseThrow(() -> new NotFoundException("Could not found user for " + followId));
-    }
-
-    private void follow(User me, User follower) {
-        me.follow(follower);
-
-        userRepository.update(me);
-        userRepository.update(follower);
-    }
-
-    private void unfollow(User me, User follower) {
-        me.unFollow(follower);
-
-        userRepository.update(me);
-        userRepository.update(follower);
     }
 }

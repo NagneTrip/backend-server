@@ -166,7 +166,7 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.response.articleInfo.id", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.content", is("#태그1 김두열1의 글")))
-                .andExpect(jsonPath("$.response.articleInfo.good", is(0)))
+                .andExpect(jsonPath("$.response.articleInfo.good", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.imageUrls").exists())
                 .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
     }

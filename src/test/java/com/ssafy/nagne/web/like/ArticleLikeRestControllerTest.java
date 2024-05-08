@@ -1,4 +1,4 @@
-package com.ssafy.nagne.web.follow;
+package com.ssafy.nagne.web.like;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -26,153 +26,151 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
-class FollowRestControllerTest {
+class ArticleLikeRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("팔로우 테스트")
+    @DisplayName("게시글 좋아요 테스트")
     @WithMockJwtAuthentication
-    void followTest() throws Exception {
+    void likeTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                post("/api/follow")
+                post("/api/articles/like")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content("{\"followId\" : \"3\"}")
+                        .content("{\"articleId\" : \"3\"}")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("follow"))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().methodName("like"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
     }
 
     @Test
-    @DisplayName("팔로우 실패 테스트 (이미 팔로우한 경우)")
+    @DisplayName("게시글 좋아요 실패 테스트 (이미 좋아요한 경우)")
     @WithMockJwtAuthentication
-    void followFailureTest1() throws Exception {
+    void likeFailureTest1() throws Exception {
         ResultActions result = mockMvc.perform(
-                post("/api/follow")
+                post("/api/articles/like")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content("{\"followId\" : \"2\"}")
+                        .content("{\"articleId\" : \"2\"}")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("follow"))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().methodName("like"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(400)))
-                .andExpect(jsonPath("$.error.message", is("already followed")));
+                .andExpect(jsonPath("$.error.message", is("already liked")));
     }
 
     @Test
-    @DisplayName("팔로우 실패 테스트 (없는 유저를 팔로우한 경우)")
+    @DisplayName("게시글 좋아요 실패 테스트 (없는 게시글에 좋아요한 경우)")
     @WithMockJwtAuthentication
-    void followFailureTest2() throws Exception {
+    void likeFailureTest2() throws Exception {
         ResultActions result = mockMvc.perform(
-                post("/api/follow")
+                post("/api/articles/like")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content("{\"followId\" : \"1000\"}")
+                        .content("{\"articleId\" : \"1000\"}")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("follow"))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().methodName("like"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(404)))
-                .andExpect(jsonPath("$.error.message", is("Could not found user for 1000")));
+                .andExpect(jsonPath("$.error.message", is("Could not found article for 1000")));
     }
 
     @Test
-    @DisplayName("팔로우 체크 테스트 (팔로우한 경우)")
+    @DisplayName("게시글 좋아요 체크 테스트 (좋아요한 경우)")
     @WithMockJwtAuthentication
     void checkTrueTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/follow/2")
+                get("/api/articles/like/1")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(FollowRestController.class))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
                 .andExpect(handler().methodName("check"))
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.response.checkFollow", is(true)));
+                .andExpect(jsonPath("$.response.checkLike", is(true)));
     }
 
     @Test
-    @DisplayName("팔로우 체크 테스트 (팔로우 안한 경우)")
+    @DisplayName("게시글 좋아요 체크 테스트 (좋아요 안한 경우)")
     @WithMockJwtAuthentication
     void checkFalseTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/follow/3")
+                get("/api/articles/like/3")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(FollowRestController.class))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
                 .andExpect(handler().methodName("check"))
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.response.checkFollow", is(false)));
+                .andExpect(jsonPath("$.response.checkLike", is(false)));
     }
 
     @Test
-    @DisplayName("언팔로우 테스트")
+    @DisplayName("게시글 좋아요 취소 테스트")
     @WithMockJwtAuthentication
-    void unfollowTest() throws Exception {
+    void unlikeTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                delete("/api/follow/2")
+                delete("/api/articles/like/1")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("unfollow"))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().methodName("cancel"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
     }
 
     @Test
-    @DisplayName("언팔로우 실패 테스트 (이미 언팔로우한 경우)")
+    @DisplayName("게시글 좋아요 취소 실패 테스트 (이미 좋아요 취소한 경우)")
     @WithMockJwtAuthentication
-    void unfollowFailureTest1() throws Exception {
+    void unlikeFailureTest1() throws Exception {
         ResultActions result = mockMvc.perform(
-                delete("/api/follow/3")
+                delete("/api/articles/like/3")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("unfollow"))
-                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().methodName("cancel"))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(400)))
-                .andExpect(jsonPath("$.error.message", is("already unfollowed")));
+                .andExpect(jsonPath("$.error.message", is("already unliked")));
     }
 
     @Test
-    @DisplayName("언팔로우 실패 테스트 (없는 유저를 언팔로우한 경우)")
+    @DisplayName("게시글 좋아요 취소 실패 테스트 (없는 게시글에 좋아요 취소하는 경우)")
     @WithMockJwtAuthentication
-    void unfollowFailureTest2() throws Exception {
+    void unlikeFailureTest2() throws Exception {
         ResultActions result = mockMvc.perform(
-                delete("/api/follow/1000")
+                delete("/api/articles/like/1000")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("unfollow"))
-                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().methodName("cancel"))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(404)))
-                .andExpect(jsonPath("$.error.message", is("Could not found user for 1000")));
+                .andExpect(jsonPath("$.error.message", is("Could not found article for 1000")));
     }
 }
