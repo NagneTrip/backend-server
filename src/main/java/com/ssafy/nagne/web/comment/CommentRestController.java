@@ -1,12 +1,10 @@
 package com.ssafy.nagne.web.comment;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
 import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.domain.Comment;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.CommentService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,24 +26,24 @@ public class CommentRestController {
     private final CommentService commentService;
 
     @PostMapping
-    public ApiResult<SaveResult> save(@AuthenticationPrincipal JwtAuthentication authentication,
-                                      @Valid @RequestBody SaveRequest request) {
-        return success(new SaveResult(commentService.save(comment(request, authentication.id()))));
+    public SaveResult save(@AuthenticationPrincipal JwtAuthentication authentication,
+                           @Valid @RequestBody SaveRequest request) {
+        return new SaveResult(commentService.save(comment(request, authentication.id())));
     }
 
     @GetMapping
-    public ApiResult<CommentListResult> findCommentsByArticleId(@RequestParam Long articleId) {
-        return success(new CommentListResult(commentService.findCommentsByArticleId(articleId)));
+    public CommentListResult findCommentsByArticleId(@RequestParam Long articleId) {
+        return new CommentListResult(commentService.findCommentsByArticleId(articleId));
     }
 
     @PatchMapping("/{id}")
-    public ApiResult<Boolean> update(@PathVariable Long id, @RequestBody UpdateRequest request) {
-        return success(commentService.update(id, request.content()));
+    public Boolean update(@PathVariable Long id, @RequestBody UpdateRequest request) {
+        return commentService.update(id, request.content());
     }
 
     @DeleteMapping("/{id}")
-    public ApiResult<Boolean> delete(@PathVariable Long id) {
-        return success(commentService.delete(id));
+    public Boolean delete(@PathVariable Long id) {
+        return commentService.delete(id);
     }
 
     private Comment comment(SaveRequest request, Long userId) {
