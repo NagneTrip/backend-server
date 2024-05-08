@@ -49,10 +49,12 @@ public class CommentService {
         return update(findCommentAndCheckMine(id, sessionId), content);
     }
 
-    public boolean delete(Long id) {
+    public boolean delete(Long id, Long sessionId) {
         checkNotNull(id, "id must be provided");
 
-        return commentRepository.delete(id) == 1;
+        findCommentAndCheckMine(id, sessionId);
+
+        return delete(id);
     }
 
     private Comment createNewComment(SaveRequest request, Long userId) {
@@ -78,5 +80,9 @@ public class CommentService {
         comment.update(content);
 
         return commentRepository.update(comment) == 1;
+    }
+
+    private boolean delete(Long id) {
+        return commentRepository.delete(id) == 1;
     }
 }

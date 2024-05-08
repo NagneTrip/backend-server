@@ -45,7 +45,7 @@ public class CommentRestController {
     }
 
     @DeleteMapping("/{id}")
-    public Boolean delete(@PathVariable Long id) {
-        return commentService.delete(id);
+    public Boolean delete(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return commentService.delete(id, authentication.id());
     }
 }
