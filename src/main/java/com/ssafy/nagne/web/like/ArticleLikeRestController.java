@@ -32,7 +32,7 @@ public class ArticleLikeRestController {
     }
 
     @DeleteMapping("/{articleId}")
-    public Boolean cancel(@PathVariable Long articleId, @AuthenticationPrincipal JwtAuthentication authentication) {
+    public Boolean unlike(@PathVariable Long articleId, @AuthenticationPrincipal JwtAuthentication authentication) {
         return articleLikeService.unlike(authentication.id(), articleId);
     }
 }

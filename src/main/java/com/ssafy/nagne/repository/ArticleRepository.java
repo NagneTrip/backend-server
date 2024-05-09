@@ -24,9 +24,5 @@ public interface ArticleRepository {
 
     int update(@Param("article") Article article);
 
-    void plusGoodCount(@Param("id") Long id);
-
-    void minusGoodCount(@Param("id") Long id);
-
     int delete(@Param("id") Long id);
 }

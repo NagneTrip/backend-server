@@ -1,10 +1,7 @@
 package com.ssafy.nagne.web.like;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.CommentLikeService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,20 +21,18 @@ public class CommentLikeRestController {
     private final CommentLikeService commentLikeService;
 
     @PostMapping
-    public ApiResult<Boolean> like(@AuthenticationPrincipal JwtAuthentication authentication,
-                                   @Valid @RequestBody CommentLikeRequest request) {
-        return success(commentLikeService.save(authentication.id(), request.commentId()));
+    public Boolean like(@AuthenticationPrincipal JwtAuthentication authentication,
+                        @Valid @RequestBody CommentLikeRequest request) {
+        return commentLikeService.like(authentication.id(), request.commentId());
     }
 
     @GetMapping("/{commentId}")
-    public ApiResult<CheckResult> check(@AuthenticationPrincipal JwtAuthentication authentication,
-                                        @PathVariable Long commentId) {
-        return success(new CheckResult(commentLikeService.check(authentication.id(), commentId)));
+    public CheckResult check(@PathVariable Long commentId, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return new CheckResult(commentLikeService.check(authentication.id(), commentId));
     }
 
     @DeleteMapping("/{commentId}")
-    public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
-                                     @PathVariable Long commentId) {
-        return success(commentLikeService.delete(authentication.id(), commentId));
+    public Boolean unlike(@PathVariable Long commentId, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return commentLikeService.unlike(authentication.id(), commentId);
     }
 }

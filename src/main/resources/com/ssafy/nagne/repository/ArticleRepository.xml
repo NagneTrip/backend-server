@@ -85,18 +85,6 @@
         WHERE id = #{article.id}
     </update>
 
-    <update id="plusGoodCount">
-        UPDATE article
-        SET good = good + 1
-        WHERE id = #{id}
-    </update>
-
-    <update id="minusGoodCount">
-        UPDATE article
-        SET good = good - 1
-        WHERE id = #{id}
-    </update>
-
     <delete id="delete">
         DELETE
         FROM article

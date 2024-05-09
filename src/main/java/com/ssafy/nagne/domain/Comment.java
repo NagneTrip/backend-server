@@ -1,5 +1,7 @@
 package com.ssafy.nagne.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +30,15 @@ public class Comment {
 
     public void update(String content) {
         this.content = content;
+    }
+
+    public void like() {
+        this.good++;
+    }
+
+    public void unlike() {
+        this.good--;
+
+        checkArgument(this.good >= 0, "good must be positive");
     }
 }

@@ -36,18 +36,6 @@
         WHERE id = #{comment.id}
     </update>
 
-    <update id="plusGoodCount">
-        UPDATE comment
-        SET good = good + 1
-        WHERE id = #{id}
-    </update>
-
-    <update id="minusGoodCount">
-        UPDATE comment
-        SET good = good - 1
-        WHERE id = #{id}
-    </update>
-
     <delete id="delete">
         DELETE
         FROM comment

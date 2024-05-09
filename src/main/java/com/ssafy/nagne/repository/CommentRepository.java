@@ -17,9 +17,5 @@ public interface CommentRepository {
 
     int update(@Param("comment") Comment comment);
 
-    void plusGoodCount(@Param("id") Long id);
-
-    void minusGoodCount(@Param("id") Long id);
-
     int delete(@Param("id") Long id);
 }
