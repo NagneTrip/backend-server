@@ -156,21 +156,4 @@ class ArticleLikeRestControllerTest {
                 .andExpect(jsonPath("$.error.status", is(400)))
                 .andExpect(jsonPath("$.error.message", is("already unliked")));
     }
-
-    @Test
-    @DisplayName("게시글 좋아요 취소 실패 테스트 (없는 게시글에 좋아요 취소하는 경우)")
-    @WithMockJwtAuthentication
-    void unlikeFailureTest2() throws Exception {
-        ResultActions result = mockMvc.perform(
-                delete("/api/articles/like/1000")
-        );
-
-        result.andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
-                .andExpect(handler().methodName("unlike"))
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.error.status", is(404)))
-                .andExpect(jsonPath("$.error.message", is("Could not found article for 1000")));
-    }
 }

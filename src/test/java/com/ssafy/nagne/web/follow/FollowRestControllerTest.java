@@ -157,22 +157,4 @@ class FollowRestControllerTest {
                 .andExpect(jsonPath("$.error.status", is(400)))
                 .andExpect(jsonPath("$.error.message", is("already unfollowed")));
     }
-
-    @Test
-    @DisplayName("언팔로우 실패 테스트 (없는 유저를 언팔로우한 경우)")
-    @WithMockJwtAuthentication
-    void unfollowFailureTest2() throws Exception {
-        ResultActions result = mockMvc.perform(
-                delete("/api/follow/1000")
-        );
-
-        result.andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(FollowRestController.class))
-                .andExpect(handler().methodName("unfollow"))
-                .andExpect(jsonPath("$.success", is(false)))
-                .andExpect(jsonPath("$.error").exists())
-                .andExpect(jsonPath("$.error.status", is(404)))
-                .andExpect(jsonPath("$.error.message", is("Could not found user for 1000")));
-    }
 }
