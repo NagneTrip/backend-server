@@ -26,44 +26,44 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
-class ArticleLikeRestControllerTest {
+class CommentLikeRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("게시글 좋아요 테스트")
+    @DisplayName("댓글 좋아요 테스트")
     @WithMockJwtAuthentication
     void likeTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                post("/api/articles/like")
+                post("/api/comments/like")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content("{\"articleId\" : \"3\"}")
+                        .content("{\"commentId\" : \"3\"}")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("like"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
     }
 
     @Test
-    @DisplayName("게시글 좋아요 실패 테스트 (이미 좋아요한 경우)")
+    @DisplayName("댓글 좋아요 실패 테스트 (이미 좋아요한 경우)")
     @WithMockJwtAuthentication
     void likeFailureTest1() throws Exception {
         ResultActions result = mockMvc.perform(
-                post("/api/articles/like")
+                post("/api/comments/like")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content("{\"articleId\" : \"2\"}")
+                        .content("{\"commentId\" : \"2\"}")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("like"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
@@ -72,85 +72,85 @@ class ArticleLikeRestControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 좋아요 실패 테스트 (없는 게시글에 좋아요한 경우)")
+    @DisplayName("댓글 좋아요 실패 테스트 (없는 댓글에 좋아요한 경우)")
     @WithMockJwtAuthentication
     void likeFailureTest2() throws Exception {
         ResultActions result = mockMvc.perform(
-                post("/api/articles/like")
+                post("/api/comments/like")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content("{\"articleId\" : \"1000\"}")
+                        .content("{\"commentId\" : \"1000\"}")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("like"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(404)))
-                .andExpect(jsonPath("$.error.message", is("Could not found article for 1000")));
+                .andExpect(jsonPath("$.error.message", is("Could not found comment for 1000")));
     }
 
     @Test
-    @DisplayName("게시글 좋아요 체크 테스트 (좋아요한 경우)")
+    @DisplayName("댓글 좋아요 체크 테스트 (좋아요한 경우)")
     @WithMockJwtAuthentication
     void checkTrueTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/articles/like/1")
+                get("/api/comments/like/1")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("check"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.checkLike", is(true)));
     }
 
     @Test
-    @DisplayName("게시글 좋아요 체크 테스트 (좋아요 안한 경우)")
+    @DisplayName("댓글 좋아요 체크 테스트 (좋아요 안한 경우)")
     @WithMockJwtAuthentication
     void checkFalseTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/articles/like/3")
+                get("/api/comments/like/3")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("check"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.checkLike", is(false)));
     }
 
     @Test
-    @DisplayName("게시글 좋아요 취소 테스트")
+    @DisplayName("댓글 좋아요 취소 테스트")
     @WithMockJwtAuthentication
     void unlikeTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                delete("/api/articles/like/1")
+                delete("/api/comments/like/1")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("unlike"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
     }
 
     @Test
-    @DisplayName("게시글 좋아요 취소 실패 테스트 (이미 좋아요 취소한 경우)")
+    @DisplayName("댓글 좋아요 취소 실패 테스트 (이미 좋아요 취소한 경우)")
     @WithMockJwtAuthentication
     void unlikeFailureTest1() throws Exception {
         ResultActions result = mockMvc.perform(
-                delete("/api/articles/like/3")
+                delete("/api/comments/like/3")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("unlike"))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(400)))
@@ -158,19 +158,19 @@ class ArticleLikeRestControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 좋아요 취소 실패 테스트 (없는 게시글에 좋아요 취소하는 경우)")
+    @DisplayName("댓글 좋아요 취소 실패 테스트 (없는 댓글에 좋아요 취소하는 경우)")
     @WithMockJwtAuthentication
     void unlikeFailureTest2() throws Exception {
         ResultActions result = mockMvc.perform(
-                delete("/api/articles/like/1000")
+                delete("/api/comments/like/1000")
         );
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(ArticleLikeRestController.class))
+                .andExpect(handler().handlerType(CommentLikeRestController.class))
                 .andExpect(handler().methodName("unlike"))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(404)))
-                .andExpect(jsonPath("$.error.message", is("Could not found article for 1000")));
+                .andExpect(jsonPath("$.error.message", is("Could not found comment for 1000")));
     }
 }

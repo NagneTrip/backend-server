@@ -92,7 +92,7 @@ class CommentRestControllerTest {
                 .andExpect(jsonPath("$.response.commentInfo.articleId", is(1)))
                 .andExpect(jsonPath("$.response.commentInfo.userId", is(1)))
                 .andExpect(jsonPath("$.response.commentInfo.content", is("1번 게시글 유저1의 댓글")))
-                .andExpect(jsonPath("$.response.commentInfo.good", is(0)))
+                .andExpect(jsonPath("$.response.commentInfo.good", is(1)))
                 .andExpect(jsonPath("$.response.commentInfo.createdDate").exists());
     }
 
