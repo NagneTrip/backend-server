@@ -21,7 +21,7 @@ public class AttractionService {
         checkNotNull(id, "id must be provided");
 
         return attractionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
+                .orElseThrow(() -> new NotFoundException("Could not found attraction for " + id));
     }
 
     public List<Attraction> findAttractionsByKeyword(String keyword) {
