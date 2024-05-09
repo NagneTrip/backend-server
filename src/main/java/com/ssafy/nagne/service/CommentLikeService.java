@@ -1,6 +1,6 @@
 package com.ssafy.nagne.service;
 
-import static lombok.Lombok.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.ssafy.nagne.domain.Comment;
 import com.ssafy.nagne.error.DuplicateException;
@@ -60,12 +60,11 @@ public class CommentLikeService {
     }
 
     private boolean delete(Long userId, Long commentId) {
-        Comment comment = findComment(commentId);
-
         if (!check(userId, commentId)) {
             throw new DuplicateException("already unliked");
         }
 
+        Comment comment = findComment(commentId);
         unlike(comment);
 
         return commentLikeRepository.delete(userId, commentId) == 1;

@@ -1,6 +1,6 @@
 package com.ssafy.nagne.service;
 
-import static lombok.Lombok.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.error.DuplicateException;
@@ -60,12 +60,11 @@ public class ArticleLikeService {
     }
 
     private boolean delete(Long userId, Long articleId) {
-        Article article = findArticle(articleId);
-
         if (!check(userId, articleId)) {
             throw new DuplicateException("already unliked");
         }
 
+        Article article = findArticle(articleId);
         unlike(article);
 
         return articleLikeRepository.delete(userId, articleId) == 1;

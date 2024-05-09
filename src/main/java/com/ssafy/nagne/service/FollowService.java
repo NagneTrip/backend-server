@@ -1,6 +1,6 @@
 package com.ssafy.nagne.service;
 
-import static lombok.Lombok.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.DuplicateException;
@@ -71,12 +71,12 @@ public class FollowService {
     }
 
     private boolean delete(Long id, Long followId) {
-        User me = findMe(id);
-        User follower = findFollower(followId);
-
         if (!check(id, followId)) {
             throw new DuplicateException("already unfollowed");
         }
+
+        User me = findMe(id);
+        User follower = findFollower(followId);
 
         unfollow(me, follower);
 

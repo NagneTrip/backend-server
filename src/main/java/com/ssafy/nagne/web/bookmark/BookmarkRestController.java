@@ -1,10 +1,7 @@
 package com.ssafy.nagne.web.bookmark;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.BookmarkService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,20 +21,18 @@ public class BookmarkRestController {
     private final BookmarkService bookmarkService;
 
     @PostMapping
-    public ApiResult<Boolean> bookmark(@AuthenticationPrincipal JwtAuthentication authentication,
-                                       @Valid @RequestBody BookmarkRequest request) {
-        return success(bookmarkService.save(authentication.id(), request.articleId()));
+    public Boolean bookmark(@AuthenticationPrincipal JwtAuthentication authentication,
+                            @Valid @RequestBody BookmarkRequest request) {
+        return bookmarkService.bookmark(authentication.id(), request.articleId());
     }
 
     @GetMapping("/{articleId}")
-    public ApiResult<CheckResult> check(@AuthenticationPrincipal JwtAuthentication authentication,
-                                        @PathVariable Long articleId) {
-        return success(new CheckResult(bookmarkService.check(authentication.id(), articleId)));
+    public CheckResult check(@PathVariable Long articleId, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return new CheckResult(bookmarkService.check(authentication.id(), articleId));
     }
 
     @DeleteMapping("/{articleId}")
-    public ApiResult<Boolean> cancel(@AuthenticationPrincipal JwtAuthentication authentication,
-                                     @PathVariable Long articleId) {
-        return success(bookmarkService.delete(authentication.id(), articleId));
+    public Boolean cancel(@PathVariable Long articleId, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return bookmarkService.cancel(authentication.id(), articleId);
     }
 }
