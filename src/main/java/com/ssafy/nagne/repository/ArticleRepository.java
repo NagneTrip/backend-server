@@ -12,7 +12,7 @@ public interface ArticleRepository {
 
     void save(@Param("article") Article article);
 
-    Optional<Article> findById(@Param("id") Long id);
+    Optional<Article> findById(@Param("id") Long id, @Param("userId") Long userId);
 
     List<Article> findArticles(@Param("tags") List<String> tags, @Param("pageable") Pageable pageable);
 

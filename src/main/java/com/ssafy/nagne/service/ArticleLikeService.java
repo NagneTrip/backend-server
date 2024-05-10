@@ -43,7 +43,7 @@ public class ArticleLikeService {
     }
 
     private boolean save(Long userId, Long articleId) {
-        Article article = findArticle(articleId);
+        Article article = findArticle(articleId, userId);
 
         like(article);
 
@@ -64,7 +64,7 @@ public class ArticleLikeService {
             throw new DuplicateException("already unliked");
         }
 
-        Article article = findArticle(articleId);
+        Article article = findArticle(articleId, userId);
         unlike(article);
 
         return articleLikeRepository.delete(userId, articleId) == 1;
@@ -75,8 +75,8 @@ public class ArticleLikeService {
         articleRepository.update(article);
     }
 
-    private Article findArticle(Long articleId) {
-        return articleRepository.findById(articleId)
+    private Article findArticle(Long articleId, Long userId) {
+        return articleRepository.findById(articleId, userId)
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + articleId));
     }
 }

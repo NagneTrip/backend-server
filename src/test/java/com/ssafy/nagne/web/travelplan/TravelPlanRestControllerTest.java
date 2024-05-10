@@ -101,7 +101,7 @@ class TravelPlanRestControllerTest {
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(handler().handlerType(TravelPlanRestController.class))
-q                .andExpect(handler().methodName("delete"))
+                .andExpect(handler().methodName("delete"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(true)));
     }

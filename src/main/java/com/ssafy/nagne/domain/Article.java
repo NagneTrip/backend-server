@@ -25,7 +25,11 @@ public class Article {
 
     private String content;
 
-    private Integer good;
+    private Integer likeCount;
+
+    private Boolean isLiked;
+
+    private Boolean isBookmarked;
 
     private List<String> imageUrls;
 
@@ -59,12 +63,12 @@ public class Article {
     }
 
     public void like() {
-        this.good++;
+        this.likeCount++;
     }
 
     public void unlike() {
-        this.good--;
+        this.likeCount--;
 
-        checkArgument(this.good >= 0, "good must be positive");
+        checkArgument(this.likeCount >= 0, "good must be positive");
     }
 }

@@ -10,7 +10,7 @@
                             last_modified_date)
         VALUES (#{article.userId},
                 #{article.content},
-                #{article.good},
+                0,
                 now(),
                 now())
     </insert>
@@ -19,7 +19,9 @@
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="content" property="content"/>
-        <result column="good" property="good"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="is_liked" property="isLiked"/>
+        <result column="is_bookmarked" property="isBookmarked"/>
         <result column="created_date" property="createdDate"/>
         <result column="last_modified_date" property="lastModifiedDate"/>
         <collection property="imageUrls" ofType="java.lang.String">
@@ -28,10 +30,22 @@
     </resultMap>
 
     <select id="findById" resultMap="ArticleWithImage">
-        SELECT *
+        SELECT article.*,
+               image.url                      AS url,
+               (like1.user_id IS NOT NULL)    AS is_liked,
+               (bookmark.user_id IS NOT NULL) AS is_bookmarked,
+               COUNT(like2.user_id)           as like_count
         FROM article
-                 LEFT JOIN image ON article.id = image.article_id
+                 LEFT JOIN
+             image ON article.id = image.article_id
+                 LEFT JOIN
+             article_likes as like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
+                 LEFT JOIN
+             bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
+                 LEFT JOIN
+             article_likes as like2 ON article.id = like2.article_id
         WHERE article.id = #{id}
+        GROUP BY article.id, image.url;
     </select>
 
     <select id="findArticles" resultMap="ArticleWithImage">

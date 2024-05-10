@@ -42,10 +42,10 @@ public class ArticleService {
         return save(newArticle, images);
     }
 
-    public Article findById(Long id) {
+    public Article findById(Long id, Long sessionId) {
         checkNotNull(id, "id must be provided");
 
-        return articleRepository.findById(id)
+        return articleRepository.findById(id, sessionId)
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
     }
 
@@ -86,7 +86,6 @@ public class ArticleService {
         return Article.builder()
                 .userId(userId)
                 .content(request.content())
-                .good(0)
                 .createdDate(now())
                 .build();
     }
@@ -157,7 +156,7 @@ public class ArticleService {
     }
 
     private Article findArticleAndCheckMine(Long id, Long sessionId) {
-        Article article = findById(id);
+        Article article = findById(id, sessionId);
 
         if (!article.isMine(sessionId)) {
             throw new AccessDeniedException();

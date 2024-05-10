@@ -166,7 +166,9 @@ class ArticleRestControllerTest {
                 .andExpect(jsonPath("$.response.articleInfo.id", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.userId", is(1)))
                 .andExpect(jsonPath("$.response.articleInfo.content", is("#태그1 김두열1의 글")))
-                .andExpect(jsonPath("$.response.articleInfo.good", is(1)))
+                .andExpect(jsonPath("$.response.articleInfo.likeCount", is(1)))
+                .andExpect(jsonPath("$.response.articleInfo.isLiked", is(true)))
+                .andExpect(jsonPath("$.response.articleInfo.isBookmarked", is(true)))
                 .andExpect(jsonPath("$.response.articleInfo.imageUrls").exists())
                 .andExpect(jsonPath("$.response.articleInfo.createdDate").exists());
     }
@@ -275,7 +277,7 @@ class ArticleRestControllerTest {
                 .andExpect(handler().handlerType(ArticleRestController.class))
                 .andExpect(handler().methodName("findFollowerArticles"))
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.response.articles", hasSize(6)));
+                .andExpect(jsonPath("$.response.articles", hasSize(7)));
     }
 
     @Test

@@ -45,7 +45,7 @@ public class FileStore {
             String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
             multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
-            return getFullPath(storeFileName);
+            return storeFileName;
         } catch (IOException e) {
             throw new FIleStoreException("파일 저장 중 예외가 발생했습니다.");
         }

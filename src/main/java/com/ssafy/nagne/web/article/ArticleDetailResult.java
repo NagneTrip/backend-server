@@ -22,7 +22,9 @@ public class ArticleDetailResult {
         private Long id;
         private Long userId;
         private String content;
-        private Integer good;
+        private Integer likeCount;
+        private Boolean isLiked;
+        private Boolean isBookmarked;
         private List<String> imageUrls;
         private LocalDateTime createdDate;
 

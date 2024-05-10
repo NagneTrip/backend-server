@@ -35,8 +35,9 @@ public class ArticleRestController {
     }
 
     @GetMapping("/{id}")
-    public ArticleDetailResult findById(@PathVariable Long id) {
-        return new ArticleDetailResult(articleService.findById(id));
+    public ArticleDetailResult findById(@PathVariable Long id,
+                                        @AuthenticationPrincipal JwtAuthentication authentication) {
+        return new ArticleDetailResult(articleService.findById(id, authentication.id()));
     }
 
     @GetMapping
