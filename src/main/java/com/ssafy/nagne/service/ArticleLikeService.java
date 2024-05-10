@@ -2,12 +2,11 @@ package com.ssafy.nagne.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.ssafy.nagne.domain.Article;
 import com.ssafy.nagne.error.DuplicateException;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.ArticleLikeRepository;
-import com.ssafy.nagne.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleLikeService {
 
     private final ArticleLikeRepository articleLikeRepository;
-    private final ArticleRepository articleRepository;
 
     public boolean like(Long userId, Long articleId) {
         checkNotNull(userId, "userId must be provided");
@@ -43,20 +41,13 @@ public class ArticleLikeService {
     }
 
     private boolean save(Long userId, Long articleId) {
-        Article article = findArticle(articleId, userId);
-
-        like(article);
-
         try {
             return articleLikeRepository.save(userId, articleId) == 1;
         } catch (DuplicateKeyException e) {
             throw new DuplicateException("already liked");
+        } catch (DataIntegrityViolationException e) {
+            throw new NotFoundException("Could not found article for " + articleId);
         }
-    }
-
-    private void like(Article article) {
-        article.like();
-        articleRepository.update(article);
     }
 
     private boolean delete(Long userId, Long articleId) {
@@ -64,19 +55,6 @@ public class ArticleLikeService {
             throw new DuplicateException("already unliked");
         }
 
-        Article article = findArticle(articleId, userId);
-        unlike(article);
-
         return articleLikeRepository.delete(userId, articleId) == 1;
-    }
-
-    private void unlike(Article article) {
-        article.unlike();
-        articleRepository.update(article);
-    }
-
-    private Article findArticle(Long articleId, Long userId) {
-        return articleRepository.findById(articleId, userId)
-                .orElseThrow(() -> new NotFoundException("Could not found article for " + articleId));
     }
 }

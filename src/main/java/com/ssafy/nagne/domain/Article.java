@@ -1,7 +1,5 @@
 package com.ssafy.nagne.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.ssafy.nagne.web.article.UpdateRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,15 +58,5 @@ public class Article {
 
     public void update(List<String> imageUrls) {
         this.imageUrls = imageUrls;
-    }
-
-    public void like() {
-        this.likeCount++;
-    }
-
-    public void unlike() {
-        this.likeCount--;
-
-        checkArgument(this.likeCount >= 0, "good must be positive");
     }
 }

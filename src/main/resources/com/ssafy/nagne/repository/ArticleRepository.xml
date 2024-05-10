@@ -61,14 +61,14 @@
              bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
                  LEFT JOIN
              article_likes as like2 ON article.id = like2.article_id
-        WHERE article.id IN (SELECT DISTINCT article_id
+        WHERE article.id IN (SELECT * FROM (SELECT DISTINCT article_id
                              FROM article_hashtag
                              WHERE hashtag_name IN (
                                  <foreach collection="tags" item="tag" separator=",">
                                     #{tag}
                                  </foreach>)
                                AND article_id &lt; #{pageable.lastIndex}
-                             ORDER BY article_id DESC LIMIT #{pageable.size})
+                             ORDER BY article_id DESC LIMIT #{pageable.size}) AS paging_article_ids)
         GROUP BY article.id, image.url
         ORDER BY article.id DESC;
     </select>
@@ -88,12 +88,13 @@
              bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
                  LEFT JOIN
              article_likes as like2 ON article.id = like2.article_id
-        WHERE id IN (SELECT article.id
-                     FROM follow
-                              LEFT JOIN article ON follow.following_id = article.user_id
-                     WHERE follower_id = #{userId}
-                       AND article.id &lt; #{pageable.lastIndex}
-                     ORDER BY article.id DESC LIMIT#{pageable.size})
+        WHERE id IN (SELECT *
+                     FROM (SELECT article.id
+                           FROM follow
+                                    LEFT JOIN article ON follow.following_id = article.user_id
+                           WHERE follower_id = #{userId}
+                             AND article.id &lt; #{pageable.lastIndex}
+                           ORDER BY article.id DESC LIMIT #{pageable.size}) AS paging_article_ids)
         GROUP BY article.id, image.url
         ORDER BY article.id DESC;
     </select>
@@ -113,11 +114,12 @@
              bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
                  LEFT JOIN
              article_likes as like2 ON article.id = like2.article_id
-        WHERE id IN (SELECT article_id
-                     FROM bookmark
-                     WHERE user_id = #{userId}
-                       AND article_id &lt; #{pageable.lastIndex}
-                     ORDER BY article_id DESC LIMIT #{pageable.size})
+        WHERE id IN (SELECT *
+                     FROM (SELECT article_id
+                           FROM bookmark
+                           WHERE user_id = #{userId}
+                             AND article_id &lt; #{pageable.lastIndex}
+                           ORDER BY article_id DESC LIMIT #{pageable.size}) AS paging_article_ids)
         GROUP BY article.id, image.url
         ORDER BY article.id DESC;
     </select>

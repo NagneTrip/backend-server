@@ -34,10 +34,10 @@ public class ArticleService {
     private final FileStore fileStore;
 
     @Transactional
-    public Article save(SaveRequest request, Long userId, List<MultipartFile> images) {
+    public Article save(SaveRequest request, Long sessionId, List<MultipartFile> images) {
         checkArgument(images.size() <= 10, "must be 10 images or less");
 
-        Article newArticle = createNewArticle(request, userId);
+        Article newArticle = createNewArticle(request, sessionId);
 
         return save(newArticle, images);
     }
@@ -53,16 +53,16 @@ public class ArticleService {
         return articleRepository.findArticles(tags, sessionId, pageable);
     }
 
-    public List<Article> findFollowerArticles(Long userId, Pageable pageable) {
-        checkNotNull(userId, "userId must be provided");
+    public List<Article> findFollowerArticles(Long sessionId, Pageable pageable) {
+        checkNotNull(sessionId, "userId must be provided");
 
-        return articleRepository.findFollowerArticles(userId, pageable);
+        return articleRepository.findFollowerArticles(sessionId, pageable);
     }
 
-    public List<Article> findBookmarkArticles(Long userId, Pageable pageable) {
-        checkNotNull(userId, "userId must be provided");
+    public List<Article> findBookmarkArticles(Long sessionId, Pageable pageable) {
+        checkNotNull(sessionId, "userId must be provided");
 
-        return articleRepository.findBookmarkArticles(userId, pageable);
+        return articleRepository.findBookmarkArticles(sessionId, pageable);
     }
 
     @Transactional
