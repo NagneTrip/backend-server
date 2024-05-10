@@ -14,7 +14,9 @@ public interface ArticleRepository {
 
     Optional<Article> findById(@Param("id") Long id, @Param("userId") Long userId);
 
-    List<Article> findArticles(@Param("tags") List<String> tags, @Param("pageable") Pageable pageable);
+    List<Article> findArticles(@Param("tags") List<String> tags,
+                               @Param("userId") Long userId,
+                               @Param("pageable") Pageable pageable);
 
     List<Article> findFollowerArticles(@Param("userId") Long userId,
                                        @Param("pageable") Pageable pageable);

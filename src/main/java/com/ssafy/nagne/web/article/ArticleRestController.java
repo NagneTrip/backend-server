@@ -42,8 +42,9 @@ public class ArticleRestController {
 
     @GetMapping
     public ArticleListResult findArticles(@RequestParam List<String> tags,
+                                          @AuthenticationPrincipal JwtAuthentication authentication,
                                           Pageable pageable) {
-        return new ArticleListResult(articleService.findArticles(tags, pageable));
+        return new ArticleListResult(articleService.findArticles(tags, authentication.id(), pageable));
     }
 
     @GetMapping("/followers")

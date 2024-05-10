@@ -49,8 +49,8 @@ public class ArticleService {
                 .orElseThrow(() -> new NotFoundException("Could not found article for " + id));
     }
 
-    public List<Article> findArticles(List<String> tags, Pageable pageable) {
-        return articleRepository.findArticles(tags, pageable);
+    public List<Article> findArticles(List<String> tags, Long sessionId, Pageable pageable) {
+        return articleRepository.findArticles(tags, sessionId, pageable);
     }
 
     public List<Article> findFollowerArticles(Long userId, Pageable pageable) {
