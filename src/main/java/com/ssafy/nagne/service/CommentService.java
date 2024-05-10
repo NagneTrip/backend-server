@@ -29,18 +29,18 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Comment findById(Long id) {
+    public Comment findById(Long id, Long sessionId) {
         checkNotNull(id, "id must be provided");
 
-        return commentRepository.findById(id)
+        return commentRepository.findById(id, sessionId)
                 .orElseThrow(() -> new NotFoundException("Could not found comment for " + id));
     }
 
     @Transactional(readOnly = true)
-    public List<Comment> findCommentsByArticleId(Long articleId) {
+    public List<Comment> findCommentsByArticleId(Long articleId, Long sessionId) {
         checkNotNull(articleId, "articleId must be provided");
 
-        return commentRepository.findCommentsByArticleId(articleId);
+        return commentRepository.findCommentsByArticleId(articleId, sessionId);
     }
 
     public boolean update(Long id, Long sessionId, String content) {
@@ -67,7 +67,7 @@ public class CommentService {
     }
 
     private Comment findCommentAndCheckMine(Long id, Long sessionId) {
-        Comment comment = findById(id);
+        Comment comment = findById(id, sessionId);
 
         if (!comment.isMine(sessionId)) {
             throw new AccessDeniedException();

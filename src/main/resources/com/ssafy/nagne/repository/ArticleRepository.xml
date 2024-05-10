@@ -126,11 +126,8 @@
 
     <update id="update">
         UPDATE article
-        SET
-        <if test="article.content != null">
-            content = #{article.content},
-        </if>
-        last_modified_date = now()
+        SET content            = #{article.content},
+            last_modified_date = now()
         WHERE id = #{article.id}
     </update>
 

@@ -29,13 +29,15 @@ public class CommentRestController {
     }
 
     @GetMapping("/{id}")
-    public CommentDetailResult findById(@PathVariable Long id) {
-        return new CommentDetailResult(commentService.findById(id));
+    public CommentDetailResult findById(@PathVariable Long id,
+                                        @AuthenticationPrincipal JwtAuthentication authentication) {
+        return new CommentDetailResult(commentService.findById(id, authentication.id()));
     }
 
     @GetMapping
-    public CommentListResult findCommentsByArticleId(@RequestParam Long articleId) {
-        return new CommentListResult(commentService.findCommentsByArticleId(articleId));
+    public CommentListResult findCommentsByArticleId(@RequestParam Long articleId,
+                                                     @AuthenticationPrincipal JwtAuthentication authentication) {
+        return new CommentListResult(commentService.findCommentsByArticleId(articleId, authentication.id()));
     }
 
     @PatchMapping("/{id}")

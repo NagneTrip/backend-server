@@ -92,13 +92,14 @@ class CommentRestControllerTest {
                 .andExpect(jsonPath("$.response.commentInfo.articleId", is(1)))
                 .andExpect(jsonPath("$.response.commentInfo.userId", is(1)))
                 .andExpect(jsonPath("$.response.commentInfo.content", is("1번 게시글 유저1의 댓글")))
-                .andExpect(jsonPath("$.response.commentInfo.good", is(1)))
+                .andExpect(jsonPath("$.response.commentInfo.likeCount", is(1)))
+                .andExpect(jsonPath("$.response.commentInfo.isLiked", is(true)))
                 .andExpect(jsonPath("$.response.commentInfo.createdDate").exists());
     }
 
     @Test
     @DisplayName("게시글 별 댓글 목록 조회 테스트")
-    @WithMockJwtAuthentication
+    @WithMockJwtAuthentication(id = 2L)
     void findCommentsByArticleIdTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 get("/api/comments")

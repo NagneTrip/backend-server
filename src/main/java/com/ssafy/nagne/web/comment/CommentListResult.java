@@ -25,6 +25,8 @@ public class CommentListResult {
         private Long articleId;
         private Long userId;
         private String content;
+        private Integer likeCount;
+        private Boolean isLiked;
         private LocalDateTime createdDate;
 
         public CommentInfo(Comment comment) {

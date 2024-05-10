@@ -2,12 +2,11 @@ package com.ssafy.nagne.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.ssafy.nagne.domain.Comment;
 import com.ssafy.nagne.error.DuplicateException;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.CommentLikeRepository;
-import com.ssafy.nagne.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentLikeService {
 
     private final CommentLikeRepository commentLikeRepository;
-    private final CommentRepository commentRepository;
 
     public boolean like(Long userId, Long commentId) {
         checkNotNull(userId, "userId must be provided");
@@ -43,20 +41,13 @@ public class CommentLikeService {
     }
 
     private boolean save(Long userId, Long commentId) {
-        Comment comment = findComment(commentId);
-
-        like(comment);
-
         try {
             return commentLikeRepository.save(userId, commentId) == 1;
         } catch (DuplicateKeyException e) {
             throw new DuplicateException("already liked");
+        } catch (DataIntegrityViolationException e) {
+            throw new NotFoundException("Could not found comment for " + commentId);
         }
-    }
-
-    private void like(Comment comment) {
-        comment.like();
-        commentRepository.update(comment);
     }
 
     private boolean delete(Long userId, Long commentId) {
@@ -64,19 +55,6 @@ public class CommentLikeService {
             throw new DuplicateException("already unliked");
         }
 
-        Comment comment = findComment(commentId);
-        unlike(comment);
-
         return commentLikeRepository.delete(userId, commentId) == 1;
-    }
-
-    private void unlike(Comment comment) {
-        comment.unlike();
-        commentRepository.update(comment);
-    }
-
-    private Comment findComment(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException("Could not found comment for " + commentId));
     }
 }
