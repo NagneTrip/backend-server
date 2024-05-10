@@ -22,4 +22,8 @@ public class TravelPlan {
     private LocalDateTime createdDate;
 
     private LocalDateTime lastModifiedDate;
+
+    public boolean isMine(Long sessionId) {
+        return this.userId.equals(sessionId);
+    }
 }

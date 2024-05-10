@@ -1,12 +1,7 @@
 package com.ssafy.nagne.web.travelplan;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
-import static java.time.LocalDateTime.now;
-
-import com.ssafy.nagne.domain.TravelPlan;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.TravelPlanService;
-import com.ssafy.nagne.utils.ApiUtils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,36 +24,25 @@ public class TravelPlanRestController {
     private final TravelPlanService travelPlanService;
 
     @PostMapping
-    public ApiResult<SaveResult> save(@AuthenticationPrincipal JwtAuthentication authentication,
-                                      @Valid @RequestBody SaveUpdateRequest request) {
-        log.info("request={}", request);
-
-        return success(
-                new SaveResult(travelPlanService.save(travelPlan(authentication.id()), request.attractions()))
-        );
+    public SaveResult save(@AuthenticationPrincipal JwtAuthentication authentication,
+                           @Valid @RequestBody SaveUpdateRequest request) {
+        return new SaveResult(travelPlanService.save(request.attractions(), authentication.id()));
     }
 
     @GetMapping("/{id}")
-    public ApiResult<TravelPlanDetailResult> findById(@PathVariable Long id) {
-        return success(new TravelPlanDetailResult(travelPlanService.findById(id)));
+    public TravelPlanDetailResult findById(@PathVariable Long id) {
+        return new TravelPlanDetailResult(travelPlanService.findById(id));
     }
 
     @PatchMapping("/{id}")
-    public ApiResult<Boolean> update(@PathVariable Long id,
-                                     @Valid @RequestBody SaveUpdateRequest request) {
-        return success(travelPlanService.update(id, request.attractions()));
+    public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
+                          @Valid @RequestBody SaveUpdateRequest request) {
+        return travelPlanService.update(id, authentication.id(), request.attractions());
     }
 
 
     @DeleteMapping("/{id}")
-    public ApiResult<Boolean> delete(@PathVariable Long id) {
-        return success(travelPlanService.delete(id));
-    }
-
-    private TravelPlan travelPlan(Long userId) {
-        return TravelPlan.builder()
-                .userId(userId)
-                .createdDate(now())
-                .build();
+    public Boolean delete(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return travelPlanService.delete(id, authentication.id());
     }
 }

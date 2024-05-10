@@ -5,6 +5,7 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 import com.ssafy.nagne.domain.Attraction;
 import com.ssafy.nagne.domain.Schedule;
 import com.ssafy.nagne.domain.TravelPlan;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class TravelPlanDetailResult {
         private Long id;
         private Long userId;
         private List<AttractionInfo> attractions;
+        private LocalDateTime createdDate;
 
         public TravelPlanInfo(TravelPlan travelPlan) {
             BeanUtils.copyProperties(travelPlan, this);

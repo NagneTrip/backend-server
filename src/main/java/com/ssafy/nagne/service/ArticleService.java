@@ -100,16 +100,6 @@ public class ArticleService {
         return newArticle;
     }
 
-    private Article findArticleAndCheckMine(Long id, Long sessionId) {
-        Article article = findById(id);
-
-        if (!article.isMine(sessionId)) {
-            throw new AccessDeniedException();
-        }
-
-        return article;
-    }
-
     private void saveImages(Article article, List<MultipartFile> images) {
         List<String> filePaths = fileStore.store(images);
 
@@ -164,5 +154,15 @@ public class ArticleService {
         deleteImages(id);
 
         return articleRepository.delete(id) == 1;
+    }
+
+    private Article findArticleAndCheckMine(Long id, Long sessionId) {
+        Article article = findById(id);
+
+        if (!article.isMine(sessionId)) {
+            throw new AccessDeniedException();
+        }
+
+        return article;
     }
 }
