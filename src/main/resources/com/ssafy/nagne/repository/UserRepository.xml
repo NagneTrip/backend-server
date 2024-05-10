@@ -6,8 +6,6 @@
         INSERT INTO users (username,
                            password,
                            nickname,
-                           followers,
-                           followings,
                            phone,
                            birth,
                            gender,
@@ -18,8 +16,6 @@
         VALUES (#{user.username},
                 #{user.password},
                 #{user.nickname},
-                #{user.followers},
-                #{user.followings},
                 #{user.phone},
                 #{user.birth},
                 #{user.gender},
@@ -30,50 +26,84 @@
     </insert>
 
     <select id="findById" resultType="User">
-        SELECT *
+        SELECT users.*,
+               IFNULL(follower_counts.follower_count, 0)   AS followers,
+               IFNULL(following_counts.following_count, 0) AS followings
         FROM users
-        WHERE id = #{id}
+                 LEFT JOIN
+             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
+             ON users.id = follower_counts.following_id
+                 LEFT JOIN
+             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
+             ON users.id = following_counts.follower_id
+        WHERE users.id = #{id};
     </select>
 
     <select id="findUsers" resultType="User">
-        SELECT *
+        SELECT users.*,
+               IFNULL(follower_counts.follower_count, 0)   AS followers,
+               IFNULL(following_counts.following_count, 0) AS followings
         FROM users
+                 LEFT JOIN
+             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
+             ON users.id = follower_counts.following_id
+                 LEFT JOIN
+             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
+             ON users.id = following_counts.follower_id
         WHERE username like CONCAT('%', #{keyword}, '%')
     </select>
 
     <select id="findByUsername" resultType="User">
-        SELECT *
+        SELECT users.*,
+               IFNULL(follower_counts.follower_count, 0)   AS followers,
+               IFNULL(following_counts.following_count, 0) AS followings
         FROM users
+                 LEFT JOIN
+             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
+             ON users.id = follower_counts.following_id
+                 LEFT JOIN
+             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
+             ON users.id = following_counts.follower_id
         WHERE username = #{username}
     </select>
 
     <select id="findFollowers" resultType="User">
-        SELECT *
+        SELECT users.*,
+               IFNULL(follower_counts.follower_count, 0)   AS followers,
+               IFNULL(following_counts.following_count, 0) AS followings
         FROM follow
-                 LEFT OUTER JOIN users ON follow.follower_id = users.id
+                 LEFT JOIN
+             users ON follow.follower_id = users.id
+                 LEFT JOIN
+             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
+             ON users.id = follower_counts.following_id
+                 LEFT JOIN
+             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
+             ON users.id = following_counts.follower_id
         WHERE follow.following_id = #{id}
     </select>
 
     <select id="findFollowings" resultType="User">
-        SELECT *
+        SELECT users.*,
+               IFNULL(follower_counts.follower_count, 0)   AS followers,
+               IFNULL(following_counts.following_count, 0) AS followings
         FROM follow
-                 LEFT OUTER JOIN users ON follow.following_id = users.id
+                 LEFT JOIN
+             users ON follow.following_id = users.id
+                 LEFT JOIN
+             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
+             ON users.id = follower_counts.following_id
+                 LEFT JOIN
+             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
+             ON users.id = following_counts.follower_id
         WHERE follow.follower_id = #{id}
     </select>
 
     <update id="update">
         UPDATE users
-        SET username           = #{user.username},
-            password           = #{user.password},
-            nickname           = #{user.nickname},
-            followers          = #{user.followers},
-            followings         = #{user.followings},
+        SET nickname           = #{user.nickname},
             phone              = #{user.phone},
-            birth              = #{user.birth},
-            gender             = #{user.gender},
             profile_image      = #{user.profileImage},
-            tier               = #{user.tier},
-            created_date       = #{user.createdDate},
             last_modified_date = #{user.lastModifiedDate},
             last_login_date    = #{user.lastLoginDate}
         WHERE id = #{user.id}

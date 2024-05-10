@@ -1,6 +1,5 @@
 package com.ssafy.nagne.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.time.LocalDateTime.now;
 
 import com.ssafy.nagne.web.user.UpdateRequest;
@@ -64,18 +63,5 @@ public class User {
         this.nickname = request.nickname();
         this.phone = request.phone();
         this.profileImage = profileImage;
-    }
-
-    public void follow(User user) {
-        user.followers++;
-        this.followings++;
-    }
-
-    public void unFollow(User user) {
-        user.followers--;
-        this.followings--;
-
-        checkArgument(user.followers >= 0, "followers must be positive");
-        checkArgument(this.followings >= 0, "followings must be positive");
     }
 }

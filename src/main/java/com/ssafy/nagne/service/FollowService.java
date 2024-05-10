@@ -2,12 +2,11 @@ package com.ssafy.nagne.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.DuplicateException;
 import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.repository.FollowRepository;
-import com.ssafy.nagne.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FollowService {
 
-    private final UserRepository userRepository;
     private final FollowRepository followRepository;
 
     public boolean follow(Long id, Long followId) {
@@ -51,23 +49,13 @@ public class FollowService {
     }
 
     private boolean save(Long id, Long followId) {
-        User me = findMe(id);
-        User follower = findFollower(followId);
-
-        follow(me, follower);
-
         try {
             return followRepository.save(id, followId) == 1;
         } catch (DuplicateKeyException e) {
             throw new DuplicateException("already followed");
+        } catch (DataIntegrityViolationException e) {
+            throw new NotFoundException("Could not found user for " + followId);
         }
-    }
-
-    private void follow(User me, User follower) {
-        me.follow(follower);
-
-        userRepository.update(me);
-        userRepository.update(follower);
     }
 
     private boolean delete(Long id, Long followId) {
@@ -75,28 +63,6 @@ public class FollowService {
             throw new DuplicateException("already unfollowed");
         }
 
-        User me = findMe(id);
-        User follower = findFollower(followId);
-
-        unfollow(me, follower);
-
         return followRepository.delete(id, followId) == 1;
-    }
-
-    private void unfollow(User me, User follower) {
-        me.unFollow(follower);
-
-        userRepository.update(me);
-        userRepository.update(follower);
-    }
-
-    private User findMe(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Could not found user for " + id));
-    }
-
-    private User findFollower(Long followId) {
-        return userRepository.findById(followId)
-                .orElseThrow(() -> new NotFoundException("Could not found user for " + followId));
     }
 }

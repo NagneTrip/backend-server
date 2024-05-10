@@ -78,16 +78,16 @@
                image.url                      AS url,
                (like1.user_id IS NOT NULL)    AS is_liked,
                (bookmark.user_id IS NOT NULL) AS is_bookmarked,
-               COUNT(like2.user_id)           as like_count
+               COUNT(like2.user_id)           AS like_count
         FROM article
                  LEFT JOIN
              image ON article.id = image.article_id
                  LEFT JOIN
-             article_likes as like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
+             article_likes AS like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
                  LEFT JOIN
              bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
                  LEFT JOIN
-             article_likes as like2 ON article.id = like2.article_id
+             article_likes AS like2 ON article.id = like2.article_id
         WHERE id IN (SELECT *
                      FROM (SELECT article.id
                            FROM follow
@@ -104,16 +104,16 @@
                image.url                      AS url,
                (like1.user_id IS NOT NULL)    AS is_liked,
                (bookmark.user_id IS NOT NULL) AS is_bookmarked,
-               COUNT(like2.user_id)           as like_count
+               COUNT(like2.user_id)           AS like_count
         FROM article
                  LEFT JOIN
              image ON article.id = image.article_id
                  LEFT JOIN
-             article_likes as like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
+             article_likes AS like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
                  LEFT JOIN
              bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
                  LEFT JOIN
-             article_likes as like2 ON article.id = like2.article_id
+             article_likes AS like2 ON article.id = like2.article_id
         WHERE id IN (SELECT *
                      FROM (SELECT article_id
                            FROM bookmark
