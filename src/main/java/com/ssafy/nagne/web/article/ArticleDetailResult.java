@@ -3,6 +3,7 @@ package com.ssafy.nagne.web.article;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 import com.ssafy.nagne.domain.Article;
+import com.ssafy.nagne.domain.Tier;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -21,7 +22,11 @@ public class ArticleDetailResult {
 
         private Long id;
         private Long userId;
+        private String userNickname;
+        private String userProfileImage;
+        private Tier userTier;
         private String content;
+        private Integer commentCount;
         private Integer likeCount;
         private Boolean isLiked;
         private Boolean isBookmarked;

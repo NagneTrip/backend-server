@@ -21,7 +21,15 @@ public class Article {
 
     private Long userId;
 
+    private String userNickname;
+
+    private String userProfileImage;
+
+    private Tier userTier;
+
     private String content;
+
+    private Integer commentCount;
 
     private Integer likeCount;
 
