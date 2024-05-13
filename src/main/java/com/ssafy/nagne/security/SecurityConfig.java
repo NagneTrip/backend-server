@@ -1,6 +1,7 @@
 package com.ssafy.nagne.security;
 
 import static com.ssafy.nagne.security.Role.USER;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers("/api/users/login").permitAll();
                             authorize.requestMatchers(POST, "/api/users").permitAll();
+                            authorize.requestMatchers(GET, "/api/articles").permitAll();
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )

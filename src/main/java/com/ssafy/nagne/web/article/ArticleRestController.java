@@ -41,10 +41,15 @@ public class ArticleRestController {
     }
 
     @GetMapping
-    public ArticleListResult findArticles(@RequestParam List<String> tags,
-                                          @AuthenticationPrincipal JwtAuthentication authentication,
-                                          Pageable pageable) {
-        return new ArticleListResult(articleService.findArticles(tags, authentication.id(), pageable));
+    public ArticleListResultForNonLoginUser findAll(Pageable pageable) {
+        return new ArticleListResultForNonLoginUser(articleService.findAll(pageable));
+    }
+
+    @GetMapping("/tags")
+    public ArticleListResult findArticlesByTags(@RequestParam List<String> tags,
+                                                @AuthenticationPrincipal JwtAuthentication authentication,
+                                                Pageable pageable) {
+        return new ArticleListResult(articleService.findArticlesByTags(tags, authentication.id(), pageable));
     }
 
     @GetMapping("/followers")

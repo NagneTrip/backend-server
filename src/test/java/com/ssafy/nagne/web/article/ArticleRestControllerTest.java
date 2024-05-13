@@ -196,14 +196,14 @@ class ArticleRestControllerTest {
     @WithMockJwtAuthentication
     void findArticlesTest1() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/articles")
+                get("/api/articles/tags")
                         .param("tags", "#태그1")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ArticleRestController.class))
-                .andExpect(handler().methodName("findArticles"))
+                .andExpect(handler().methodName("findArticlesByTags"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articles", hasSize(4)));
     }
@@ -213,14 +213,14 @@ class ArticleRestControllerTest {
     @WithMockJwtAuthentication
     void findArticlesTest2() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/articles")
+                get("/api/articles/tags")
                         .param("tags", "#태그1", "#태그2")
         );
 
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ArticleRestController.class))
-                .andExpect(handler().methodName("findArticles"))
+                .andExpect(handler().methodName("findArticlesByTags"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articles", hasSize(5)));
     }
@@ -230,7 +230,7 @@ class ArticleRestControllerTest {
     @WithMockJwtAuthentication
     void findArticlesTest3() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/articles")
+                get("/api/articles/tags")
                         .param("tags", "#태그1", "#태그2")
                         .param("size", "3")
                         .param("lastIndex", "5")
@@ -239,7 +239,7 @@ class ArticleRestControllerTest {
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ArticleRestController.class))
-                .andExpect(handler().methodName("findArticles"))
+                .andExpect(handler().methodName("findArticlesByTags"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articles", hasSize(3)))
                 .andExpect(jsonPath("$.response.articles[0].id", is(3)));
@@ -250,7 +250,7 @@ class ArticleRestControllerTest {
     @WithMockJwtAuthentication
     void findArticlesTest4() throws Exception {
         ResultActions result = mockMvc.perform(
-                get("/api/articles")
+                get("/api/articles/tags")
                         .param("tags", "#태그1", "#태그2", "태그3", "태그4", "태그5")
                         .param("size", "3")
                         .param("lastIndex", "1")
@@ -259,7 +259,7 @@ class ArticleRestControllerTest {
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ArticleRestController.class))
-                .andExpect(handler().methodName("findArticles"))
+                .andExpect(handler().methodName("findArticlesByTags"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.articles", hasSize(0)));
     }
