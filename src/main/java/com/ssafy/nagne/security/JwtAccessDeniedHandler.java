@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
-    static String _403 = """
+    private static final String _403 = """
             {
                 "success" : false,
                 "response" : null,

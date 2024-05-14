@@ -3,6 +3,7 @@ package com.ssafy.nagne.security;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 import com.ssafy.nagne.domain.User;
+import com.ssafy.nagne.error.NotFoundException;
 import com.ssafy.nagne.security.Jwt.Claims;
 import com.ssafy.nagne.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,47 +26,31 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        send(authentication, response);
-    }
-
-    private void send(Authentication authentication, HttpServletResponse response)
-            throws IOException {
         String username = getUsername(authentication);
 
-        //TODO: 첫 소셜 로그인 할 때 회원 가입 할 수 있게 구현하기
-        User user = userService.loginOAuth(username);
+        try {
+            User user = login(username);
+            send(response, createSuccessMessage(user));
+        } catch (NotFoundException e) {
+            send(response, createNeedToJoinMessage(username));
+        }
+    }
 
-        String token = createToken(user);
-
-        send(response, user, token);
+    private User login(String username) {
+        return userService.loginOAuth(username);
     }
 
     private String getUsername(Authentication authentication) {
         DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
-
         return principal.getAttribute("email");
     }
 
-    private String createToken(User user) {
-        JwtAuthenticationToken authenticated = new JwtAuthenticationToken(
-                new JwtAuthentication(user.getId(), user.getUsername()),
-                null,
-                createAuthorityList(Role.USER.value())
-        );
+    private String createSuccessMessage(User user) {
+        JwtAuthenticationToken authenticated = createAuthenticationToken(user);
 
-        return jwt.create(
-                Claims.of(
-                        user.getId(),
-                        user.getUsername(),
-                        authenticated.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .toArray(String[]::new)
-                )
-        );
-    }
+        String jwt = createJWT(authenticated);
 
-    private void send(HttpServletResponse response, User user, String token) throws IOException {
-        String successMessage = """
+        return """
                 {
                     "success": true,
                     "response": {
@@ -77,11 +62,47 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                         }
                     },
                     "error": null
-                }""".formatted(token, user.getId(), user.getUsername(), user.getLastLoginDate());
+                }""".formatted(jwt, user.getId(), user.getUsername(), user.getLastLoginDate());
+    }
 
+    private JwtAuthenticationToken createAuthenticationToken(User user) {
+        return new JwtAuthenticationToken(
+                new JwtAuthentication(user.getId(), user.getUsername()),
+                null,
+                createAuthorityList(Role.USER.value())
+        );
+    }
+
+    private String createJWT(JwtAuthenticationToken authenticated) {
+        JwtAuthentication principal = (JwtAuthentication) authenticated.getPrincipal();
+
+        return jwt.create(
+                Claims.of(
+                        principal.id(),
+                        principal.username(),
+                        authenticated.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .toArray(String[]::new)
+                )
+        );
+    }
+
+    private String createNeedToJoinMessage(String username) {
+        return """
+                {
+                    "success": true,
+                    "response": {
+                        "needToJoin": true,
+                        "username": "%s"
+                    },
+                    "error": null
+                }""".formatted(username);
+    }
+
+    private void send(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        response.getWriter().write(successMessage);
+        response.getWriter().write(message);
         response.getWriter().flush();
         response.getWriter().close();
     }
