@@ -55,6 +55,17 @@ public class UserService {
     }
 
     @Transactional
+    public User loginOAuth(String username) {
+        checkNotNull(username, "username must be provided");
+
+        User user = findByUsername(username);
+
+        updateLastLoginDate(user);
+
+        return user;
+    }
+
+    @Transactional
     public User login(String username, String password) {
         checkNotNull(username, "username must be provided");
         checkNotNull(password, "password must be provided");

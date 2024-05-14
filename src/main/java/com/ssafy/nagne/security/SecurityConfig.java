@@ -8,8 +8,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,8 +24,9 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler accessDeniedHandler;
     private final EntryPointUnauthorizedHandler authenticationEntryPoint;
 
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,23 +44,15 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> {
-                            authorize.requestMatchers("/api/users/login").permitAll();
+                            authorize.requestMatchers("/api/users/login", "/login/**").permitAll();
                             authorize.requestMatchers(POST, "/api/users").permitAll();
                             authorize.requestMatchers(GET, "/api/articles").permitAll();
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(configurer -> configurer.successHandler(oAuth2AuthenticationSuccessHandler))
                 .build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(
-                AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(jwtAuthenticationProvider);
-
-        return authenticationManagerBuilder.build();
     }
 
     private CorsConfigurationSource apiConfigurationSource() {

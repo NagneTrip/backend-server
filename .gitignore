@@ -15,6 +15,9 @@ application-JWT.properties
 ### FILE INFO ###
 application-FILE.properties
 
+### OAUTH INFO ###
+application-OAUTH.properties
+
 ### SCHEMA ###
 data.sql
 schema.sql
