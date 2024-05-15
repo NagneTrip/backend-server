@@ -1,10 +1,9 @@
-package com.ssafy.nagne.web.user;
+package com.ssafy.nagne.security;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
-class AuthRestControllerTest {
+class JwtLoginFilterTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,8 +39,6 @@ class AuthRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(handler().handlerType(AuthRestController.class))
-                .andExpect(handler().methodName("login"))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response.token").exists())
                 .andExpect(jsonPath("$.response.token").isString())
@@ -62,8 +59,6 @@ class AuthRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(AuthRestController.class))
-                .andExpect(handler().methodName("login"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(401)))
@@ -82,8 +77,6 @@ class AuthRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(AuthRestController.class))
-                .andExpect(handler().methodName("login"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(401)))
@@ -102,8 +95,6 @@ class AuthRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(AuthRestController.class))
-                .andExpect(handler().methodName("login"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(400)))
@@ -122,8 +113,6 @@ class AuthRestControllerTest {
 
         result.andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(handler().handlerType(AuthRestController.class))
-                .andExpect(handler().methodName("login"))
                 .andExpect(jsonPath("$.success", is(false)))
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.error.status", is(400)))

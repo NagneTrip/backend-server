@@ -24,6 +24,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler accessDeniedHandler;
     private final EntryPointUnauthorizedHandler authenticationEntryPoint;
 
+    private final JwtLoginFilter jwtLoginFilter;
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -36,6 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> {
                             exception.accessDeniedHandler(accessDeniedHandler);
                             exception.authenticationEntryPoint(authenticationEntryPoint);
@@ -45,12 +47,12 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> {
-                            authorize.requestMatchers("/api/users/login", "/login/**").permitAll();
                             authorize.requestMatchers(POST, "/api/users").permitAll();
                             authorize.requestMatchers(GET, "/api/articles").permitAll();
                             authorize.requestMatchers("/api/**").hasRole(USER.name());
                         }
                 )
+                .addFilterBefore(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(configurer -> configurer
                         .successHandler(oAuth2AuthenticationSuccessHandler)
