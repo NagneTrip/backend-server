@@ -1,17 +1,18 @@
 package com.ssafy.nagne.security;
 
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
+import static com.ssafy.nagne.security.Jwt.Claims.of;
+import static com.ssafy.nagne.utils.ApiUtils.success;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.NotFoundException;
-import com.ssafy.nagne.security.Jwt.Claims;
 import com.ssafy.nagne.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private final ObjectMapper objectMapper;
     private final Jwt jwt;
+
     private final UserService userService;
 
     @Override
@@ -29,15 +32,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String username = getUsername(authentication);
 
         try {
-            User user = login(username);
-            send(response, createSuccessMessage(user));
-        } catch (NotFoundException e) {
-            send(response, createNeedToJoinMessage(username));
-        }
-    }
+            User user = userService.loginOAuth(username);
+            String jwt = createJWT(user);
 
-    private User login(String username) {
-        return userService.loginOAuth(username);
+            send(response, new LoginResult(jwt, user));
+        } catch (NotFoundException e) {
+            send(response, new NeedToJoinResult(username));
+        }
     }
 
     private String getUsername(Authentication authentication) {
@@ -45,65 +46,37 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return principal.getAttribute("email");
     }
 
-    private String createSuccessMessage(User user) {
-        JwtAuthenticationToken authenticated = createAuthenticationToken(user);
-
-        String jwt = createJWT(authenticated);
-
-        return """
-                {
-                    "success": true,
-                    "response": {
-                        "token": "%s",
-                        "userInfo": {
-                            "id": %d,
-                            "username": "%s",
-                            "lastLoginDate": "%s"
-                        }
-                    },
-                    "error": null
-                }""".formatted(jwt, user.getId(), user.getUsername(), user.getLastLoginDate());
-    }
-
-    private JwtAuthenticationToken createAuthenticationToken(User user) {
-        return new JwtAuthenticationToken(
-                new JwtAuthentication(user.getId(), user.getUsername()),
-                null,
-                createAuthorityList(Role.USER.value())
+    private String createJWT(User user) {
+        return jwt.create(of(
+                user.getId(),
+                user.getUsername(),
+                new String[]{Role.USER.value()})
         );
     }
 
-    private String createJWT(JwtAuthenticationToken authenticated) {
-        JwtAuthentication principal = (JwtAuthentication) authenticated.getPrincipal();
-
-        return jwt.create(
-                Claims.of(
-                        principal.id(),
-                        principal.username(),
-                        authenticated.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .toArray(String[]::new)
-                )
-        );
-    }
-
-    private String createNeedToJoinMessage(String username) {
-        return """
-                {
-                    "success": true,
-                    "response": {
-                        "needToJoin": true,
-                        "username": "%s"
-                    },
-                    "error": null
-                }""".formatted(username);
-    }
-
-    private void send(HttpServletResponse response, String message) throws IOException {
+    private <T> void send(HttpServletResponse response, T data) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        response.getWriter().write(message);
-        response.getWriter().flush();
-        response.getWriter().close();
+        objectMapper.writeValue(response.getOutputStream(), success(data));
+    }
+
+    private record LoginResult(String token, UserInfo userInfo) {
+
+        public LoginResult(String token, User user) {
+            this(token, new UserInfo(user));
+        }
+
+        private record UserInfo(Long id, String username, LocalDateTime lastLoginDate) {
+            private UserInfo(User user) {
+                this(user.getId(), user.getUsername(), user.getLastLoginDate());
+            }
+        }
+    }
+
+    private record NeedToJoinResult(boolean needToJoin, String username) {
+
+        public NeedToJoinResult(String username) {
+            this(true, username);
+        }
     }
 }

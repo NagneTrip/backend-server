@@ -1,6 +1,5 @@
 package com.ssafy.nagne.security;
 
-import static com.ssafy.nagne.security.Role.USER;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -38,19 +37,16 @@ public class SecurityConfig {
                 .headers(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> {
-                            exception.accessDeniedHandler(accessDeniedHandler);
-                            exception.authenticationEntryPoint(authenticationEntryPoint);
-                        }
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint)
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(authorize -> {
-                            authorize.requestMatchers(POST, "/api/users").permitAll();
-                            authorize.requestMatchers(GET, "/api/articles").permitAll();
-                            authorize.requestMatchers("/api/**").hasRole(USER.name());
-                        }
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(POST, "/api/users").permitAll()
+                        .requestMatchers(GET, "/api/articles").permitAll()
+                        .requestMatchers("/api/**").authenticated()
                 )
                 .addFilterBefore(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
