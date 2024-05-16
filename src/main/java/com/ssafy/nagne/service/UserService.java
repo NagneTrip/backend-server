@@ -29,15 +29,15 @@ public class UserService {
     private final FileStore fileStore;
 
     @Transactional
-    public User save(JoinRequest request, MultipartFile profileImage) {
-        User newUser = createNewUser(request, fileStore.store(profileImage));
+    public User save(JoinRequest request) {
+        User newUser = createNewUser(request);
 
         userRepository.save(newUser);
 
         return newUser;
     }
 
-    private User createNewUser(JoinRequest request, String imagePath) {
+    private User createNewUser(JoinRequest request) {
         return User.builder()
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
@@ -47,7 +47,6 @@ public class UserService {
                 .phone(request.phone())
                 .birth(request.birth())
                 .gender(Gender.of(request.gender()))
-                .profileImage(imagePath)
                 .tier(UNRANKED)
                 .createdDate(now())
                 .lastModifiedDate(now())
