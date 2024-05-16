@@ -26,6 +26,7 @@ public class SecurityConfig {
     private final JwtLoginFilter jwtLoginFilter;
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
@@ -51,6 +52,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(configurer -> configurer
+                        .userInfoEndpoint(endpointConfig -> endpointConfig.userService(customOAuth2UserService))
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         .failureHandler(oAuth2AuthenticationFailureHandler)
                 )

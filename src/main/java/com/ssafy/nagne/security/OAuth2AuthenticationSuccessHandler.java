@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -42,8 +41,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private String getUsername(Authentication authentication) {
-        DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
-        return principal.getAttribute("email");
+        CustomOAuth2User principal = (CustomOAuth2User) authentication.getPrincipal();
+        return principal.getName();
     }
 
     private String createJWT(User user) {
