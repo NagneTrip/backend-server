@@ -1,7 +1,6 @@
 package com.ssafy.nagne.security;
 
 import static com.ssafy.nagne.security.Jwt.Claims.of;
-import static com.ssafy.nagne.utils.ApiUtils.success;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.nagne.domain.User;
@@ -34,9 +33,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             User user = userService.loginOAuth(username);
             String jwt = createJWT(user);
 
-            send(response, new LoginResult(jwt, user));
+            sendToken(response, jwt);
         } catch (NotFoundException e) {
-            send(response, new NeedToJoinResult(username));
+            sendNeedToJoin(response, username);
         }
     }
 
@@ -53,10 +52,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         );
     }
 
-    private <T> void send(HttpServletResponse response, T data) throws IOException {
+    private void sendToken(HttpServletResponse response, String token) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        objectMapper.writeValue(response.getOutputStream(), success(data));
+        response.sendRedirect("http://localhost:5173/signup?token=" + token);
+    }
+
+    private void sendNeedToJoin(HttpServletResponse response, String username) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader("content-type", "application/json");
+        response.sendRedirect("http://localhost:5173/signup?needToJoin=true&username=" + username);
     }
 
     private record LoginResult(String token, UserInfo userInfo) {
