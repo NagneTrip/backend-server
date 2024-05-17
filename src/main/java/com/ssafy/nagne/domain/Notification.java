@@ -1,13 +1,11 @@
 package com.ssafy.nagne.domain;
 
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 public abstract class Notification {
 
     private Long id;

@@ -7,4 +7,10 @@
         VALUES (#{notification.type}, #{notification.fromUserId}, #{notification.toUserId}, #{notification.isNew},
                 #{notification.createdDate})
     </insert>
+
+    <insert id="save" parameterType="Notification" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notification(type, from_user_id, to_user_id, is_new, article_id, created_date)
+        VALUES (#{notification.type}, #{notification.fromUserId}, #{notification.toUserId}, #{notification.isNew},
+                #{notification.articleId}, #{notification.createdDate})
+    </insert>
 </mapper>

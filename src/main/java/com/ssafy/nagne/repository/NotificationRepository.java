@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 public interface NotificationRepository {
 
     void save(@Param("notification") Notification notification);
+
+    //TODO: like용 save메서드 구현
 }
