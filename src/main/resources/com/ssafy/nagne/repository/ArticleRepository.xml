@@ -181,6 +181,22 @@
         ORDER BY article.id DESC;
     </select>
 
+    <select id="findTop10Articles" resultType="Article">
+        SELECT article.*,
+               users.nickname                  AS user_nickname,
+               users.profile_image             AS user_profile_image,
+               users.tier                      AS user_tier,
+               IFNULL(comment_counts.count, 0) AS comment_count,
+               IFNULL(likes_counts.count, 0)   AS like_count
+        FROM article
+                 LEFT JOIN users ON article.user_id = users.id
+                 LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM comment GROUP BY article_id) AS comment_counts
+                           ON article.id = comment_counts.article_id
+                 LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM article_likes GROUP BY article_id) AS likes_counts
+                           ON article.id = likes_counts.article_id
+        ORDER BY like_count DESC, comment_count DESC, article.id DESC LIMIT 10;
+    </select>
+
     <update id="update">
         UPDATE article
         SET content            = #{article.content},

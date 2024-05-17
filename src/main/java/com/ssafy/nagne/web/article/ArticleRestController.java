@@ -64,6 +64,11 @@ public class ArticleRestController {
         return new ArticleListResult(articleService.findBookmarkArticles(authentication.id(), pageable));
     }
 
+    @GetMapping("/best")
+    public ArticleListResult findTop10Articles() {
+        return new ArticleListResult(articleService.findTop10Articles());
+    }
+
     @PatchMapping("/{id}")
     public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
                           @Valid @RequestPart UpdateRequest request,

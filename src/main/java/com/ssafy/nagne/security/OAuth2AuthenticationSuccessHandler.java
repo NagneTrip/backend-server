@@ -51,9 +51,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private void sendToken(HttpServletResponse response, User user) throws IOException {
+        String data = objectMapper.writeValueAsString(new LoginResult(createJWT(user), user));
+
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        String data = objectMapper.writeValueAsString(new LoginResult(createJWT(user), user));
         response.sendRedirect("http://localhost:5173/signup?needToJoin=false&data=" + data);
     }
 

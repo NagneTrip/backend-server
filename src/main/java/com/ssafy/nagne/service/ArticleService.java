@@ -69,6 +69,10 @@ public class ArticleService {
         return articleRepository.findBookmarkArticles(sessionId, pageable);
     }
 
+    public List<Article> findTop10Articles() {
+        return articleRepository.findTop10Articles();
+    }
+
     @Transactional
     public boolean update(Long id, Long sessionId, UpdateRequest request, List<MultipartFile> images) {
         checkNotNull(id, "id must be provided");

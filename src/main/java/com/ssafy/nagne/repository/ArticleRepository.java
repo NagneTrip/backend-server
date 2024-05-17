@@ -26,6 +26,8 @@ public interface ArticleRepository {
     List<Article> findBookmarkArticles(@Param("userId") Long userId,
                                        @Param("pageable") Pageable pageable);
 
+    List<Article> findTop10Articles();
+
     int update(@Param("article") Article article);
 
     int delete(@Param("id") Long id);
