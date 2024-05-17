@@ -31,9 +31,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         try {
             User user = userService.loginOAuth(username);
-            String jwt = createJWT(user);
-
-            sendToken(response, jwt);
+            sendToken(response, user);
         } catch (NotFoundException e) {
             sendNeedToJoin(response, username);
         }
@@ -52,10 +50,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         );
     }
 
-    private void sendToken(HttpServletResponse response, String token) throws IOException {
+    private void sendToken(HttpServletResponse response, User user) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        response.sendRedirect("http://localhost:5173/signup?needToJoin=false&token=" + token);
+        String data = objectMapper.writeValueAsString(new LoginResult(createJWT(user), user));
+        response.sendRedirect("http://localhost:5173/signup?needToJoin=false&data=" + data);
     }
 
     private void sendNeedToJoin(HttpServletResponse response, String username) throws IOException {
