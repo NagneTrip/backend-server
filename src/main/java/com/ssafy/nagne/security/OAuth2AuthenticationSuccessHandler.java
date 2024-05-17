@@ -55,7 +55,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private void sendToken(HttpServletResponse response, String token) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        response.sendRedirect("http://localhost:5173/signup?token=" + token);
+        response.sendRedirect("http://localhost:5173/signup?needToJoin=false&token=" + token);
     }
 
     private void sendNeedToJoin(HttpServletResponse response, String username) throws IOException {
