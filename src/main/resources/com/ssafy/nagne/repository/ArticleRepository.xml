@@ -84,14 +84,48 @@
 
     <select id="findArticlesByTags" resultMap="ArticleWithImage">
         SELECT article.*,
-               users.nickname                       AS user_nickname,
-               users.profile_image                  AS user_profile_image,
-               users.tier                           AS user_tier,
-               image.url                            AS url,
-               (article_likes.user_id IS NOT NULL)  AS is_liked,
-               (bookmark.user_id IS NOT NULL)       AS is_bookmarked,
-               IFNULL(comment_counts.count, 0)      AS comment_count,
-               IFNULL(likes_counts.count, 0)        AS like_count
+        users.nickname AS user_nickname,
+        users.profile_image AS user_profile_image,
+        users.tier AS user_tier,
+        image.url AS url,
+        (article_likes.user_id IS NOT NULL) AS is_liked,
+        (bookmark.user_id IS NOT NULL) AS is_bookmarked,
+        IFNULL(comment_counts.count, 0) AS comment_count,
+        IFNULL(likes_counts.count, 0) AS like_count
+        FROM article
+        LEFT JOIN
+        users ON article.user_id = users.id
+        LEFT JOIN
+        image ON article.id = image.article_id
+        LEFT JOIN
+        article_likes ON article.id = article_likes.article_id AND article_likes.user_id = #{userId}
+        LEFT JOIN
+        bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
+        LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM comment GROUP BY article_id) AS comment_counts
+        ON article.id = comment_counts.article_id
+        LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM article_likes GROUP BY article_id) AS likes_counts
+        ON article.id = likes_counts.article_id
+        WHERE article.id IN (SELECT * FROM (SELECT DISTINCT article_id
+        FROM article_hashtag
+        WHERE hashtag_name IN (
+        <foreach collection="tags" item="tag" separator=",">
+            #{tag}
+        </foreach>)
+        AND article_id &lt; #{pageable.lastIndex}
+        ORDER BY article_id DESC LIMIT #{pageable.size}) AS paging_article_ids)
+        ORDER BY article.id DESC;
+    </select>
+
+    <select id="findFollowerArticles" resultMap="ArticleWithImage">
+        SELECT article.*,
+               users.nickname                      AS user_nickname,
+               users.profile_image                 AS user_profile_image,
+               users.tier                          AS user_tier,
+               image.url                           AS url,
+               (article_likes.user_id IS NOT NULL) AS is_liked,
+               (bookmark.user_id IS NOT NULL)      AS is_bookmarked,
+               IFNULL(comment_counts.count, 0)     AS comment_count,
+               IFNULL(likes_counts.count, 0)       AS like_count
         FROM article
                  LEFT JOIN
              users ON article.user_id = users.id
@@ -105,40 +139,6 @@
                            ON article.id = comment_counts.article_id
                  LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM article_likes GROUP BY article_id) AS likes_counts
                            ON article.id = likes_counts.article_id
-        WHERE article.id IN (SELECT * FROM (SELECT DISTINCT article_id
-                             FROM article_hashtag
-                             WHERE hashtag_name IN (
-                                 <foreach collection="tags" item="tag" separator=",">
-                                    #{tag}
-                                 </foreach>)
-                               AND article_id &lt; #{pageable.lastIndex}
-                             ORDER BY article_id DESC LIMIT #{pageable.size}) AS paging_article_ids)
-        ORDER BY article.id DESC;
-    </select>
-
-    <select id="findFollowerArticles" resultMap="ArticleWithImage">
-        SELECT article.*,
-               users.nickname                  AS user_nickname,
-               users.profile_image             AS user_profile_image,
-               users.tier                      AS user_tier,
-               image.url                       AS url,
-               (like1.user_id IS NOT NULL)     AS is_liked,
-               (bookmark.user_id IS NOT NULL)  AS is_bookmarked,
-               IFNULL(comment_counts.count, 0) AS comment_count,
-               IFNULL(likes_counts.count, 0)   AS like_count
-        FROM article
-                 LEFT JOIN
-             users ON article.user_id = users.id
-                 LEFT JOIN
-             image ON article.id = image.article_id
-                 LEFT JOIN
-             article_likes AS like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
-                 LEFT JOIN
-             bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
-                 LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM comment GROUP BY article_id) AS comment_counts
-                           ON article.id = comment_counts.article_id
-                 LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM article_likes GROUP BY article_id) AS likes_counts
-                           ON article.id = likes_counts.article_id
         WHERE article.id IN (SELECT *
                              FROM (SELECT article.id
                                    FROM follow
@@ -146,27 +146,26 @@
                                    WHERE follower_id = #{userId}
                                      AND article.id &lt; #{pageable.lastIndex}
                                    ORDER BY article.id DESC LIMIT #{pageable.size}) AS paging_article_ids)
-        GROUP BY article.id, image.url
         ORDER BY article.id DESC;
     </select>
 
     <select id="findBookmarkArticles" resultMap="ArticleWithImage">
         SELECT article.*,
-               users.nickname                  AS user_nickname,
-               users.profile_image             AS user_profile_image,
-               users.tier                      AS user_tier,
-               image.url                       AS url,
-               (like1.user_id IS NOT NULL)     AS is_liked,
-               (bookmark.user_id IS NOT NULL)  AS is_bookmarked,
-               IFNULL(comment_counts.count, 0) AS comment_count,
-               IFNULL(likes_counts.count, 0)   AS like_count
+               users.nickname                      AS user_nickname,
+               users.profile_image                 AS user_profile_image,
+               users.tier                          AS user_tier,
+               image.url                           AS url,
+               (article_likes.user_id IS NOT NULL) AS is_liked,
+               (bookmark.user_id IS NOT NULL)      AS is_bookmarked,
+               IFNULL(comment_counts.count, 0)     AS comment_count,
+               IFNULL(likes_counts.count, 0)       AS like_count
         FROM article
                  LEFT JOIN
              users ON article.user_id = users.id
                  LEFT JOIN
              image ON article.id = image.article_id
                  LEFT JOIN
-             article_likes AS like1 ON article.id = like1.article_id AND like1.user_id = #{userId}
+             article_likes ON article.id = article_likes.article_id AND article_likes.user_id = #{userId}
                  LEFT JOIN
              bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
                  LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM comment GROUP BY article_id) AS comment_counts
@@ -179,7 +178,6 @@
                                    WHERE user_id = #{userId}
                                      AND article_id &lt; #{pageable.lastIndex}
                                    ORDER BY article_id DESC LIMIT #{pageable.size}) AS paging_article_ids)
-        GROUP BY article.id, image.url
         ORDER BY article.id DESC;
     </select>
 
