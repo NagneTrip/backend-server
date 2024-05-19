@@ -2,6 +2,7 @@ package com.ssafy.nagne.web.user;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
+import com.ssafy.nagne.domain.Tier;
 import com.ssafy.nagne.domain.User;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ public class UserListResult {
         private Integer followers;
         private Integer followings;
         private String profileImage;
+        private Tier tier;
         private LocalDateTime lastLoginDate;
 
         public UserInfo(User user) {
