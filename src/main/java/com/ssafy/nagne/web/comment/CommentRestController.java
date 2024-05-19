@@ -1,5 +1,6 @@
 package com.ssafy.nagne.web.comment;
 
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.CommentService;
 import jakarta.validation.Valid;
@@ -36,8 +37,9 @@ public class CommentRestController {
 
     @GetMapping
     public CommentListResult findCommentsByArticleId(@RequestParam Long articleId,
-                                                     @AuthenticationPrincipal JwtAuthentication authentication) {
-        return new CommentListResult(commentService.findCommentsByArticleId(articleId, authentication.id()));
+                                                     @AuthenticationPrincipal JwtAuthentication authentication,
+                                                     Pageable pageable) {
+        return new CommentListResult(commentService.findCommentsByArticleId(articleId, authentication.id(), pageable));
     }
 
     @PatchMapping("/{id}")

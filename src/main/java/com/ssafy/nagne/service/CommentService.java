@@ -6,6 +6,7 @@ import static java.time.LocalDateTime.now;
 import com.ssafy.nagne.domain.Comment;
 import com.ssafy.nagne.error.AccessDeniedException;
 import com.ssafy.nagne.error.NotFoundException;
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.repository.CommentRepository;
 import com.ssafy.nagne.web.comment.SaveRequest;
 import java.util.List;
@@ -37,10 +38,10 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<Comment> findCommentsByArticleId(Long articleId, Long sessionId) {
+    public List<Comment> findCommentsByArticleId(Long articleId, Long sessionId, Pageable pageable) {
         checkNotNull(articleId, "articleId must be provided");
 
-        return commentRepository.findCommentsByArticleId(articleId, sessionId);
+        return commentRepository.findCommentsByArticleId(articleId, sessionId, pageable);
     }
 
     public boolean update(Long id, Long sessionId, String content) {
