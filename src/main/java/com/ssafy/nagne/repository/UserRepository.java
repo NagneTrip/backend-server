@@ -1,6 +1,7 @@
 package com.ssafy.nagne.repository;
 
 import com.ssafy.nagne.domain.User;
+import com.ssafy.nagne.page.Pageable;
 import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,11 +16,14 @@ public interface UserRepository {
 
     Optional<User> findByUsername(@Param("username") String username);
 
-    List<User> findUsers(@Param("keyword") String keyword);
+    List<User> findUsers(@Param("keyword") String keyword,
+                         @Param("pageable") Pageable pageable);
 
-    List<User> findFollowers(@Param("id") Long id);
+    List<User> findFollowers(@Param("id") Long id,
+                             @Param("pageable") Pageable pageable);
 
-    List<User> findFollowings(@Param("id") Long id);
+    List<User> findFollowings(@Param("id") Long id,
+                              @Param("pageable") Pageable pageable);
 
     int update(@Param("user") User user);
 

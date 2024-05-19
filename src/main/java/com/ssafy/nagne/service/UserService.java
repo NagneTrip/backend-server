@@ -8,6 +8,7 @@ import com.ssafy.nagne.domain.Gender;
 import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.error.AccessDeniedException;
 import com.ssafy.nagne.error.NotFoundException;
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.repository.UserRepository;
 import com.ssafy.nagne.web.user.JoinRequest;
 import com.ssafy.nagne.web.user.UpdateRequest;
@@ -101,20 +102,20 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Could not found user for " + username));
     }
 
-    public List<User> findUsers(String keyword) {
-        return userRepository.findUsers(keyword);
+    public List<User> findUsers(String keyword, Pageable pageable) {
+        return userRepository.findUsers(keyword, pageable);
     }
 
-    public List<User> findFollowers(Long id) {
+    public List<User> findFollowers(Long id, Pageable pageable) {
         checkNotNull(id, "id must be provided");
 
-        return userRepository.findFollowers(id);
+        return userRepository.findFollowers(id, pageable);
     }
 
-    public List<User> findFollowings(Long id) {
+    public List<User> findFollowings(Long id, Pageable pageable) {
         checkNotNull(id, "id must be provided");
 
-        return userRepository.findFollowings(id);
+        return userRepository.findFollowings(id, pageable);
     }
 
     @Transactional

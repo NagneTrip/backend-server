@@ -39,20 +39,6 @@
         WHERE users.id = #{id};
     </select>
 
-    <select id="findUsers" resultType="User">
-        SELECT users.*,
-               IFNULL(follower_counts.follower_count, 0)   AS followers,
-               IFNULL(following_counts.following_count, 0) AS followings
-        FROM users
-                 LEFT JOIN
-             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
-             ON users.id = follower_counts.following_id
-                 LEFT JOIN
-             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
-             ON users.id = following_counts.follower_id
-        WHERE username like CONCAT('%', #{keyword}, '%')
-    </select>
-
     <select id="findByUsername" resultType="User">
         SELECT users.*,
                IFNULL(follower_counts.follower_count, 0)   AS followers,
@@ -65,6 +51,22 @@
              (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
              ON users.id = following_counts.follower_id
         WHERE username = #{username}
+    </select>
+
+    <select id="findUsers" resultType="User">
+        SELECT users.*,
+               IFNULL(follower_counts.follower_count, 0)   AS followers,
+               IFNULL(following_counts.following_count, 0) AS followings
+        FROM users
+                 LEFT JOIN
+             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
+             ON users.id = follower_counts.following_id
+                 LEFT JOIN
+             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
+             ON users.id = following_counts.follower_id
+        WHERE username LIKE CONCAT('%', #{keyword}, '%')
+          AND id &lt; #{pageable.lastIndex}
+        ORDER BY id DESC LIMIT #{pageable.size};
     </select>
 
     <select id="findFollowers" resultType="User">
@@ -81,6 +83,8 @@
              (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
              ON users.id = following_counts.follower_id
         WHERE follow.following_id = #{id}
+          AND id &lt; #{pageable.lastIndex}
+        ORDER BY id DESC LIMIT #{pageable.size};
     </select>
 
     <select id="findFollowings" resultType="User">
@@ -97,6 +101,8 @@
              (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
              ON users.id = following_counts.follower_id
         WHERE follow.follower_id = #{id}
+          AND id &lt; #{pageable.lastIndex}
+        ORDER BY id DESC LIMIT #{pageable.size};
     </select>
 
     <update id="update">

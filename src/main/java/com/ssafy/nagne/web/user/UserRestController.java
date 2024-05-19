@@ -1,5 +1,6 @@
 package com.ssafy.nagne.web.user;
 
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.security.JwtAuthentication;
 import com.ssafy.nagne.service.UserService;
 import jakarta.validation.Valid;
@@ -41,18 +42,21 @@ public class UserRestController {
     }
 
     @GetMapping
-    public UserListResult findUsers(@RequestParam(required = false) String keyword) {
-        return new UserListResult(userService.findUsers(keyword));
+    public UserListResult findUsers(@RequestParam(required = false) String keyword,
+                                    Pageable pageable) {
+        return new UserListResult(userService.findUsers(keyword, pageable));
     }
 
     @GetMapping("/{id}/followers")
-    public UserListResult findFollowers(@PathVariable Long id) {
-        return new UserListResult(userService.findFollowers(id));
+    public UserListResult findFollowers(@PathVariable Long id,
+                                        Pageable pageable) {
+        return new UserListResult(userService.findFollowers(id, pageable));
     }
 
     @GetMapping("/{id}/followings")
-    public UserListResult findFollowings(@PathVariable Long id) {
-        return new UserListResult(userService.findFollowings(id));
+    public UserListResult findFollowings(@PathVariable Long id,
+                                         Pageable pageable) {
+        return new UserListResult(userService.findFollowings(id, pageable));
     }
 
     @PatchMapping("/{id}")

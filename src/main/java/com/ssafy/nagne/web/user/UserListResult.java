@@ -10,12 +10,9 @@ import lombok.Data;
 @Data
 public class UserListResult {
 
-    private int count;
     private final List<UserInfo> userInfo;
 
     public UserListResult(List<User> users) {
-        count = users.size();
-
         userInfo = users.stream()
                 .map(UserInfo::new)
                 .toList();
