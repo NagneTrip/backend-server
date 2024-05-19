@@ -10,6 +10,7 @@
     <resultMap id="TravelPlanWithSchedule" type="TravelPlan">
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
         <result column="created_date" property="createdDate"/>
         <result column="last_modified_date" property="lastModifiedDate"/>
         <collection property="schedules" javaType="java.util.List" ofType="Schedule">
@@ -19,7 +20,7 @@
                 <id column="attraction_id" property="id"/>
                 <result column="sido_code" property="sidoCode"/>
                 <result column="gugun_code" property="gugunCode"/>
-                <result column="title" property="title"/>
+                <result column="attraction_title" property="title"/>
                 <result column="addr" property="addr"/>
                 <result column="zipcode" property="zipCode"/>
                 <result column="tel" property="tel"/>
@@ -31,7 +32,7 @@
     </resultMap>
 
     <select id="findById" resultMap="TravelPlanWithSchedule">
-        SELECT *
+        SELECT *, attraction_info.title AS attraction_title
         FROM travel_plan
                  LEFT JOIN travel_plan_schedule ON travel_plan.id = travel_plan_schedule.travel_plan_id
                  LEFT JOIN attraction_info ON travel_plan_schedule.attraction_id = attraction_info.id

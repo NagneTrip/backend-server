@@ -17,6 +17,8 @@ public class TravelPlan {
 
     private Long userId;
 
+    private String title;
+
     private List<Schedule> schedules;
 
     private LocalDateTime createdDate;

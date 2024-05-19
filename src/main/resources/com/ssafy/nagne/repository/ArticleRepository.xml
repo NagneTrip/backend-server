@@ -82,6 +82,38 @@
         ORDER BY article.id DESC;
     </select>
 
+    <select id="findArticlesByUserId" resultMap="ArticleWithImage">
+        SELECT article.*,
+               users.nickname                      AS user_nickname,
+               users.profile_image                 AS user_profile_image,
+               users.tier                          AS user_tier,
+               image.url                           AS url,
+               (article_likes.user_id IS NOT NULL) AS is_liked,
+               (bookmark.user_id IS NOT NULL)      AS is_bookmarked,
+               IFNULL(comment_counts.count, 0)     AS comment_count,
+               IFNULL(likes_counts.count, 0)       AS like_count
+        FROM article
+                 LEFT JOIN
+             users ON article.user_id = users.id
+                 LEFT JOIN
+             image ON article.id = image.article_id
+                 LEFT JOIN
+             article_likes ON article.id = article_likes.article_id AND article_likes.user_id = #{sessionId}
+                 LEFT JOIN
+             bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{sessionId}
+                 LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM comment GROUP BY article_id) AS comment_counts
+                           ON article.id = comment_counts.article_id
+                 LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM article_likes GROUP BY article_id) AS likes_counts
+                           ON article.id = likes_counts.article_id
+        WHERE article.id IN (SELECT *
+                             FROM (SELECT id
+                                   FROM article
+                                   WHERE user_id = #{userId}
+                                     AND id &lt; #{pageable.lastIndex}
+                                   ORDER BY id DESC LIMIT #{pageable.size}) AS paging_article_ids)
+        ORDER BY article.id DESC;
+    </select>
+
     <select id="findArticlesByTags" resultMap="ArticleWithImage">
         SELECT article.*,
         users.nickname AS user_nickname,
@@ -98,9 +130,9 @@
         LEFT JOIN
         image ON article.id = image.article_id
         LEFT JOIN
-        article_likes ON article.id = article_likes.article_id AND article_likes.user_id = #{userId}
+        article_likes ON article.id = article_likes.article_id AND article_likes.user_id = #{sessionId}
         LEFT JOIN
-        bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{userId}
+        bookmark ON article.id = bookmark.article_id AND bookmark.user_id = #{sessionId}
         LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM comment GROUP BY article_id) AS comment_counts
         ON article.id = comment_counts.article_id
         LEFT JOIN (SELECT article_id, COUNT(*) AS count FROM article_likes GROUP BY article_id) AS likes_counts

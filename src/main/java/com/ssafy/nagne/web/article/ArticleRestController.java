@@ -45,6 +45,13 @@ public class ArticleRestController {
         return new ArticleListResultForNonLoginUser(articleService.findAll(pageable));
     }
 
+    @GetMapping("/by")
+    public ArticleListResult findArticlesByUserId(@RequestParam Long userId,
+                                                  @AuthenticationPrincipal JwtAuthentication authentication,
+                                                  Pageable pageable) {
+        return new ArticleListResult(articleService.findArticlesByUserId(userId, authentication.id(), pageable));
+    }
+
     @GetMapping("/tags")
     public ArticleListResult findArticlesByTags(@RequestParam List<String> tags,
                                                 @AuthenticationPrincipal JwtAuthentication authentication,
@@ -65,8 +72,8 @@ public class ArticleRestController {
     }
 
     @GetMapping("/best")
-    public ArticleListResult findTop10Articles() {
-        return new ArticleListResult(articleService.findTop10Articles());
+    public BestArticleListResult findTop10Articles() {
+        return new BestArticleListResult(articleService.findTop10Articles());
     }
 
     @PatchMapping("/{id}")

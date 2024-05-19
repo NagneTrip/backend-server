@@ -53,6 +53,12 @@ public class ArticleService {
         return articleRepository.findAll(pageable);
     }
 
+    public List<Article> findArticlesByUserId(Long userId, Long sessionId, Pageable pageable) {
+        checkNotNull(userId, "userId must be provided");
+
+        return articleRepository.findArticlesByUserId(userId, sessionId, pageable);
+    }
+
     public List<Article> findArticlesByTags(List<String> tags, Long sessionId, Pageable pageable) {
         return articleRepository.findArticlesByTags(tags, sessionId, pageable);
     }

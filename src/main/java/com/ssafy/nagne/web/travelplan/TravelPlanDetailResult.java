@@ -25,6 +25,7 @@ public class TravelPlanDetailResult {
 
         private Long id;
         private Long userId;
+        private String title;
         private List<AttractionInfo> attractions;
         private LocalDateTime createdDate;
 
