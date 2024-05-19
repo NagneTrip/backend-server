@@ -11,9 +11,12 @@ import com.ssafy.nagne.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Aspect
-//@Component
+@Component
+@Transactional
 @RequiredArgsConstructor
 public class LikeNotificationAop {
 
@@ -21,8 +24,8 @@ public class LikeNotificationAop {
     private final ArticleService articleService;
 
     @AfterReturning(value = "execution(* com.ssafy.nagne.service.ArticleLikeService.like(..)) && args(userId, articleId)")
-    public void sendFollowNotification(Long userId, Long articleId) {
-        Article article = articleService.findById(userId, articleId);
+    public void sendLikeNotification(Long userId, Long articleId) {
+        Article article = articleService.findById(articleId, userId);
 
         notificationService.save(createNotification(userId, article));
     }

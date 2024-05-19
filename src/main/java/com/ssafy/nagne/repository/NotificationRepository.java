@@ -1,13 +1,13 @@
 package com.ssafy.nagne.repository;
 
 import com.ssafy.nagne.domain.Notification;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-@Mapper
-public interface NotificationRepository {
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    void save(@Param("notification") Notification notification);
-
-    //TODO: like용 save메서드 구현
+    @Query("SELECT n FROM Notification n WHERE n.toUserId = :toUserId")
+    List<Notification> findNotificationsByToUserId(@Param("toUserId") Long toUserId);
 }

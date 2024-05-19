@@ -9,9 +9,12 @@ import com.ssafy.nagne.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Aspect
-//@Component
+@Component
+@Transactional
 @RequiredArgsConstructor
 public class FollowNotificationAop {
 

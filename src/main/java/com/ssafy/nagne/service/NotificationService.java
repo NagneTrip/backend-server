@@ -2,6 +2,7 @@ package com.ssafy.nagne.service;
 
 import com.ssafy.nagne.domain.Notification;
 import com.ssafy.nagne.repository.NotificationRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,5 +16,9 @@ public class NotificationService {
 
     public void save(Notification notification) {
         notificationRepository.save(notification);
+    }
+
+    public List<Notification> findNotificationsByUserId(Long userId) {
+        return notificationRepository.findNotificationsByToUserId(userId);
     }
 }
