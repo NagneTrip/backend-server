@@ -18,6 +18,12 @@ public class Comment {
 
     private Long userId;
 
+    private String userNickname;
+
+    private String userProfileImage;
+
+    private Tier userTier;
+
     private String content;
 
     private Integer likeCount;

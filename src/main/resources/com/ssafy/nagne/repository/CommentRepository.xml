@@ -16,28 +16,39 @@
     </insert>
 
     <select id="findById" resultType="Comment">
-        SELECT comment.*, (like1.user_id IS NOT NULL) AS is_liked, COUNT(like2.user_id) AS like_count
+        SELECT comment.*,
+               users.nickname                      AS user_nickname,
+               users.profile_image                 AS profile_image,
+               users.tier                          AS tier,
+               (comment_likes.user_id IS NOT NULL) AS is_liked,
+               IFNULL(likes_counts.count, 0)       AS like_count
         FROM comment
                  LEFT JOIN
-             comment_likes like1 ON comment.id = like1.comment_id AND like1.user_id = #{userId}
+             users ON comment.user_id = users.id
                  LEFT JOIN
-             comment_likes like2 ON comment.id = like2.comment_id
+             comment_likes ON comment.id = comment_likes.comment_id AND comment_likes.user_id = #{userId}
+                 LEFT JOIN (SELECT comment_id, COUNT(*) AS count FROM comment_likes GROUP BY comment_id) AS likes_counts
+                           ON comment.id = likes_counts.comment_id
         WHERE comment.id = #{id}
-        GROUP BY comment.id;
     </select>
 
     <select id="findCommentsByArticleId" resultType="Comment">
         SELECT comment.*,
+               users.nickname                      AS user_nickname,
+               users.profile_image                 AS user_profile_image,
+               users.tier                          AS user_tier,
                (comment_likes.user_id IS NOT NULL) AS is_liked,
                IFNULL(likes_counts.count, 0)       AS like_count
         FROM comment
+                 LEFT JOIN
+             users ON comment.user_id = users.id
                  LEFT JOIN
              comment_likes ON comment.id = comment_likes.comment_id AND comment_likes.user_id = #{userId}
                  LEFT JOIN (SELECT comment_id, COUNT(*) AS count FROM comment_likes GROUP BY comment_id) AS likes_counts
                            ON comment.id = likes_counts.comment_id
         WHERE article_id = #{articleId}
-          AND id &lt; #{pageable.lastIndex}
-        ORDER BY like_count DESC, id DESC LIMIT #{pageable.size};
+          AND comment.id &lt; #{pageable.lastIndex}
+        ORDER BY like_count DESC, comment.id DESC LIMIT #{pageable.size};
     </select>
 
     <update id="update">

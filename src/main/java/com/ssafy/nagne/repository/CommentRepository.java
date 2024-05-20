@@ -12,7 +12,8 @@ public interface CommentRepository {
 
     void save(@Param("comment") Comment comment);
 
-    Optional<Comment> findById(@Param("id") Long id, @Param("userId") Long userId);
+    Optional<Comment> findById(@Param("id") Long id,
+                               @Param("userId") Long userId);
 
     List<Comment> findCommentsByArticleId(@Param("articleId") Long articleId,
                                           @Param("userId") Long userId,

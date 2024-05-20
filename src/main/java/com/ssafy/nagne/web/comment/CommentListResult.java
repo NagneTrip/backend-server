@@ -3,6 +3,7 @@ package com.ssafy.nagne.web.comment;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 import com.ssafy.nagne.domain.Comment;
+import com.ssafy.nagne.domain.Tier;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -24,6 +25,9 @@ public class CommentListResult {
         private Long id;
         private Long articleId;
         private Long userId;
+        private String userNickname;
+        private String userProfileImage;
+        private Tier userTier;
         private String content;
         private Integer likeCount;
         private Boolean isLiked;
