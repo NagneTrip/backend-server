@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +24,10 @@ public class NotificationRestController {
     @GetMapping
     public List<Notification> findNotificationsByUserId(@AuthenticationPrincipal JwtAuthentication authentication) {
         return notificationService.findNotificationsByUserId(authentication.id());
+    }
+
+    @PatchMapping("/{id}")
+    public Boolean read(@PathVariable Long id) {
+        return notificationService.read(id);
     }
 }

@@ -43,4 +43,8 @@ public abstract class Notification {
     private Boolean isNew;
 
     private LocalDateTime createdDate;
+
+    public void read() {
+        isNew = false;
+    }
 }

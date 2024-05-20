@@ -21,4 +21,8 @@ public class NotificationService {
     public List<Notification> findNotificationsByUserId(Long userId) {
         return notificationRepository.findNotificationsByToUserId(userId);
     }
+
+    public Boolean read(Long id) {
+        return notificationRepository.read(id) == 1;
+    }
 }
