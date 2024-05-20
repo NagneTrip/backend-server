@@ -8,13 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-
-    @Query(value = "SELECT notification.*, "
-            + "users.nickname AS from_user_nickname, "
-            + "users.profile_image AS from_user_profile_image, "
-            + "users.tier AS from_user_tier "
-            + "FROM notification LEFT JOIN users ON notification.from_user_id = users.id "
-            + "WHERE to_user_id = :toUserId", nativeQuery = true)
+    
     List<Notification> findNotificationsByToUserId(@Param("toUserId") Long toUserId);
 
     @Query("SELECT COUNT(n) FROM Notification n WHERE n.toUserId = :toUserId AND n.isNew")
