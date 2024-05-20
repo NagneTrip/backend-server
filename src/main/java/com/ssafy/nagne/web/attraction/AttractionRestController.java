@@ -1,5 +1,6 @@
 package com.ssafy.nagne.web.attraction;
 
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.service.AttractionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class AttractionRestController {
     }
 
     @GetMapping
-    public AttractionListResult findAttractionsByKeyword(@RequestParam String keyword) {
-        return new AttractionListResult(attractionService.findAttractionsByKeyword(keyword));
+    public AttractionListResult findAttractionsByKeyword(@RequestParam String keyword, Pageable pageable) {
+        return new AttractionListResult(attractionService.findAttractionsByKeyword(keyword, pageable));
     }
 }

@@ -4,6 +4,7 @@ import static lombok.Lombok.checkNotNull;
 
 import com.ssafy.nagne.domain.Attraction;
 import com.ssafy.nagne.error.NotFoundException;
+import com.ssafy.nagne.page.Pageable;
 import com.ssafy.nagne.repository.AttractionRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class AttractionService {
                 .orElseThrow(() -> new NotFoundException("Could not found attraction for " + id));
     }
 
-    public List<Attraction> findAttractionsByKeyword(String keyword) {
+    public List<Attraction> findAttractionsByKeyword(String keyword, Pageable pageable) {
         checkNotNull(keyword, "keyword must be provided");
 
-        return attractionRepository.findAttractionsByKeyword(keyword);
+        return attractionRepository.findAttractionsByKeyword(keyword, pageable);
     }
 }

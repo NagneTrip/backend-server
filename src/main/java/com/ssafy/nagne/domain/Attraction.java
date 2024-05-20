@@ -13,6 +13,8 @@ public class Attraction {
 
     private Long id;
 
+    private Long attractionTypeId;
+
     private Long sidoCode;
 
     private Long gugunCode;

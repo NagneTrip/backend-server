@@ -21,6 +21,7 @@ public class AttractionListResult {
     private static class AttractionInfo {
 
         private Long id;
+        private Long attractionTypeId;
         private Long sidoCode;
         private Long gugunCode;
         private String title;
