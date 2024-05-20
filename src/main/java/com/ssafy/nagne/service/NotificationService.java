@@ -22,6 +22,10 @@ public class NotificationService {
         return notificationRepository.findNotificationsByToUserId(userId);
     }
 
+    public Boolean hasNewNotifications(Long userId) {
+        return notificationRepository.countNewNotifications(userId) > 0;
+    }
+
     public Boolean read(Long id) {
         return notificationRepository.read(id) == 1;
     }

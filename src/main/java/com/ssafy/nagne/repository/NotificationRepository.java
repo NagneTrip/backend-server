@@ -17,6 +17,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             + "WHERE to_user_id = :toUserId", nativeQuery = true)
     List<Notification> findNotificationsByToUserId(@Param("toUserId") Long toUserId);
 
+    @Query("SELECT COUNT(n) FROM Notification n WHERE n.toUserId = :toUserId AND n.isNew")
+    int countNewNotifications(@Param("toUserId") Long toUserId);
+
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE notification SET is_new = false WHERE id = :id", nativeQuery = true)
     int read(@Param("id") Long id);

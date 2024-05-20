@@ -26,6 +26,11 @@ public class NotificationRestController {
         return notificationService.findNotificationsByUserId(authentication.id());
     }
 
+    @GetMapping("/has-new")
+    public Boolean hasNewNotifications(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return notificationService.hasNewNotifications(authentication.id());
+    }
+
     @PatchMapping("/{id}")
     public Boolean read(@PathVariable Long id) {
         return notificationService.read(id);
