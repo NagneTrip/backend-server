@@ -31,6 +31,13 @@ public abstract class Notification {
 
     private Long fromUserId;
 
+    private String fromUserNickname;
+
+    private String fromUserProfileImage;
+
+    @Enumerated(value = EnumType.STRING)
+    private Tier fromUserTier;
+
     private Long toUserId;
 
     private Boolean isNew;
