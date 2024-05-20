@@ -75,8 +75,8 @@ public class ArticleService {
         return articleRepository.findBookmarkArticles(sessionId, pageable);
     }
 
-    public List<Article> findTop10Articles() {
-        return articleRepository.findTop10Articles();
+    public List<Article> findTop10Articles(String sort) {
+        return articleRepository.findTop10Articles(sort);
     }
 
     @Transactional

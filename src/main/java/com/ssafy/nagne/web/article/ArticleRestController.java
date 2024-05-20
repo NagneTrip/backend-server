@@ -71,9 +71,10 @@ public class ArticleRestController {
         return new ArticleListResult(articleService.findBookmarkArticles(authentication.id(), pageable));
     }
 
+    //TODO: ArgumentResolver 리팩토링
     @GetMapping("/best")
-    public BestArticleListResult findTop10Articles() {
-        return new BestArticleListResult(articleService.findTop10Articles());
+    public BestArticleListResult findTop10Articles(@RequestParam String sort) {
+        return new BestArticleListResult(articleService.findTop10Articles(sort));
     }
 
     @PatchMapping("/{id}")
