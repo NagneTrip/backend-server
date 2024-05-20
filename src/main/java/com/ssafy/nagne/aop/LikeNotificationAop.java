@@ -25,19 +25,24 @@ public class LikeNotificationAop {
 
     @AfterReturning(value = "execution(* com.ssafy.nagne.service.ArticleLikeService.like(..)) && args(userId, articleId)")
     public void sendLikeNotification(Long userId, Long articleId) {
-        Article article = articleService.findById(articleId, userId);
 
-        notificationService.save(createNotification(userId, article));
+        notificationService.save(createNotification(userId, articleId));
     }
 
-    private Notification createNotification(Long userId, Article article) {
+    private Notification createNotification(Long userId, Long articleId) {
         return LikeNotification.builder()
                 .type(LIKE)
                 .fromUserId(userId)
-                .toUserId(article.getUserId())
+                .toUserId(getToUserId(userId, articleId))
                 .isNew(true)
-                .articleId(article.getId())
+                .articleId(articleId)
                 .createdDate(now())
                 .build();
+    }
+
+    private Long getToUserId(Long userId, Long articleId) {
+        Article article = articleService.findById(articleId, userId);
+
+        return article.getUserId();
     }
 }
