@@ -16,13 +16,16 @@ public interface UserRepository {
 
     Optional<User> findByUsername(@Param("username") String username);
 
-    List<User> findUsers(@Param("keyword") String keyword,
-                         @Param("pageable") Pageable pageable);
+    List<User> findUsersByKeyword(@Param("keyword") String keyword,
+                                  @Param("sessionId") Long sessionId,
+                                  @Param("pageable") Pageable pageable);
 
     List<User> findFollowers(@Param("id") Long id,
+                             @Param("sessionId") Long sessionId,
                              @Param("pageable") Pageable pageable);
 
     List<User> findFollowings(@Param("id") Long id,
+                              @Param("sessionId") Long sessionId,
                               @Param("pageable") Pageable pageable);
 
     int update(@Param("user") User user);

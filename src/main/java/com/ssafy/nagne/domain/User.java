@@ -25,6 +25,8 @@ public class User {
 
     private String nickname;
 
+    private Boolean isFollowed;
+
     private Integer followers;
 
     private Integer followings;

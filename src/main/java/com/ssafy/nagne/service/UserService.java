@@ -102,20 +102,20 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Could not found user for " + username));
     }
 
-    public List<User> findUsers(String keyword, Pageable pageable) {
-        return userRepository.findUsers(keyword, pageable);
+    public List<User> findUsersByKeyword(String keyword, Long sessionId, Pageable pageable) {
+        return userRepository.findUsersByKeyword(keyword, sessionId, pageable);
     }
 
-    public List<User> findFollowers(Long id, Pageable pageable) {
+    public List<User> findFollowers(Long id, Long sessionId, Pageable pageable) {
         checkNotNull(id, "id must be provided");
 
-        return userRepository.findFollowers(id, pageable);
+        return userRepository.findFollowers(id, sessionId, pageable);
     }
 
-    public List<User> findFollowings(Long id, Pageable pageable) {
+    public List<User> findFollowings(Long id, Long sessionId, Pageable pageable) {
         checkNotNull(id, "id must be provided");
 
-        return userRepository.findFollowings(id, pageable);
+        return userRepository.findFollowings(id, sessionId, pageable);
     }
 
     @Transactional

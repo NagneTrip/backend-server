@@ -42,21 +42,24 @@ public class UserRestController {
     }
 
     @GetMapping
-    public UserListResult findUsers(@RequestParam(required = false) String keyword,
-                                    Pageable pageable) {
-        return new UserListResult(userService.findUsers(keyword, pageable));
+    public UserListResult findUsersByKeyword(@RequestParam(required = false) String keyword,
+                                             @AuthenticationPrincipal JwtAuthentication authentication,
+                                             Pageable pageable) {
+        return new UserListResult(userService.findUsersByKeyword(keyword, authentication.id(), pageable));
     }
 
     @GetMapping("/{id}/followers")
     public UserListResult findFollowers(@PathVariable Long id,
+                                        @AuthenticationPrincipal JwtAuthentication authentication,
                                         Pageable pageable) {
-        return new UserListResult(userService.findFollowers(id, pageable));
+        return new UserListResult(userService.findFollowers(id, authentication.id(), pageable));
     }
 
     @GetMapping("/{id}/followings")
     public UserListResult findFollowings(@PathVariable Long id,
+                                         @AuthenticationPrincipal JwtAuthentication authentication,
                                          Pageable pageable) {
-        return new UserListResult(userService.findFollowings(id, pageable));
+        return new UserListResult(userService.findFollowings(id, authentication.id(), pageable));
     }
 
     @PatchMapping("/{id}")

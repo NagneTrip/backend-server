@@ -40,24 +40,19 @@
     </select>
 
     <select id="findByUsername" resultType="User">
-        SELECT users.*,
-               IFNULL(follower_counts.follower_count, 0)   AS followers,
-               IFNULL(following_counts.following_count, 0) AS followings
+        SELECT users.*
         FROM users
-                 LEFT JOIN
-             (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
-             ON users.id = follower_counts.following_id
-                 LEFT JOIN
-             (SELECT follower_id, COUNT(*) AS following_count FROM follow GROUP BY follower_id) AS following_counts
-             ON users.id = following_counts.follower_id
         WHERE username = #{username}
     </select>
 
-    <select id="findUsers" resultType="User">
+    <select id="findUsersByKeyword" resultType="User">
         SELECT users.*,
+               (follow_check.following_id IS NOT NULL)     AS is_followed,
                IFNULL(follower_counts.follower_count, 0)   AS followers,
                IFNULL(following_counts.following_count, 0) AS followings
         FROM users
+                 LEFT JOIN
+             follow AS follow_check ON follow_check.following_id = users.id AND follow_check.follower_id = #{sessionId}
                  LEFT JOIN
              (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
              ON users.id = follower_counts.following_id
@@ -71,11 +66,14 @@
 
     <select id="findFollowers" resultType="User">
         SELECT users.*,
+               (follow_check.following_id IS NOT NULL)     AS is_followed,
                IFNULL(follower_counts.follower_count, 0)   AS followers,
                IFNULL(following_counts.following_count, 0) AS followings
         FROM follow
                  LEFT JOIN
              users ON follow.follower_id = users.id
+                 LEFT JOIN
+             follow AS follow_check ON follow_check.following_id = users.id AND follow_check.follower_id = #{sessionId}
                  LEFT JOIN
              (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
              ON users.id = follower_counts.following_id
@@ -89,11 +87,14 @@
 
     <select id="findFollowings" resultType="User">
         SELECT users.*,
+               (follow_check.following_id IS NOT NULL)     AS is_followed,
                IFNULL(follower_counts.follower_count, 0)   AS followers,
                IFNULL(following_counts.following_count, 0) AS followings
         FROM follow
                  LEFT JOIN
              users ON follow.following_id = users.id
+                 LEFT JOIN
+             follow AS follow_check ON follow_check.following_id = users.id AND follow_check.follower_id = #{sessionId}
                  LEFT JOIN
              (SELECT following_id, COUNT(*) AS follower_count FROM follow GROUP BY following_id) AS follower_counts
              ON users.id = follower_counts.following_id

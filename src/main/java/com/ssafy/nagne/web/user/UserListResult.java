@@ -25,6 +25,7 @@ public class UserListResult {
         private Long id;
         private String username;
         private String nickname;
+        private Boolean isFollowed;
         private Integer followers;
         private Integer followings;
         private String profileImage;
