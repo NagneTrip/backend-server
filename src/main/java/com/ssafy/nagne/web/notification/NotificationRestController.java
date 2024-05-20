@@ -31,8 +31,14 @@ public class NotificationRestController {
         return notificationService.hasNewNotifications(authentication.id());
     }
 
+    //TODO: 자신의 알림만 읽을 수 있도록 하기
     @PatchMapping("/{id}")
     public Boolean read(@PathVariable Long id) {
         return notificationService.read(id);
+    }
+
+    @PatchMapping
+    public Boolean readAll(@AuthenticationPrincipal JwtAuthentication authentication) {
+        return notificationService.readAll(authentication.id());
     }
 }

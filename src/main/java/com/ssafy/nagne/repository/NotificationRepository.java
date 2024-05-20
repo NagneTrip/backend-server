@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    
+
     List<Notification> findNotificationsByToUserId(@Param("toUserId") Long toUserId);
 
     @Query("SELECT COUNT(n) FROM Notification n WHERE n.toUserId = :toUserId AND n.isNew")
@@ -17,4 +17,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE notification SET is_new = false WHERE id = :id", nativeQuery = true)
     int read(@Param("id") Long id);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE notification SET is_new = false WHERE to_user_id = :userId", nativeQuery = true)
+    int readAll(@Param("userId") Long userId);
 }

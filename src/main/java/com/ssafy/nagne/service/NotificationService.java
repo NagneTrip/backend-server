@@ -29,4 +29,8 @@ public class NotificationService {
     public Boolean read(Long id) {
         return notificationRepository.read(id) == 1;
     }
+
+    public Boolean readAll(Long userId) {
+        return notificationRepository.readAll(userId) > 0;
+    }
 }
