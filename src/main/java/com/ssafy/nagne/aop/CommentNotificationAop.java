@@ -6,8 +6,10 @@ import static java.time.LocalDateTime.now;
 import com.ssafy.nagne.domain.Comment;
 import com.ssafy.nagne.domain.CommentNotification;
 import com.ssafy.nagne.domain.Notification;
+import com.ssafy.nagne.domain.User;
 import com.ssafy.nagne.service.ArticleService;
 import com.ssafy.nagne.service.NotificationService;
+import com.ssafy.nagne.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -24,6 +26,7 @@ public class CommentNotificationAop {
 
     private final NotificationService notificationService;
     private final ArticleService articleService;
+    private final UserService userService;
 
     @AfterReturning(value = "execution(* com.ssafy.nagne.service.CommentService.save(..))", returning = "comment")
     public void sendCommentNotification(Comment comment) {
@@ -31,9 +34,14 @@ public class CommentNotificationAop {
     }
 
     private Notification createNotification(Comment comment) {
+        User user = userService.findById(getFromUserId(comment));
+
         return CommentNotification.builder()
                 .type(COMMENT)
-                .fromUserId(getFromUserId(comment))
+                .fromUserId(user.getId())
+                .fromUserNickname(user.getNickname())
+                .fromUserProfileImage(user.getProfileImage())
+                .fromUserTier(user.getTier())
                 .toUserId(getToUserId(comment))
                 .isNew(true)
                 .articleId(getArticleId(comment))
