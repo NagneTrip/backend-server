@@ -15,9 +15,6 @@ application-MYSQL.properties
 ### JWT INFO ###
 application-JWT.properties
 
-### FILE INFO ###
-application-FILE.properties
-
 ### OAUTH INFO ###
 application-OAUTH.properties
 
