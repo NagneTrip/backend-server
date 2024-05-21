@@ -1,8 +1,8 @@
 package com.ssafy.nagne.error;
 
-import static com.ssafy.nagne.utils.ApiUtils.error;
+import static com.ssafy.nagne.api.ApiUtils.error;
 
-import com.ssafy.nagne.utils.ApiUtils;
+import com.ssafy.nagne.api.ApiUtils;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;

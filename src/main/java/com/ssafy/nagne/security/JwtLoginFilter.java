@@ -1,8 +1,8 @@
 package com.ssafy.nagne.security;
 
+import static com.ssafy.nagne.api.ApiUtils.error;
+import static com.ssafy.nagne.api.ApiUtils.success;
 import static com.ssafy.nagne.security.Jwt.Claims.of;
-import static com.ssafy.nagne.utils.ApiUtils.error;
-import static com.ssafy.nagne.utils.ApiUtils.success;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.nagne.domain.User;

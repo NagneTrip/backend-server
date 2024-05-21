@@ -1,6 +1,6 @@
 package com.ssafy.nagne.security;
 
-import static com.ssafy.nagne.utils.ApiUtils.error;
+import static com.ssafy.nagne.api.ApiUtils.error;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

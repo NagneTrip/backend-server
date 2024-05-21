@@ -1,25 +1,28 @@
 package com.ssafy.nagne.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.UUID.randomUUID;
 import static org.springframework.util.StringUtils.getFilenameExtension;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.nagne.error.FIleStoreException;
-import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@RequiredArgsConstructor
 public class FileStore {
 
-    @Value("${file.dir}")
-    private String fileDir;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
-    private String getFullPath(String fileName) {
-        return fileDir + fileName;
-    }
+    private final AmazonS3 amazonS3;
 
     public List<String> store(List<MultipartFile> multipartFiles) {
         if (multipartFiles == null) {
@@ -32,7 +35,6 @@ public class FileStore {
 
         return multipartFiles.stream()
                 .map(this::store)
-                .map(this::getFullPath)
                 .toList();
     }
 
@@ -43,9 +45,15 @@ public class FileStore {
 
         try {
             String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
-            multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
-            return storeFileName;
+            amazonS3.putObject(
+                    bucket,
+                    storeFileName,
+                    multipartFile.getInputStream(),
+                    objectMetadata(multipartFile)
+            );
+
+            return URLDecoder.decode(amazonS3.getUrl(bucket, storeFileName).toString(), UTF_8);
         } catch (IOException e) {
             throw new FIleStoreException("파일 저장 중 예외가 발생했습니다.");
         }
@@ -53,5 +61,11 @@ public class FileStore {
 
     private String createStoreFileName(String originalFileName) {
         return randomUUID() + "." + getFilenameExtension(originalFileName);
+    }
+
+    private ObjectMetadata objectMetadata(MultipartFile multipartFile) throws IOException {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(multipartFile.getInputStream().available());
+        return objectMetadata;
     }
 }

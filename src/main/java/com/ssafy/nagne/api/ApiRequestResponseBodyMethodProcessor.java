@@ -1,6 +1,6 @@
 package com.ssafy.nagne.api;
 
-import static com.ssafy.nagne.utils.ApiUtils.success;
+import static com.ssafy.nagne.api.ApiUtils.success;
 
 import java.io.IOException;
 import java.util.List;

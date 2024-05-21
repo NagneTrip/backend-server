@@ -1,4 +1,4 @@
-package com.ssafy.nagne.utils;
+package com.ssafy.nagne.api;
 
 import org.springframework.http.HttpStatus;
 

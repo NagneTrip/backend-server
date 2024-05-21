@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 img/
 
+### AWS INFO ###
+application-AWS.properties
+
 ### DB INFO ###
 application-MYSQL.properties
 
