@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -79,9 +80,8 @@ public class ArticleRestController {
 
     @PatchMapping("/{id}")
     public Boolean update(@PathVariable Long id, @AuthenticationPrincipal JwtAuthentication authentication,
-                          @Valid @RequestPart UpdateRequest request,
-                          @RequestPart List<MultipartFile> images) {
-        return articleService.update(id, authentication.id(), request, images);
+                          @Valid @RequestBody UpdateRequest request) {
+        return articleService.update(id, authentication.id(), request);
     }
 
     @DeleteMapping("/{id}")

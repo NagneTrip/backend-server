@@ -80,11 +80,10 @@ public class ArticleService {
     }
 
     @Transactional
-    public boolean update(Long id, Long sessionId, UpdateRequest request, List<MultipartFile> images) {
+    public boolean update(Long id, Long sessionId, UpdateRequest request) {
         checkNotNull(id, "id must be provided");
-        checkArgument(images.size() <= 10, "must be 10 images or less");
 
-        return update(findArticleAndCheckMine(id, sessionId), request, images);
+        return update(findArticleAndCheckMine(id, sessionId), request);
     }
 
     @Transactional
@@ -140,10 +139,9 @@ public class ArticleService {
         articleHashTagRepository.delete(id);
     }
 
-    private boolean update(Article article, UpdateRequest request, List<MultipartFile> images) {
-        updateHashTags(article);
-        updateImages(article, images);
+    private boolean update(Article article, UpdateRequest request) {
         updateContent(article, request);
+        updateHashTags(article);
 
         return articleRepository.update(article) == 1;
     }
@@ -151,11 +149,6 @@ public class ArticleService {
     private void updateHashTags(Article article) {
         deleteHashTags(article.getId());
         saveHashTags(article);
-    }
-
-    private void updateImages(Article article, List<MultipartFile> images) {
-        deleteImages(article.getId());
-        saveImages(article, images);
     }
 
     private void updateContent(Article article, UpdateRequest request) {
