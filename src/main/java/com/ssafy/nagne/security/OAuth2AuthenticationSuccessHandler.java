@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    @Value("${front.domain}")
+    private String frontServerDomain;
 
     private final ObjectMapper objectMapper;
     private final Jwt jwt;
@@ -55,13 +59,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        response.sendRedirect("http://localhost:5173/signup?needToJoin=false&data=" + data);
+        response.sendRedirect(frontServerDomain + "/signup?needToJoin=false&data=" + data);
     }
 
     private void sendNeedToJoin(HttpServletResponse response, String username) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("content-type", "application/json");
-        response.sendRedirect("http://localhost:5173/signup?needToJoin=true&username=" + username);
+        response.sendRedirect(frontServerDomain + "/signup?needToJoin=true&username=" + username);
     }
 
     private record LoginResult(String token, UserInfo userInfo) {

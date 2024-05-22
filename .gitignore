@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 img/
 
+### FRONT SERVER DOMAIN INFO ###
+application-FRONT.properties
+
 ### AWS INFO ###
 application-AWS.properties
 
