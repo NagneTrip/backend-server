@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,6 +25,11 @@ public class BookmarkRestController {
     public Boolean bookmark(@AuthenticationPrincipal JwtAuthentication authentication,
                             @Valid @RequestBody BookmarkRequest request) {
         return bookmarkService.bookmark(authentication.id(), request.articleId());
+    }
+
+    @GetMapping("/count")
+    public CountResult countByUserId(@RequestParam Long userId) {
+        return new CountResult(bookmarkService.countByUserId(userId));
     }
 
     @GetMapping("/{articleId}")

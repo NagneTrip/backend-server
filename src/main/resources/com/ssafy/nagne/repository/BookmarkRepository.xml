@@ -7,6 +7,12 @@
         VALUES (#{userId}, #{articleId}, now())
     </insert>
 
+    <select id="countByUserId">
+        SELECT COUNT(*)
+        FROM bookmark
+        WHERE user_id = #{userId};
+    </select>
+
     <select id="check">
         SELECT COUNT(*) &gt; 0
         FROM bookmark

@@ -26,6 +26,13 @@ public class BookmarkService {
     }
 
     @Transactional(readOnly = true)
+    public int countByUserId(Long userId) {
+        checkNotNull(userId, "userId must be provided");
+
+        return bookmarkRepository.countByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
     public boolean check(Long userId, Long articleId) {
         checkNotNull(userId, "userId must be provided");
         checkNotNull(articleId, "articleId must be provided");
