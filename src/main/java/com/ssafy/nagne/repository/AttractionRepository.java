@@ -13,5 +13,6 @@ public interface AttractionRepository {
     Optional<Attraction> findById(@Param("id") Long id);
 
     List<Attraction> findAttractionsByKeyword(@Param("keyword") String keyword,
-                                              Pageable pageable);
+                                              @Param("attractionTypeId") Long attractionTypeId,
+                                              @Param("pageable") Pageable pageable);
 }

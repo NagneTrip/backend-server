@@ -12,6 +12,7 @@
         SELECT *
         FROM attraction_info
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
+          AND attraction_type_id = #{attractionTypeId}
           AND id &lt; #{pageable.lastIndex}
         ORDER BY id DESC LIMIT #{pageable.size}
     </select>

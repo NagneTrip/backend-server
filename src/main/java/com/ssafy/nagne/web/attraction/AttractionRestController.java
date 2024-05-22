@@ -22,7 +22,10 @@ public class AttractionRestController {
     }
 
     @GetMapping
-    public AttractionListResult findAttractionsByKeyword(@RequestParam String keyword, Pageable pageable) {
-        return new AttractionListResult(attractionService.findAttractionsByKeyword(keyword, pageable));
+    public AttractionListResult findAttractionsByKeyword(@RequestParam String keyword,
+                                                         @RequestParam Long attractionTypeId,
+                                                         Pageable pageable) {
+        return new AttractionListResult(
+                attractionService.findAttractionsByKeyword(keyword, attractionTypeId, pageable));
     }
 }

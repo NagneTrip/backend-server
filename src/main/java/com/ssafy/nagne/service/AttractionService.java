@@ -25,9 +25,9 @@ public class AttractionService {
                 .orElseThrow(() -> new NotFoundException("Could not found attraction for " + id));
     }
 
-    public List<Attraction> findAttractionsByKeyword(String keyword, Pageable pageable) {
+    public List<Attraction> findAttractionsByKeyword(String keyword, Long attractionTypeId, Pageable pageable) {
         checkNotNull(keyword, "keyword must be provided");
 
-        return attractionRepository.findAttractionsByKeyword(keyword, pageable);
+        return attractionRepository.findAttractionsByKeyword(keyword, attractionTypeId, pageable);
     }
 }
