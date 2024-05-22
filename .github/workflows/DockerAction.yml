@@ -27,13 +27,6 @@ jobs:
           echo "${{ secrets.PROPERTIES_AWS }}" > ./application-AWS.properties
         shell: bash
 
-      - name: Make application-AWS.properties
-        run: |
-          cd ./src/main/resources
-          touch ./application-AWS.properties
-          echo "${{ secrets.PROPERTIES_AWS }}" > ./application-AWS.properties
-        shell: bash
-
       - name: Make application-JWT.properties
         run: |
           cd ./src/main/resources
@@ -74,8 +67,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.PEM_FILE }}
           envs: GITHUB_SHA
-        script: |
-          sudo docker rm -f $(docker ps -qa)
-          sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
-          docker-compose up -d
-          docker image prune -f
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
+            docker-compose up -d
+            docker image prune -f
