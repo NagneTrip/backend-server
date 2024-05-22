@@ -48,6 +48,13 @@ jobs:
           echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-OAUTH.properties
         shell: bash
 
+      - name: Make application-FRONT.properties
+        run: |
+          cd ./src/main/resources
+          touch ./application-FRONT.properties
+          echo "${{ secrets.PROPERTIES_FRONT }}" > ./application-FRONT.properties
+        shell: bash
+
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
