@@ -11,8 +11,13 @@
     <select id="findAttractionsByKeyword" resultType="Attraction">
         SELECT *
         FROM attraction_info
-        WHERE title LIKE CONCAT('%', #{keyword}, '%')
-          AND attraction_type_id = #{attractionTypeId}
+        WHERE
+            <if test="keyword != null">
+                title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="attractionTypeId != null">
+                AND attraction_type_id = #{attractionTypeId}
+            </if>
           AND id &lt; #{pageable.lastIndex}
         ORDER BY id DESC LIMIT #{pageable.size}
     </select>

@@ -23,9 +23,10 @@ public class AttractionRestController {
 
     @GetMapping
     public AttractionListResult findAttractionsByKeyword(@RequestParam String keyword,
-                                                         @RequestParam Long attractionTypeId,
+                                                         @RequestParam(required = false) Long attractionTypeId,
                                                          Pageable pageable) {
         return new AttractionListResult(
-                attractionService.findAttractionsByKeyword(keyword, attractionTypeId, pageable));
+                attractionService.findAttractionsByKeyword(keyword, attractionTypeId, pageable)
+        );
     }
 }
