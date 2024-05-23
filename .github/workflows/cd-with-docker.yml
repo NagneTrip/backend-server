@@ -77,6 +77,5 @@ jobs:
           script: |
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
-            docker-compose up -d
             docker run -p 8080:8080 -d ${{ secrets.DOCKER_REPO }}:latest
             docker image prune -f
